@@ -1,7 +1,7 @@
 package de.bwvaachen.braun.beamoflightpuzzle.model;
 
 public enum LightTileState {
-	SOUTH('s',0.0), WEST('w',Math.PI),NORTH('n',180),EAST('e',-90), EMPTY('-',0.0);
+	SOUTH('s',Math.PI), WEST('w',3.0*Math.PI/2.0), NORTH('n',0.0), EAST('e',Math.PI/2.0), EMPTY('-',0.0);
 	private double theta;
 	private char saveValue;
 	private LightTileState(char c, double d) {
