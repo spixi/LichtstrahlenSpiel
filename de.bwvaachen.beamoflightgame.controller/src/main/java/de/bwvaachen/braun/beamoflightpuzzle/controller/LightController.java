@@ -1,6 +1,5 @@
-package de.bwvaacchen.braun.beamoflightpuzzle.controller;
+package de.bwvaachen.braun.beamoflightpuzzle.controller;
 
-import de.bwvaachen.braun.beamoflightpuzzle.controller.ILightController;
 import de.bwvaachen.braun.beamoflightpuzzle.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.braun.beamoflightpuzzle.model.ITile;
 import de.bwvaachen.braun.beamoflightpuzzle.model.ILightTile;
