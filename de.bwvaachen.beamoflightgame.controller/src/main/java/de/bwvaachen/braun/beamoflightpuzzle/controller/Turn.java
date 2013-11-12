@@ -37,10 +37,19 @@ import de.bwvaachen.braun.beamoflightpuzzle.model.ITile;
 import de.bwvaachen.braun.beamoflightpuzzle.model.LightTileState;
 
 public class Turn implements UndoableEdit, Serializable  {
-	private boolean alive, hasBeenDone;
+	private static transient final int FLAG_ALIVE = 0x1, FLAG_HAS_BEEN_DONE = 0x2, FLAG_SIGNIFICANT = 0x4;
+	private int flags;
 	private IBeamsOfLightPuzzleBoard board;
 	private int x, y;
 	private LightTileState oldTileState, newTileState;
+	
+	private void setFlag(int f) {
+		flags |= f;
+	}
+	
+	private void unsetFlag(int f) {
+		flags &= ~f;
+	}
 	
 	public Turn(IBeamsOfLightPuzzleBoard b, int x, int y, LightTileState oldTileState, LightTileState newTileState) {
 		board        = b;
@@ -48,8 +57,8 @@ public class Turn implements UndoableEdit, Serializable  {
 		this.y       = y;
 		this.oldTileState = oldTileState;
 		this.newTileState = newTileState;
-		alive       = true;
-		hasBeenDone = true;
+		flags |= FLAG_ALIVE;
+		flags |= FLAG_HAS_BEEN_DONE;
 	}
 
 	public boolean addEdit(UndoableEdit anEdit) {
@@ -57,15 +66,15 @@ public class Turn implements UndoableEdit, Serializable  {
 	}
 
 	public boolean canRedo() {
-		return alive && !hasBeenDone ? board.isPlacementOfTileStatePossible(newTileState, x, y) : false;
+		return (flags & FLAG_ALIVE | ~FLAG_HAS_BEEN_DONE) != 0 ? board.isPlacementOfTileStatePossible(newTileState, x, y) : false;
 	}
 
 	public boolean canUndo() {
-		return alive && hasBeenDone ? board.isPlacementOfTileStatePossible(oldTileState, x, y) : false;
+		return (flags & FLAG_ALIVE & FLAG_HAS_BEEN_DONE) != 0 ? board.isPlacementOfTileStatePossible(oldTileState, x, y) : false;
 	}
 
 	public void die() {
-		alive = false;
+		unsetFlag(FLAG_ALIVE);
 	}
 
 	public String getPresentationName() {
@@ -80,15 +89,23 @@ public class Turn implements UndoableEdit, Serializable  {
 	public String getUndoPresentationName() {
 		return getPresentationName() + " rückgängig machen.";
 	}
-
+	
+	public void mark() {
+		setFlag(FLAG_SIGNIFICANT);
+	}
+	
+	public void unmark() {
+		unsetFlag(FLAG_SIGNIFICANT);
+	}
+	
+	@Override
 	public boolean isSignificant() {
-		// TODO
-		return true;
+		return (flags & FLAG_SIGNIFICANT) != 0;
 	}
 
 	public void redo() throws CannotRedoException {
 		if(!canRedo()) throw new CannotRedoException();
-		hasBeenDone = true;
+		setFlag(FLAG_HAS_BEEN_DONE);
 		ITile tile = board.getTileAt(x, y);
 		((ILightTile) tile).setState(newTileState);
 	}
@@ -99,9 +116,11 @@ public class Turn implements UndoableEdit, Serializable  {
 
 	public void undo() throws CannotUndoException {
 		if(!canUndo()) throw new CannotUndoException();
-		hasBeenDone = false;
+		unsetFlag(FLAG_HAS_BEEN_DONE);
 		ITile tile = board.getTileAt(x, y);
 		((ILightTile) tile).setState(oldTileState);
 	}
+
+
 
 }
