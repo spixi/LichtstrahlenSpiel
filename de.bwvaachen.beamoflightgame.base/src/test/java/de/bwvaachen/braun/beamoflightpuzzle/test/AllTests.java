@@ -22,11 +22,15 @@
 * JUnit test suite
 */
 
-package de.bwvaachen.braun.beamoflightpuzzle.lichtspiel.test;
+package de.bwvaachen.braun.beamoflightpuzzle.test;
+
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 
 @RunWith(Suite.class)
-@SuiteClasses({UndoTest.class})
+@SuiteClasses({UndoTest.class,ModelTest.class})
 public class AllTests {
 
 }

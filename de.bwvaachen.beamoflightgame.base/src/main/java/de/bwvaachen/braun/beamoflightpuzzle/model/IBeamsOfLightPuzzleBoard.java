@@ -1,9 +1,8 @@
 package de.bwvaachen.braun.beamoflightpuzzle.model;
 
 import java.awt.Dimension;
-import java.io.Serializable;
 
-public interface IBeamsOfLightPuzzleBoard extends Iterable<ITile>, Serializable {
+public interface IBeamsOfLightPuzzleBoard extends Iterable<ITile> {
 	public int getWidth();
 	public int getHeight();
 	

@@ -22,7 +22,7 @@
 * Template for JUnit tests
 */
 
-package de.bwvaachen.braun.beamoflightpuzzle.lichtspiel.test;
+package de.bwvaachen.braun.beamoflightpuzzle.test;
 
 import static org.easymock.EasyMock.*;
 import org.junit.*;

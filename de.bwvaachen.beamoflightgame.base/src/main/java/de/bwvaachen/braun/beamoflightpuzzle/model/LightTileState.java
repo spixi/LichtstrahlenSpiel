@@ -1,7 +1,5 @@
 package de.bwvaachen.braun.beamoflightpuzzle.model;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
@@ -44,16 +42,4 @@ public class LightTileState implements Serializable {
 	    }
 	 }
      
-	 //Wo ist die Test-Suite nur hin???
-	 public static void main(String[] args) throws IOException {
-		 ObjectOutputStream oos = new ObjectOutputStream(System.out);
-		 oos.writeObject(EAST);
-		 oos.writeObject(NORTH);
-		 oos.writeObject(EAST);
-		 oos.writeObject(EMPTY);
-		 oos.writeObject(EAST);
-		 oos.writeObject(EMPTY);
-		 oos.writeObject(EAST);
-	 }
-
 }

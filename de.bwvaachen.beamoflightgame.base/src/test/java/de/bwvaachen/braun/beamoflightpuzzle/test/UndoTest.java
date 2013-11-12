@@ -22,29 +22,26 @@
 * Test for the undo mechanism
 */
 
-package de.bwvaachen.braun.beamoflightpuzzle.lichtspiel.test;
+package de.bwvaachen.braun.beamoflightpuzzle.test;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertTrue;
 
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 
 import org.easymock.EasyMock;
-import org.easymock.IAnswer;
-import org.junit.*;
-import org.junit.runner.RunWith;
-import org.powermock.api.easymock.PowerMock;
+import org.junit.Before;
+import org.junit.Test;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import de.bwvaachen.braun.beamoflightpuzzle.lichtspiel.model.FillableTile;
-import de.bwvaachen.braun.beamoflightpuzzle.lichtspiel.model.IBoard;
-import de.bwvaachen.braun.beamoflightpuzzle.lichtspiel.model.Turn;
-import de.bwvaachen.braun.beamoflightpuzzle.lichtspiel.view.Direction;
+import de.bwvaachen.braun.beamoflightpuzzle.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.braun.beamoflightpuzzle.model.ILightTile;
 
 //@RunWith(PowerMockRunner.class)
-@PrepareForTest({IBoard.class})
+@PrepareForTest({IBeamsOfLightPuzzleBoard.class})
 
 public class UndoTest {
 	@Before
@@ -52,12 +49,15 @@ public class UndoTest {
 
 	}
 	
+	//TODO: Implement the controller first
+	
+	/*
 	@Test
 	public void test() {
-		IBoard    b = EasyMock.createStrictMock(IBoard.class);
+		IBeamsOfLightPuzzleBoard    b = EasyMock.createStrictMock(IBeamsOfLightPuzzleBoard.class);
 		
-		FillableTile before = new FillableTile(Direction.DARKNESS);
-		FillableTile after  = new FillableTile(Direction.EAST);
+		ILightTile before;
+		ILightTile after;
 		
 		Turn  t             = new Turn(b, 1, 2, before, after);
 		
@@ -97,5 +97,6 @@ public class UndoTest {
 		
 		verify(b);
 	}
+	*/
 
 }

@@ -1,5 +1,7 @@
 package de.bwvaachen.braun.beamoflightpuzzle.model;
 
-public interface ITile {
+import java.io.Serializable;
+
+public interface ITile extends Serializable {
 
 }
