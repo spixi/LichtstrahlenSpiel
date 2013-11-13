@@ -58,7 +58,6 @@ public class TestTemplate {
 	
 	@Test
 	public void test() {
-		
 	}
 
 }

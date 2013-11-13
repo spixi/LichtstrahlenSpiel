@@ -23,17 +23,26 @@ import de.bwvaachen.braun.beamoflightpuzzle.model.LightTileState;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Iterator;
 
 public class LightgameUI extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3961364231837270604L;
 	private JPanel contentPane;
 	private ILightController controller=new ILightController() {
 		
 		@Override
 		public IBeamsOfLightPuzzleBoard getCurrentModel() {
 			return new IBeamsOfLightPuzzleBoard() {
-				
+
+				private static final long serialVersionUID = -4083622772286418047L;
+
 				@Override
 				public int getWidth() {
 					return 5;
@@ -62,11 +71,6 @@ public class LightgameUI extends JFrame {
 					return null;
 				}
 
-				@Override
-				public Dimension getDimension() {
-					// TODO Auto-generated method stub
-					return null;
-				}
 
 				@Override
 				public boolean isPlacementOfTileStatePossible(
@@ -90,6 +94,19 @@ public class LightgameUI extends JFrame {
 		@Override
 		public int countLightedFields() {
 			return 0;
+		}
+
+		@Override
+		public void save(File f) throws IOException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void load(File f) throws FileNotFoundException, IOException,
+				ClassNotFoundException {
+			// TODO Auto-generated method stub
+			
 		}
 	};
 

@@ -37,7 +37,7 @@ public class BoardUtils {
 			private int x = row, y = 0;
 			
 			public boolean hasNext() {
-				return y<=b.getDimension().getHeight();
+				return y<=b.getHeight();
 			}
 
 			public ITile next() throws NoSuchElementException {
@@ -60,7 +60,7 @@ public class BoardUtils {
 			private int x = row, y = 0;
 			
 			public boolean hasNext() {
-				return x<=b.getDimension().getWidth();
+				return x<=b.getWidth();
 			}
 
 			public ITile next() {
