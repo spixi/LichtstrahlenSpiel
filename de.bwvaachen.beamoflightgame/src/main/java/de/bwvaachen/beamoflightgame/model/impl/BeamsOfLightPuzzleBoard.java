@@ -1,10 +1,11 @@
-package de.bwvaachen.beamoflightgame.model;
+package de.bwvaachen.beamoflightgame.model.impl;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.model.INumberTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 
