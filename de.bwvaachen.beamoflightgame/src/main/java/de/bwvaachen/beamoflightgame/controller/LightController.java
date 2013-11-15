@@ -24,6 +24,7 @@ public class LightController implements ILightController {
 	private UndoManager              turnManager;
 	private IBeamsOfLightPuzzleBoard puzzleBoard;
 
+	/*
 	@Override
 	public IBeamsOfLightPuzzleBoard getCurrentModel() {
 		return puzzleBoard;
@@ -66,6 +67,7 @@ public class LightController implements ILightController {
 		}
 		return count;
 	}
+	*/
 	
 	public void save(File f) throws IOException {
 		FileOutputStream  fos    = new FileOutputStream(f);
@@ -89,6 +91,12 @@ public class LightController implements ILightController {
 		turnManager = (UndoManager)ois.readObject();
 		
 		ois.close();
+	}
+
+	@Override
+	public IBeamsOfLightPuzzleBoard getCurrentModel() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

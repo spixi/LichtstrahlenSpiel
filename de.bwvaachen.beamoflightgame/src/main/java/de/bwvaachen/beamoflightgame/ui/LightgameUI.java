@@ -75,21 +75,6 @@ public class LightgameUI extends JFrame {
 		}
 
 		@Override
-		public int countEmptyFields() {
-			return 0;
-		}
-
-		@Override
-		public int countLightFields() {
-			return 0;
-		}
-
-		@Override
-		public int countLightedFields() {
-			return 0;
-		}
-
-		@Override
 		public void save(File f) throws IOException {
 			// TODO Auto-generated method stub
 			
