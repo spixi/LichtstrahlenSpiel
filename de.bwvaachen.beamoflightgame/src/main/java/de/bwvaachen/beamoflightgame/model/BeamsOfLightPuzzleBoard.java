@@ -12,8 +12,8 @@ import de.bwvaachen.beamoflightgame.model.LightTileState;
 public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 	
 	private int width, height;
-	private TreeMap<Long,INumberTile> tiles;
-	private ILightTile[] lightTiles;
+	private TreeMap<Long,INumberTile> numberTiles;
+	private ITile[] tiles;
 	
 	private long xyToIndex(int x, int y){
 		return (((long) x << 32) | ((long) y));
@@ -37,7 +37,7 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 			}
 
 			public ITile next() {
-				ITile theTile = tiles.get(xyToIndex(x,y));
+				ITile theTile = numberTiles.get(xyToIndex(x,y));
 				if (theTile == null) throw new NoSuchElementException();
 			
 			 	if(y++==height) x++; y=0;
@@ -51,34 +51,22 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 		};
 	}
 
-	@Override
 	public int getWidth() {
-		// TODO Auto-generated method stub
-		return 0;
+		return width;
 	}
 
-	@Override
 	public int getHeight() {
-		// TODO Auto-generated method stub
-		return 0;
+		return height;
 	}
 
 	@Override
 	public ITile getTileAt(int row, int col) throws IndexOutOfBoundsException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ITile getTileByIndex(int index) throws IndexOutOfBoundsException {
-		// TODO Auto-generated method stub
-		return null;
+		return tiles[row*col];
 	}
 
 	@Override
 	public boolean isPlacementOfTileStatePossible(LightTileState state,
 			int row, int col) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

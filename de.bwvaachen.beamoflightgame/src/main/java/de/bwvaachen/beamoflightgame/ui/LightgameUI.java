@@ -66,13 +66,6 @@ public class LightgameUI extends JFrame {
 				}
 
 				@Override
-				public ITile getTileByIndex(int index) {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-
-				@Override
 				public boolean isPlacementOfTileStatePossible(
 						LightTileState state, int row, int col) {
 					// TODO Auto-generated method stub
