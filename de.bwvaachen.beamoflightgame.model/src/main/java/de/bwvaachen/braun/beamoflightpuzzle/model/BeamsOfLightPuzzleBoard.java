@@ -53,27 +53,19 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 
 	@Override
 	public int getWidth() {
-		// TODO Auto-generated method stub
-		return 0;
+		return width;
 	}
 
 	@Override
 	public int getHeight() {
-		// TODO Auto-generated method stub
-		return 0;
+		return height;
 	}
 
 	@Override
 	public ITile getTileAt(int row, int col) throws IndexOutOfBoundsException {
-		// TODO Auto-generated method stub
-		return null;
+		return ILightTile[row*col];
 	}
 
-	@Override
-	public ITile getTileByIndex(int index) throws IndexOutOfBoundsException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public boolean isPlacementOfTileStatePossible(LightTileState state,
