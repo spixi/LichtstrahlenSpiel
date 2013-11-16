@@ -9,6 +9,6 @@ public interface ISolver {
 	
 	//The level of a puzzle is determined by the formula
 	//log(sum(complexity)/count(turns))
-	public int getLevel();
+	public double getLevel();
 
 }

@@ -9,5 +9,5 @@ public interface IStrategy {
 	//Strategies with complexities of 1 - 9 are considered to be trivial
 	//Strategies with complexities of 10 - 99 are more challenging
 	//Strategies with complexities of 100 - 999 are hard
-	public int getComplexity();
+	public double getComplexity();
 }

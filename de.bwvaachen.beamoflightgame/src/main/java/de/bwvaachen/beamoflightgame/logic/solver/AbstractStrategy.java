@@ -1,13 +1,13 @@
 package de.bwvaachen.beamoflightgame.logic.solver;
 
 public abstract class AbstractStrategy implements IStrategy {
-	private int complexity;
+	private double complexity;
 	
-	protected AbstractStrategy(int complexity) {
+	protected AbstractStrategy(double complexity) {
 		this.complexity = complexity;
 	}
 	
-	public int getComplexity() {
+	public double getComplexity() {
 		return complexity;
 	}
 }
