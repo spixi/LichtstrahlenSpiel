@@ -17,6 +17,7 @@ import javax.swing.JProgressBar;
 
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.model.INumberTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 
@@ -70,6 +71,12 @@ public class LightgameUI extends JFrame {
 						LightTileState state, int row, int col) {
 					// TODO Auto-generated method stub
 					return false;
+				}
+
+				@Override
+				public ITile getTileByIndex(int index) {
+					// TODO Auto-generated method stub
+					return null;
 				}
 			};
 		}

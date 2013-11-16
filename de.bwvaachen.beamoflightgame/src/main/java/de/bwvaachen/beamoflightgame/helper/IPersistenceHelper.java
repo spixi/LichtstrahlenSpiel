@@ -2,10 +2,19 @@ package de.bwvaachen.beamoflightgame.helper;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
+import de.bwvaachen.beamoflightgame.controller.Turn;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 
 public interface IPersistenceHelper {
-	void save(File path,IBeamsOfLightPuzzleBoard board, LinkedList<>) throws IOException;
-	void load(File path);
+	/**
+	 * 
+	 * @param path
+	 * @param board
+	 * @param turns 
+	 * @throws IOException
+	 */
+	void save(File path,IBeamsOfLightPuzzleBoard board, List<Turn> turns) throws IOException;
+	void load(File path) throws IOException, WrongCodecException;
 }

@@ -1,24 +1,13 @@
-package de.bwvaachen.beamoflightgame.controller;
+package de.bwvaachen.beamoflightgame.controller.impl;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 import javax.swing.undo.UndoManager;
 
-import lzma.sdk.lzma.Decoder;
-import lzma.streams.LzmaInputStream;
-import lzma.streams.LzmaOutputStream;
+import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
-import de.bwvaachen.beamoflightgame.model.ILightTile;
-import de.bwvaachen.beamoflightgame.model.ITile;
-import de.bwvaachen.beamoflightgame.model.LightTileState;
 
 public class LightController implements ILightController {
 	private UndoManager              turnManager;
@@ -70,27 +59,28 @@ public class LightController implements ILightController {
 	*/
 	
 	public void save(File f) throws IOException {
-		FileOutputStream  fos    = new FileOutputStream(f);
-		LzmaOutputStream  los    = new LzmaOutputStream.Builder(fos).build();
-		BufferedOutputStream bos = new BufferedOutputStream(los);
-		ObjectOutputStream oos   = new ObjectOutputStream(bos);
-		
-		oos.writeObject(puzzleBoard);
-		oos.writeObject(turnManager);
-		oos.flush();
-		oos.close();
+//		TODO You can ZipPersister or write your one persister you dont need an extern jar for zip streams  
+//		FileOutputStream  fos    = new FileOutputStream(f);
+//		LzmaOutputStream  los    = new LzmaOutputStream.Builder(fos).build();
+//		BufferedOutputStream bos = new BufferedOutputStream(los);
+//		ObjectOutputStream oos   = new ObjectOutputStream(bos);
+//		
+//		oos.writeObject(puzzleBoard);
+//		oos.writeObject(turnManager);
+//		oos.flush();
+//		oos.close();
 	}
 	
 	public void load(File f) throws FileNotFoundException, IOException, ClassNotFoundException {
-		FileInputStream   fis   = new FileInputStream(f);
-		BufferedInputStream bis = new BufferedInputStream(fis);
-		LzmaInputStream   lis   = new LzmaInputStream(bis, new Decoder());
-		ObjectInputStream ois   = new ObjectInputStream(lis);
-		
-		puzzleBoard = (IBeamsOfLightPuzzleBoard)ois.readObject();
-		turnManager = (UndoManager)ois.readObject();
-		
-		ois.close();
+//		FileInputStream   fis   = new FileInputStream(f);
+//		BufferedInputStream bis = new BufferedInputStream(fis);
+//		LzmaInputStream   lis   = new LzmaInputStream(bis, new Decoder());
+//		ObjectInputStream ois   = new ObjectInputStream(lis);
+//		
+//		puzzleBoard = (IBeamsOfLightPuzzleBoard)ois.readObject();
+//		turnManager = (UndoManager)ois.readObject();
+//		
+//		ois.close();
 	}
 
 	@Override

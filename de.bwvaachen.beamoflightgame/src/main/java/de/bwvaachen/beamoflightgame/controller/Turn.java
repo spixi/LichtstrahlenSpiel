@@ -24,7 +24,6 @@
 
 package de.bwvaachen.beamoflightgame.controller;
 
-import java.awt.image.TileObserver;
 import java.io.Serializable;
 
 import javax.swing.undo.CannotRedoException;
@@ -59,6 +58,26 @@ public class Turn implements UndoableEdit, Serializable  {
 		this.newTileState = newTileState;
 		flags |= FLAG_ALIVE;
 		flags |= FLAG_HAS_BEEN_DONE;
+	}
+
+	public int getFlags() {
+		return flags;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public LightTileState getOldTileState() {
+		return oldTileState;
+	}
+
+	public LightTileState getNewTileState() {
+		return newTileState;
 	}
 
 	public boolean addEdit(UndoableEdit anEdit) {
