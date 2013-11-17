@@ -87,4 +87,9 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 		return getTileAt(row, col);
 	}
 
+	@Override
+	public int getNumOfNumberTiles() {
+		return numberTiles.values().size();
+	}
+
 }

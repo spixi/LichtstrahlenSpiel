@@ -11,7 +11,6 @@ public class SolverBuilder {
 	private static SolverBuilder instance = new SolverBuilder();
 	
 	private class SolverBuilderContext implements ISolverBuilderContext {
-		private ISolver solver;
 		private List<IStrategy> strategies;
 		
 		private SolverBuilderContext() {
@@ -25,12 +24,12 @@ public class SolverBuilder {
 		}
 
 		@Override
-		public ISolver get() {
-			return new AbstractSolver() {
+		public ISolver forBoard(final IBeamsOfLightPuzzleBoard board) {
+			return new AbstractSolver(board) {
 				@Override
-				public void solve(IBeamsOfLightPuzzleBoard board)
-						throws PuzzleException {
-					//TODO
+				public void solve() throws PuzzleException {
+					// TODO Auto-generated method stub
+					
 				}
 			};
 		}

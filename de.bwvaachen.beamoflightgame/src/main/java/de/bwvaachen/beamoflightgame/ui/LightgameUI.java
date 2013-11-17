@@ -78,6 +78,12 @@ public class LightgameUI extends JFrame {
 					// TODO Auto-generated method stub
 					return null;
 				}
+
+				@Override
+				public int getNumOfNumberTiles() {
+					// TODO Auto-generated method stub
+					return 9;
+				}
 			};
 		}
 

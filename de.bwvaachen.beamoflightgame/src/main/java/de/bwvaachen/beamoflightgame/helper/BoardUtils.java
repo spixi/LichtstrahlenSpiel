@@ -1,5 +1,5 @@
 /**
-* Copyright (C) 2013 Marius Spix, Bastian Winzen, Andreas Pauls, Christian Frühholz, Georg Braun
+* Copyright (C) 2013 Marius Spix, Bastian Winzen, Andreas Pauls, Christian Frï¿½hholz, Georg Braun
 *
 * This file is part of the lichtspiel project.
 *
@@ -32,50 +32,57 @@ import de.bwvaachen.beamoflightgame.model.ITile;
 
 public class BoardUtils {
 	
-	public Iterator<ITile> getRowIterator(final IBeamsOfLightPuzzleBoard b, final int row) {
-		return new Iterator<ITile>() {
-			private int x = row, y = 0;
-			
-			public boolean hasNext() {
-				return y<=b.getHeight();
-			}
+	public static Iterable<ITile> row(final IBeamsOfLightPuzzleBoard b, final int row) {
+		return new Iterable<ITile>() {
+			public Iterator<ITile> iterator() {
+				return new Iterator<ITile>() {
+					private int x = row, y = 0;
+					
+					public boolean hasNext() {
+						return y<=b.getHeight();
+					}
 
-			public ITile next() throws NoSuchElementException {
-				try {
-					return b.getTileAt(x,y++);
-				}
-				catch (IndexOutOfBoundsException e) {
-					throw new NoSuchElementException();
-				}
-			}
+					public ITile next() throws NoSuchElementException {
+						try {
+							return b.getTileAt(x,y++);
+						}
+						catch (IndexOutOfBoundsException e) {
+							throw new NoSuchElementException();
+						}
+					}
 
-			public void remove() throws UnsupportedOperationException {
-					throw new UnsupportedOperationException();
+					public void remove() throws UnsupportedOperationException {
+							throw new UnsupportedOperationException();
+					}
+				};
 			}
 		};
 	}
 	
-	public Iterator<ITile> getColumnIterator(final IBeamsOfLightPuzzleBoard b, final int row) {
-		return new Iterator<ITile>() {
-			private int x = row, y = 0;
-			
-			public boolean hasNext() {
-				return x<=b.getWidth();
-			}
+	public static Iterable<ITile> column(final IBeamsOfLightPuzzleBoard b, final int column) {
+		return new Iterable<ITile>() {
+			public Iterator<ITile> iterator() {
+				return new Iterator<ITile>() {
+					private int x = 0, y = column;
+					
+					public boolean hasNext() {
+						return x<=b.getWidth();
+					}
 
-			public ITile next() {
-				try {
-					return b.getTileAt(x++,y);
-				}
-				catch (IndexOutOfBoundsException e) {
-						throw new NoSuchElementException();
-				}
-			}
+					public ITile next() throws NoSuchElementException {
+						try {
+							return b.getTileAt(x++,y);
+						}
+						catch (IndexOutOfBoundsException e) {
+							throw new NoSuchElementException();
+						}
+					}
 
-			public void remove() throws UnsupportedOperationException {
-				throw new UnsupportedOperationException();
+					public void remove() throws UnsupportedOperationException {
+							throw new UnsupportedOperationException();
+					}
+				};
 			}
 		};
 	}
-
 }
