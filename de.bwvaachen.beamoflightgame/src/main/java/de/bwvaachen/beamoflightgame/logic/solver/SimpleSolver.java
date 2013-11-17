@@ -16,11 +16,12 @@ import de.bwvaachen.beamoflightgame.model.ILightTile;
 import de.bwvaachen.beamoflightgame.model.INumberTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
 
+@Deprecated
 public class SimpleSolver {
 
 	public IBeamsOfLightPuzzleBoard solve(IBeamsOfLightPuzzleBoard model) {
 		/*
-		 * Verknüpfung Index und festgestellte Anzahl an Abhängigkeiten
+		 * Verknï¿½pfung Index und festgestellte Anzahl an Abhï¿½ngigkeiten
 		 * Key=Index Value=
 		 */
 		HashMap<Integer, NumberFieldDependenciesContainer> numberfieldsMap = new HashMap<Integer, SimpleSolver.NumberFieldDependenciesContainer>();
@@ -28,7 +29,7 @@ public class SimpleSolver {
 				.getHeight()][model.getWidth()];
 		HashSet<Integer>solvedNumberfields=new HashSet<Integer>();
 
-		// Heraussuchen der Zahlenfelder und anlegen des Lösungsmodells
+		// Heraussuchen der Zahlenfelder und anlegen des Lï¿½sungsmodells
 		for (int row = 0; row < model.getHeight(); row++) {
 			for (int col = 0; col < model.getWidth(); col++) {
 				ITile field = model.getTileAt(row, col);
@@ -43,7 +44,7 @@ public class SimpleSolver {
 			}
 		}
 
-		// Initiales berechnen der Abhängigkeiten
+		// Initiales berechnen der Abhï¿½ngigkeiten
 		for (Integer index : numberfieldsMap.keySet()) {
 			int row = index / model.getWidth();
 			int col = index - model.getWidth() * row;
@@ -77,7 +78,7 @@ public class SimpleSolver {
 			}
 		}
 
-		// Herausstreichen der eindeutigen Abhänigkeiten
+		// Herausstreichen der eindeutigen Abhï¿½nigkeiten
 		boolean change=true;
 		while(change){
 			change=false;
@@ -118,8 +119,8 @@ public class SimpleSolver {
 		}
 		
 		// Aktuallisieren der Wertigkeit des Zahlenfeldes
-		// MArkieren aller Felder an denen sich was geändert haben könnte
-		// Bei Gleichheit aktueller Wertigkeit und soll Wertigkeit entferne alle Abhängikeiten
+		// MArkieren aller Felder an denen sich was geï¿½ndert haben kï¿½nnte
+		// Bei Gleichheit aktueller Wertigkeit und soll Wertigkeit entferne alle Abhï¿½ngikeiten
 		
 		return null;
 
