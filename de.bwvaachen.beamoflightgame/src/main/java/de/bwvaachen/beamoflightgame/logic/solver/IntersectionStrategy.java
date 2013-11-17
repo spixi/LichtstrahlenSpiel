@@ -1,25 +1,24 @@
 package de.bwvaachen.beamoflightgame.logic.solver;
 
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.model.ITile;
 
 public class IntersectionStrategy implements IStrategy {
 
 	@Override
-	public boolean solve(IBeamsOfLightPuzzleBoard b) {
+	public boolean solve(IBeamsOfLightPuzzleBoard b, ITile t) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	private int getNumberOfPossibleSolutions() {
+		//TODO
+		return 0;
 	}
 
 	@Override
 	public double getComplexity() {
-		// TODO Auto-generated method stub
-		
-		//eindeutige Lösung: return 1
-		//zwei Lösungen: return 4
-		//drei Lösungen: return 9
-		//x Lösungen: return Lösungen^2
-		
-		return 0;
+		return (getNumberOfPossibleSolutions() == 1) ? 1.0 : 10.0;
 	}
 
 }

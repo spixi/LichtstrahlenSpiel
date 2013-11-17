@@ -1,7 +1,5 @@
 package de.bwvaachen.beamoflightgame.logic.solver;
 
-import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
-
 public interface ISolver {
 	
 	//The level of a puzzle is determined by the formula

@@ -17,11 +17,9 @@ public abstract class AbstractSolver implements ISolver {
 
 	@Override
 	public double getLevel() {
-		int numofturns = board.getHeight() * board.getWidth();
-
+		int numofturns = board.getHeight() * board.getWidth(); //TODO - board.countNumberTiles()
 		
-		return Math.log10(complexity/numofturns) //level = complexity / number of turns
-				*Math.pow(numofturns, 0.25);     //very big puzzles should have 
+		return Math.log10(complexity/numofturns); //level = complexity / number of turns
 	}
 
 }
