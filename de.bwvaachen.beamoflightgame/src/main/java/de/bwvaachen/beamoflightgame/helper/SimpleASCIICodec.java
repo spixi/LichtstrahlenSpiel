@@ -29,6 +29,7 @@ public class SimpleASCIICodec implements ICodec {
 			builder.append(lineBreak);
 			for (int col = 0; col < board.getWidth(); col++) {
 				ITile tile = board.getTileAt(row, col);
+				//TODO This is ugly. Please use tile.toString() here!
 				if (tile instanceof INumberTile) {
 					builder.append(((INumberTile) tile).getNumber() + " ");
 				} else {
@@ -98,7 +99,7 @@ public class SimpleASCIICodec implements ICodec {
 		Scanner scanner = new Scanner(input);
 		while (scanner.hasNextLine()) {
 			String line = scanner.nextLine();
-			if(!line.matches("[0-9]+[ ][0-9]+[ ][nesw][ ][nesw][ ][0-9]+")){//TODO more precision
+			if(!line.matches("(\\d+ ){2}([nesw\\-] ){2}(\\d){1,3}")){
 				throw new WrongCodecException();
 			}
 			Scanner lineScanner = new Scanner(line);//TODO Check values
