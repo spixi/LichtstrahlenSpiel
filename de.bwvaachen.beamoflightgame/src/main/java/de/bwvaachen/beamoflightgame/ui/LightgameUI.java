@@ -15,6 +15,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.JProgressBar;
 
+import org.easymock.EasyMock;
+
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.INumberTile;
@@ -40,51 +42,7 @@ public class LightgameUI extends JFrame {
 		
 		@Override
 		public IBeamsOfLightPuzzleBoard getCurrentModel() {
-			return new IBeamsOfLightPuzzleBoard() {
-
-				private static final long serialVersionUID = -4083622772286418047L;
-
-				@Override
-				public int getWidth() {
-					return 5;
-				}
-				
-				@Override
-				public int getHeight() {
-					return 5;
-				}
-				
-				@Override
-				public ITile getTileAt(int i, int j) {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				public Iterator<ITile> iterator() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				public boolean isPlacementOfTileStatePossible(
-						LightTileState state, int row, int col) {
-					// TODO Auto-generated method stub
-					return false;
-				}
-
-				@Override
-				public ITile getTileByIndex(int index) {
-					// TODO Auto-generated method stub
-					return null;
-				}
-
-				@Override
-				public int getNumOfNumberTiles() {
-					// TODO Auto-generated method stub
-					return 9;
-				}
-			};
+			return EasyMock.createMock(IBeamsOfLightPuzzleBoard.class);
 		}
 
 		@Override

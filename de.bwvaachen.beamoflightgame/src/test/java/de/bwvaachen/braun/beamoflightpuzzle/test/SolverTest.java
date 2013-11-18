@@ -39,13 +39,19 @@ public class SolverTest {
 	}
 	
 	@Test
-	public void lonelyFieldStrategyTest() {
+	public void lonelyFieldStrategyTest() throws InstantiationException, IllegalAccessException, PuzzleException {
 		List<INumberTile> numberTiles = Arrays.asList(new INumberTile[] {null, null});
 		
 		//Board: 1 _ _ _ 2
 		
 		IBeamsOfLightPuzzleBoard b = new BeamsOfLightPuzzleBoard(5, 1, numberTiles);
 		//TODO !!!
+		
+		System.out.println(b.toString());
+		
+		ISolver s = SolverBuilder.buildWith(LonelyFieldStrategy.class).forBoard(b);
+		
+		s.solve();
 		
 	}
 

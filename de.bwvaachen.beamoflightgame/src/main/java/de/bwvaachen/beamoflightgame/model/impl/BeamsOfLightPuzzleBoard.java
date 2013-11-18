@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
+import org.easymock.EasyMock;
+
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.model.ILightTile;
 import de.bwvaachen.beamoflightgame.model.INumberTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
@@ -13,12 +16,47 @@ import de.bwvaachen.beamoflightgame.model.LightTileState;
 public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 
 	private int width, height;
+	private TreeMap<Long, ITile> tiles;
 	private TreeMap<Long, INumberTile> numberTiles;
-	private ITile[] tiles;
 
-	public BeamsOfLightPuzzleBoard(int width, int heigth, List<INumberTile> numberTiles) {
+
+	public BeamsOfLightPuzzleBoard(int width, int heigth, Iterable<INumberTile> nrs) {
 		this.width = width;
 		this.height = heigth;
+		
+		tiles       = new TreeMap<Long, ITile>();
+		numberTiles = new TreeMap<Long, INumberTile>();
+		
+		for (INumberTile nt : nrs) {
+			Long index = xyToIndex(nt.getCol(),nt.getRow());
+			numberTiles.put(index, nt);
+			tiles.put(index, nt);
+		}
+		
+		for(int y=0; y<=height; y++) {
+			for(int x=0; x<=height; y++) {
+				long index = xyToIndex(x,y);
+				if (!numberTiles.containsKey(index)) {
+				}
+				
+				ILightTile tile;
+				
+				try{
+				//tile = new LightTile(LightTileState.EMPTY)	
+					
+				tile = (ILightTile) Class.forName("de.bwvaachen.beamoflightgame.model.impl.LightTile")
+						    .getConstructor(LightTileState.class).newInstance(LightTileState.EMPTY);
+				}
+				catch (Throwable e) {
+					tile = EasyMock.createMock(ILightTile.class);
+					EasyMock.expect(tile.getState()).anyTimes().andReturn(LightTileState.EMPTY);
+				}
+				
+				tiles.put(xyToIndex(x,y), tile);
+			}
+		}
+		
+		
 		//TODO
 	}
 
@@ -40,18 +78,15 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 			int x = 0, y = 0;
 
 			public boolean hasNext() {
-				return (x == width) && (y == width);
+				return (x == width) && (y == height);
 			}
 
 			public ITile next() {
-				ITile theTile = numberTiles.get(xyToIndex(x, y));
-				if (theTile == null)
-					throw new NoSuchElementException();
-
-				if (y++ == height)
-					x++;
-				y = 0;
-				return theTile;
+				if (x++ == width) {
+					y++;
+				    x = 0;
+				}
+				return getTileAt(x,y);
 			}
 
 			public void remove() throws UnsupportedOperationException {
@@ -71,7 +106,7 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 
 	@Override
 	public ITile getTileAt(int row, int col) throws IndexOutOfBoundsException {
-		return tiles[row * col];
+		return tiles.get(xyToIndex(row,col));
 	}
 
 	@Override
@@ -81,15 +116,26 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 	}
 
 	@Override
-	public ITile getTileByIndex(int index) {
-		int row = index / getWidth();
-		int col = index - getWidth() * row;
-		return getTileAt(row, col);
+	public ITile getTileByIndex(long index) {
+		return tiles.get(index);
 	}
 
 	@Override
 	public int getNumOfNumberTiles() {
 		return numberTiles.values().size();
+	}
+	
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		
+		for(int y=0; y<=height; y++) {
+			for(int x=0; x<=height; y++) {
+				sb.append(getTileAt(x,y));
+			}
+			sb.append('\n');
+		}
+
+		return sb.toString();
 	}
 
 }
