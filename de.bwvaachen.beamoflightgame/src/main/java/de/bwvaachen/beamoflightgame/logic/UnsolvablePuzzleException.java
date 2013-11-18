@@ -1,4 +1,5 @@
-package de.bwvaachen.beamoflightgame.logic.solver;
+package de.bwvaachen.beamoflightgame.logic;
+
 
 public class UnsolvablePuzzleException extends PuzzleException {
 

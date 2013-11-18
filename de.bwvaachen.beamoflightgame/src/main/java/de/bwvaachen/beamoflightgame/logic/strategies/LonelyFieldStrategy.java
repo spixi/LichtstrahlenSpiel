@@ -1,15 +1,17 @@
-package de.bwvaachen.beamoflightgame.logic.solver;
+package de.bwvaachen.beamoflightgame.logic.strategies;
 
 import java.util.Iterator;
-import java.util.List;
 import de.bwvaachen.beamoflightgame.helper.BoardUtils;
+import de.bwvaachen.beamoflightgame.logic.PuzzleException;
+import de.bwvaachen.beamoflightgame.logic.solver.IStrategy;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.model.ILightTile;
 import de.bwvaachen.beamoflightgame.model.INumberTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
 
 public class LonelyFieldStrategy implements IStrategy {
 	@Override
-	public boolean solve(IBeamsOfLightPuzzleBoard b, ITile t) {
+	public boolean tryToSolve(IBeamsOfLightPuzzleBoard b, ITile t) throws PuzzleException {
 		int row, col;
 		
 		INumberTile north, east, south, west;
@@ -41,17 +43,20 @@ public class LonelyFieldStrategy implements IStrategy {
 			else north = (INumberTile) next;
 		}
 		
-		
+		return false;
 		//TODO
 		//Now check for each of the four numberTiles whether it has enough range
 		//left to reach the tile.
-		
-		
-		return false;
+
 	}
 
 	@Override
 	public double getComplexity() {
 		return 2.0;
+	}
+	
+	@Override
+	public boolean isAppliableForTile(ITile t) {
+		return (t instanceof ILightTile);
 	}
 }

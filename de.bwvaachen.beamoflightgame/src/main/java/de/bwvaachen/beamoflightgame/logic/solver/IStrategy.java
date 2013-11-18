@@ -1,10 +1,12 @@
 package de.bwvaachen.beamoflightgame.logic.solver;
 
+import de.bwvaachen.beamoflightgame.logic.PuzzleException;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 
 public interface IStrategy {
-	public boolean solve(IBeamsOfLightPuzzleBoard b, ITile t);
+	public boolean tryToSolve(IBeamsOfLightPuzzleBoard b, ITile t) throws PuzzleException;
+	public boolean isAppliableForTile(ITile t);
 	
 	//The complexity states how difficult a strategy is.
 	//Strategies with complexities of 1 - 9 are considered to be trivial

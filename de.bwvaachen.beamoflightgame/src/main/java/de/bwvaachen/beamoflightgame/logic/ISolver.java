@@ -1,4 +1,4 @@
-package de.bwvaachen.beamoflightgame.logic.solver;
+package de.bwvaachen.beamoflightgame.logic;
 
 public interface ISolver {
 	
