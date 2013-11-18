@@ -99,7 +99,7 @@ public class SimpleASCIICodec implements ICodec {
 		Scanner scanner = new Scanner(input);
 		while (scanner.hasNextLine()) {
 			String line = scanner.nextLine();
-			if(!line.matches("(\\d+ ){2}([nesw\\-] ){2}(\\d){1,3}")){
+			if(!line.matches("(\\d+ ){2}([nesw\\-] ){2}\\d{1,3}")){
 				throw new WrongCodecException();
 			}
 			Scanner lineScanner = new Scanner(line);//TODO Check values
