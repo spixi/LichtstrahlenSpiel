@@ -54,8 +54,8 @@ public class LightgameUI extends JFrame {
 		@Override
 		public void load(File f) throws FileNotFoundException, IOException,
 				ClassNotFoundException {
-			// TODO Auto-generated method stub
-			
+			//Sobald die Controllerimplementation steht
+			//IBeamsOfLightPuzzleBoard board = controller.load(new File("Dateiname.dat"));		
 		}
 	};
 
@@ -128,6 +128,19 @@ public class LightgameUI extends JFrame {
 		
 		JMenuItem mntmLoad = new JMenuItem("Load");
 		mnFile.add(mntmLoad);
+		mntmLoad.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//Dialog zum ermitteln des Dateipfades einbinden
+				try {
+					//im Design ist das hier nicht void sondern gibt ein Puzzle zurück, das sollten wir dann aufbauen
+					controller.load(new File(""));
+				} catch (ClassNotFoundException
+						| IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
 		
 		JSeparator separator = new JSeparator();
 		mnFile.add(separator);
