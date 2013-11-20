@@ -26,7 +26,7 @@ public class IntersectionStrategy implements IStrategy {
 
 	@Override
 	public boolean isAppliableForTile(ITile t) {
-		return (t instanceof INumberTile);
+		return (t instanceof INumberTile && ((INumberTile) t).getRemainingLightRange() > 0);
 	}
 
 }

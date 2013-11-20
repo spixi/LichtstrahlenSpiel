@@ -8,13 +8,14 @@ import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ILightTile;
 import de.bwvaachen.beamoflightgame.model.INumberTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
+import de.bwvaachen.beamoflightgame.model.LightTileState;
 
 public class LonelyFieldStrategy implements IStrategy {
 	@Override
 	public boolean tryToSolve(IBeamsOfLightPuzzleBoard b, ITile t) throws PuzzleException {
 		int row, col;
 		
-		INumberTile north, east, south, west;
+		INumberTile north = null, east = null, south = null, west = null;
 		
 		Iterator<ITile> it;
 		ITile next;
@@ -43,12 +44,31 @@ public class LonelyFieldStrategy implements IStrategy {
 			else north = (INumberTile) next;
 		}
 		
-		return false;
 		//TODO
 		//Now check for each of the four numberTiles whether it has enough range
 		//left to reach the tile.
+		
+		
+		//TODO Reusability, Math.abs(int,int) could be useful for the difference
+		if(north != null && north.getRemainingLightRange() >= (t.getRow() - north.getRow())) {
+			//TODO
+			//check whether beams do not cross
+			
+		}
+		if(east != null && east.getRemainingLightRange() >= (east.getCol() - t.getCol())) {
+			//...
+		}
+		if(south != null && south.getRemainingLightRange() >= (south.getRow() - t.getRow())) {
+			//...
+		}
+		if(west != null && west.getRemainingLightRange() >= (t.getCol() - west.getCol())) {
+			//...
+		}
+		
+		return false;
 
 	}
+
 
 	@Override
 	public double getComplexity() {
@@ -57,6 +77,6 @@ public class LonelyFieldStrategy implements IStrategy {
 	
 	@Override
 	public boolean isAppliableForTile(ITile t) {
-		return (t instanceof ILightTile);
+		return (t instanceof ILightTile) & ((ILightTile) t).getState() == LightTileState.EMPTY;
 	}
 }
