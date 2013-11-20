@@ -1,5 +1,6 @@
+package de.bwvaachen.beamoflightpuzzle.test;
 ///**
-//* Copyright (C) 2013 Marius Spix, Bastian Winzen, Andreas Pauls, Christian Frühholz, Georg Braun
+//* Copyright (C) 2013 Marius Spix, Bastian Winzen, Andreas Pauls, Christian Frï¿½hholz, Georg Braun
 //*
 //* This file is part of the lichtspiel project.
 //*

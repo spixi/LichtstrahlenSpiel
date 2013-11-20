@@ -1,5 +1,5 @@
 /**
-* Copyright (C) 2013 Marius Spix, Bastian Winzen, Andreas Pauls, Christian Frühholz, Georg Braun
+* Copyright (C) 2013 Marius Spix, Bastian Winzen, Andreas Pauls, Christian Fruehholz, Georg Braun
 *
 * This file is part of the lichtspiel project.
 *
@@ -30,6 +30,6 @@ public class IllegalPlacementException extends RuntimeException {
 	}
 	
 	IllegalPlacementException() {
-		super("Dieser Zug ist nicht möglich.");
+		super("Dieser Zug ist nicht moeglich.");
 	}
 }

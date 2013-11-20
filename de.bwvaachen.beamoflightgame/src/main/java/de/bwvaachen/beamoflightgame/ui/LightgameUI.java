@@ -135,12 +135,12 @@ public class LightgameUI extends JFrame {
 				if(fileChooser.showOpenDialog(LightgameUI.this)!=JFileChooser.CANCEL_OPTION){
 					File selectedFile = fileChooser.getSelectedFile();
 					if(selectedFile!=null&& selectedFile.exists()){
-							//Öffnen
+							//ï¿½ffnen
 					}
 					
 				}
 				try {
-					//im Design ist das hier nicht void sondern gibt ein Puzzle zurück, das sollten wir dann aufbauen
+					//im Design ist das hier nicht void sondern gibt ein Puzzle zurueck, das sollten wir dann aufbauen
 					controller.load(new File(""));
 				} catch (ClassNotFoundException
 						| IOException e1) {

@@ -1,4 +1,4 @@
-package de.bwvaachen.braun.beamoflightpuzzle.test;
+package de.bwvaachen.beamoflightpuzzle.test;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
@@ -35,7 +35,7 @@ public class SolverTest {
 		ISolver s = SolverBuilder.buildWith(IntersectionStrategy.class)
 				                 .and(TryAndErrorStrategy.class).forBoard(b);
 		
-		assertNotNull("Prüfe, ob der Builder einen funktionsfähigen Solver erstellen kann ...",s);
+		assertNotNull("Prï¿½fe, ob der Builder einen funktionsfï¿½higen Solver erstellen kann ...",s);
 	}
 	
 	@Test

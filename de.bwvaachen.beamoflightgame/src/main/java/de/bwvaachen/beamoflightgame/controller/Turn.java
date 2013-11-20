@@ -1,5 +1,5 @@
 /**
-* Copyright (C) 2013 Marius Spix, Bastian Winzen, Andreas Pauls, Christian Frühholz, Georg Braun
+* Copyright (C) 2013 Marius Spix, Bastian Winzen, Andreas Pauls, Christian Fruehholz, Georg Braun
 *
 * This file is part of the lichtspiel project.
 *
@@ -106,7 +106,7 @@ public class Turn implements UndoableEdit, Serializable  {
 	}
 
 	public String getUndoPresentationName() {
-		return getPresentationName() + " rückgängig machen.";
+		return getPresentationName() + " rueckgÃ¤ngig machen.";
 	}
 	
 	public void mark() {
