@@ -24,6 +24,7 @@ import javax.swing.filechooser.FileFilter;
 import org.easymock.EasyMock;
 
 import de.bwvaachen.beamoflightgame.controller.ILightController;
+import de.bwvaachen.beamoflightgame.controller.impl.LightController;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 
 public class LightgameUI extends JFrame {
@@ -34,6 +35,9 @@ public class LightgameUI extends JFrame {
 	private static final long serialVersionUID = -3961364231837270604L;
 	private JPanel contentPane;
 	private File lastSaveFile=null;
+	private ILightController controller = new LightController() ;
+	
+	/*
 	private ILightController controller=new ILightController() {
 		
 		@Override
@@ -54,11 +58,13 @@ public class LightgameUI extends JFrame {
 			//IBeamsOfLightPuzzleBoard board = controller.load(new File("Dateiname.dat"));		
 		}
 	};
-
+	*/
+	
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -69,6 +75,7 @@ public class LightgameUI extends JFrame {
 				}
 			}
 		});
+		
 	}
 
 	/**
