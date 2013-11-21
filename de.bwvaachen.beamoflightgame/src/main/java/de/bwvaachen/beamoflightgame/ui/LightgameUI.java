@@ -83,7 +83,7 @@ public class LightgameUI extends JFrame {
 	 */
 	public LightgameUI() {
 		
-		// Setzen der initialen Fensterposition und Größe.
+		// Setzen der initialen Fensterposition und Grï¿½ï¿½e.
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		
@@ -159,7 +159,7 @@ public class LightgameUI extends JFrame {
 				}
 				try {
 					//im Design ist das hier nicht void sondern gibt ein Puzzle zurueck, das sollten wir dann aufbauen
-					controller.load(new File(""));
+					controller.loadGame(new File(""));
 				} catch (ClassNotFoundException
 						| IOException e1) {
 					e1.printStackTrace();
