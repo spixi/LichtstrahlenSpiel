@@ -75,31 +75,42 @@ public class LightgameUI extends JFrame {
 	 * Create the frame.
 	 */
 	public LightgameUI() {
+		
+		// Setzen der initialen Fensterposition und Größe.
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		
+		// Erzeugen des Menus
 		buildMenu();
+		
+		// Layout setzen
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		
+		// Progressbar
 		JProgressBar progressBar = new JProgressBar();
 		contentPane.add(progressBar, BorderLayout.SOUTH);
 		
+		//  Spieleraster 
 		JPanel rasterPanel = new JPanel();
 		contentPane.add(rasterPanel, BorderLayout.CENTER);
 
 		
-		IBeamsOfLightPuzzleBoard currentModel = controller.getCurrentModel();
-		rasterPanel.setLayout(new GridLayout(0, currentModel.getWidth(), 0, 0));
-		for(int row=0; row<currentModel.getHeight();row++) {
-			for(int col=0;col<currentModel.getWidth();col++){
-				rasterPanel.add(new JButton(row+"/"+col));
-			}
-		}
-	}
+		int rows = 4 ; // = currentModel.getHeight() ;
+		int cols = 4 ; // = currentModel.getWidth() ;
+		
+		IBeamsOfLightPuzzleBoard currentModel = controller . getCurrentModel();
+		rasterPanel . setLayout ( new GridLayout ( rows , cols , 0 , 0 ) ) ;
+		for ( int row=0 ; row<rows ; row++ ) {
+			for ( int col=0 ;col<cols ; col++ ) {
+				rasterPanel.add ( new JButton(row+"/"+col) ) ;
+			} // for ( int col=0 ;col<cols ; col++ )
+		} // for ( int row=0 ; row<rows ; row++ )
+	} // public LightgameUI()
 
+	
 	private void buildMenu() {
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -160,7 +171,8 @@ public class LightgameUI extends JFrame {
 				System.exit(0);
 			}
 		});
-	}
+		
+	} // private void buildMenu()
 	
 	class ExtensionFileFilter extends FileFilter {
 		  String description;
