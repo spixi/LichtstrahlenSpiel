@@ -1,6 +1,7 @@
 package de.bwvaachen.beamoflightgame.model;
 
-public interface ILightTile extends ITile {
-	public LightTileState getState();
+import javax.swing.undo.UndoableEdit;
+
+public interface ILightTile extends ITile<LightTileState> {
 	public void setState(LightTileState state);
 }
