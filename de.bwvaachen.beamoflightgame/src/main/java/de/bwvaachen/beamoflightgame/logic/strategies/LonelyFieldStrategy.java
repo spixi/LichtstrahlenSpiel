@@ -20,20 +20,26 @@ public class LonelyFieldStrategy implements IStrategy {
 		ITile currentTile;
 	    ILightTile neighbour = null;
 		
-		
-		//west neighbor
-		while (traverser.shift(0, -1)) {
-			currentTile = traverser.get();
-			switch (currentTile.getClass().getSimpleName()) {
-			case("ILightTile"): break; //Prüfe ob Kreuzung
-			case("INumberTile"): break; //prüfe, ob dieses Feld noch mit den Restfeldern erreichbar ist
-			}
-			/*
-			if (currentTile instanceof ILightTile);
+	    findNeighbour: {
+	    	//west neighbor
+	    	while (traverser.shift(0, -1)) {
+	    		currentTile = traverser.get();
+	    		switch (currentTile.getClass().getSimpleName()) {
+	    		case("ILightTile"):  //found an ILightTile
+	    			if (((ILightTile)currentTile ).getState() != LightTileState.NORTH)
+	    				break findNeighbour;
+	    		case("INumberTile"): break;
+	    		//prüfe, ob dieses Feld noch mit den Restfeldern erreichbar ist
+	    		    
+	    			
+	    		}
+	    		/*
+				if (currentTile instanceof ILightTile);
 				neighbour = (ILightTile)currentTile;
 				*/
-		}
-       
+	    	}
+
+	    }
 		
 		
 		return false;
