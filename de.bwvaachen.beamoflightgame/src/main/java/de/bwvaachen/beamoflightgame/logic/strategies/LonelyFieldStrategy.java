@@ -2,7 +2,7 @@ package de.bwvaachen.beamoflightgame.logic.strategies;
 
 import java.util.Iterator;
 
-import de.bwvaachen.beamoflightgame.logic.BoardTraverser;
+import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.logic.PuzzleException;
 import de.bwvaachen.beamoflightgame.logic.solver.IStrategy;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
