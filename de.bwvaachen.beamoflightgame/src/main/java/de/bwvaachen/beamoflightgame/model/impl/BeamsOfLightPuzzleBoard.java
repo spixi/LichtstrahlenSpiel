@@ -49,7 +49,7 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 				}
 				catch (Throwable e) {
 					tile = EasyMock.createMock(ILightTile.class);
-					EasyMock.expect(tile.getState()).anyTimes().andReturn(LightTileState.EMPTY);
+					EasyMock.expect(tile.getTileState()).anyTimes().andReturn(LightTileState.EMPTY);
 				}
 				
 				tiles.put(xyToIndex(x,y), tile);

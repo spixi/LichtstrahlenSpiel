@@ -57,6 +57,6 @@ public class LonelyFieldStrategy implements IStrategy {
 	
 	@Override
 	public boolean isAppliableForTile(ITile t) {
-		return (t instanceof ILightTile) & ((ILightTile) t).getState() == LightTileState.EMPTY;
+		return (t instanceof ILightTile) & t.getTileState() == LightTileState.EMPTY;
 	}
 }

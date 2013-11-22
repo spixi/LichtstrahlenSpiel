@@ -3,7 +3,7 @@ package de.bwvaachen.beamoflightgame.model;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
-public enum LightTileState implements Serializable {
+public enum LightTileState implements ITileState {
 	SOUTH(Math.PI, 's'), WEST(3.0 * Math.PI / 2.0, 'w'), NORTH(0.0, 'n'), EAST(
 			Math.PI / 2.0, 'e'), EMPTY(0.0, '-');
 	private double theta;
