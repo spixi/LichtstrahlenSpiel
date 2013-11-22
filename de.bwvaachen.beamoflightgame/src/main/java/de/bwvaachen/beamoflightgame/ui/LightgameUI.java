@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -83,6 +84,8 @@ public class LightgameUI extends JFrame {
 	 */
 	public LightgameUI() {
 		
+		
+		
 		// Setzen der initialen Fensterposition und Gr��e.
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -112,11 +115,25 @@ public class LightgameUI extends JFrame {
 		rasterPanel . setLayout ( new GridLayout ( rows , cols , 0 , 0 ) ) ;
 		for ( int row=0 ; row<rows ; row++ ) {
 			for ( int col=0 ;col<cols ; col++ ) {
-				rasterPanel.add ( new JButton(row+"/"+col) ) ;
+				JButton btn = new JButton();
+				btn = addIcon(btn);
+				rasterPanel.add(btn);
 			} // for ( int col=0 ;col<cols ; col++ )
 		} // for ( int row=0 ; row<rows ; row++ )
 	} // public LightgameUI()
 
+	/**
+	 * @author pauls_and
+	 * @param btn 
+	 * @return Button mit Icon
+	 */
+	private JButton addIcon(JButton btn)
+	{
+		ImageIcon ii = new ImageIcon(getClass().getResource("../../resources/themes/alternativ/LightBeam-end.png"));
+		btn.setIcon(ii);
+		return btn;
+	}
+	
 	
 	private void buildMenu() {
 		JMenuBar menuBar = new JMenuBar();
