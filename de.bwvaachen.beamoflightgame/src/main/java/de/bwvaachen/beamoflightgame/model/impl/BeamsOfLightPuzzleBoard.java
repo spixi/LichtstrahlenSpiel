@@ -49,7 +49,7 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 				}
 				catch (Throwable e) {
 					tile = EasyMock.createMock(ILightTile.class);
-					EasyMock.expect(tile.getState()).anyTimes().andReturn(LightTileState.EMPTY);
+					EasyMock.expect(tile.getTileState()).anyTimes().andReturn(LightTileState.EMPTY);
 				}
 				
 				tiles.put(xyToIndex(x,y), tile);
@@ -136,6 +136,12 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 		}
 
 		return sb.toString();
+	}
+
+	@Override
+	public boolean hasField(int row, int col) {
+		// TODO Auto-generated method stub
+		return (row>0) && (row<getWidth()) && (col>0) && (col<getWidth());
 	}
 
 }
