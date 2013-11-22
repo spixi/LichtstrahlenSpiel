@@ -1,6 +1,7 @@
 package de.bwvaachen.beamoflightgame.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -8,6 +9,9 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -117,6 +121,9 @@ public class LightgameUI extends JFrame {
 			for ( int col=0 ;col<cols ; col++ ) {
 				JButton btn = new JButton();
 				btn = addIcon(btn);
+				btn.addActionListener(new TileButtonListener());
+				
+				
 				rasterPanel.add(btn);
 			} // for ( int col=0 ;col<cols ; col++ )
 		} // for ( int row=0 ; row<rows ; row++ )
@@ -129,11 +136,17 @@ public class LightgameUI extends JFrame {
 	 */
 	private JButton addIcon(JButton btn)
 	{
-		ImageIcon ii = new ImageIcon(getClass().getResource("../../resources/themes/alternativ/LightBeam-end.png"));
-		btn.setIcon(ii);
+		File f = new File("resources/themes/alternativ/LightBeam-end.png");
+		ImageIcon ii =null;
+		URL u = this.getClass().getClassLoader().getResource("themes/alternativ/LightBeam-row.png");
+		
+		ii = new ImageIcon(u);
+
+		RotatedIcon ri = new RotatedIcon(ii,RotatedIcon.Rotate.UP);
+		btn.setIcon(ri);
 		return btn;
-	}
-	
+	} 
+
 	
 	private void buildMenu() {
 		JMenuBar menuBar = new JMenuBar();
@@ -159,6 +172,31 @@ public class LightgameUI extends JFrame {
 		
 		JMenuItem mntmLoad = new JMenuItem("Load");
 		mnFile.add(mntmLoad);
+		
+		JMenu mnGame = new JMenu("Game");
+		menuBar.add(mnGame);
+		
+		JMenuItem mntmbacktoFailure = new JMenuItem("Back to failure");
+		mnGame.add(mntmbacktoFailure);
+		
+		JSeparator separator_3 = new JSeparator();
+		mnGame.add(separator_3);
+		
+		JMenuItem mntmsetMarker = new JMenuItem("Set mark");
+		mnGame.add(mntmsetMarker);
+		
+		JSeparator separator_4 = new JSeparator();
+		mnGame.add(separator_4);
+		
+		JMenuItem mntmDeleteMarker = new JMenuItem("Delete mark");
+		mnGame.add(mntmDeleteMarker);
+		
+		JSeparator separator_5 = new JSeparator();
+		mnGame.add(separator_5);
+		
+		JMenuItem mntmBackToMark = new JMenuItem("Back to mark");
+		mnGame.add(mntmBackToMark);
+		
 		mntmLoad.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -242,4 +280,18 @@ public class LightgameUI extends JFrame {
 		    return false;
 		  }
 		}
+	class TileButtonListener implements ActionListener
+	{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JButton btn = (JButton)e.getSource();
+			btn.setBackground(new Color(255,0,0));
+		}
+	
+	}
+	class Selection
+	{
+		
+	}
 }
