@@ -12,4 +12,5 @@ public interface IBeamsOfLightPuzzleBoard extends Iterable<ITile>, Serializable 
 	
 	public boolean isPlacementOfTileStatePossible(LightTileState state, int row, int col);
 	public ITile getTileByIndex(long index);
+	public boolean hasField(int row, int col);
 }

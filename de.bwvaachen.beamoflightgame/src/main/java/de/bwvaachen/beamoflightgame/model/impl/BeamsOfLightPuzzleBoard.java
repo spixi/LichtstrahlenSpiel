@@ -138,4 +138,10 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 		return sb.toString();
 	}
 
+	@Override
+	public boolean hasField(int row, int col) {
+		// TODO Auto-generated method stub
+		return (row>0) && (row<getWidth()) && (col>0) && (col<getWidth());
+	}
+
 }
