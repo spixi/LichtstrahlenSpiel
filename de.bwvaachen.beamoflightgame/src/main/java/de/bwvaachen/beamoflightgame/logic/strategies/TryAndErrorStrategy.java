@@ -6,10 +6,10 @@ import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.INumberTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
 
-public class TryAndErrorStrategy implements IStrategy {
+public class TryAndErrorStrategy extends AbstractStrategy {
 
 	@Override
-	public boolean tryToSolve(IBeamsOfLightPuzzleBoard b, ITile t)  throws PuzzleException {
+	public boolean tryToSolve()  throws PuzzleException {
 		return false;
 		// TODO Auto-generated method stub
 	}

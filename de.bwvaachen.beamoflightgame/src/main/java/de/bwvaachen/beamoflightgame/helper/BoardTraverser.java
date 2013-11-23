@@ -5,12 +5,18 @@ import de.bwvaachen.beamoflightgame.model.ITile;
 
 public class BoardTraverser {
 	private final IBeamsOfLightPuzzleBoard board;
-	int x, y;
+	int x, y, startX, startY;
+
+	public void reset() {
+		x = startX;
+		y = startY;
+	}
+	
 	
 	public BoardTraverser(final IBeamsOfLightPuzzleBoard b, int x, int y) {
 		this.board = b;
-		this.x = x;
-		this.y = y;
+		this.x = startX = x;
+		this.y = startY = y;
 	}
 	
 	public ITile get() {
@@ -25,20 +31,8 @@ public class BoardTraverser {
 		return true;
 	}
 	
-	public boolean shiftNorth(int x, int y) {
-		return shift(-1, 0);
-	}
-	
-	public boolean shiftSouth(int x, int y) {
-		return shift(1, 0);
-	}
-	
-	public boolean shiftEast(int x, int y) {
-		return shift(0, -1);
-	}
-	
-	public boolean shiftWest(int x, int y) {
-		return shift(0, 1);
+	public boolean shift(TraverseDirection d) {
+		return shift(d.x, d.y);
 	}
 	
 	public int getX() {

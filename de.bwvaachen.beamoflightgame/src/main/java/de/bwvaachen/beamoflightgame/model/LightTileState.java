@@ -3,23 +3,29 @@ package de.bwvaachen.beamoflightgame.model;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 
-public enum LightTileState implements ITileState {
-	SOUTH(Math.PI, 's'), WEST(3.0 * Math.PI / 2.0, 'w'), NORTH(0.0, 'n'), EAST(
-			Math.PI / 2.0, 'e'), EMPTY(0.0, '-');
-	private double theta;
-	private char sign;
+import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
+import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 
-	private LightTileState(double d, char c) {
-		theta = d;
-		sign = c;
+public enum LightTileState implements ITileState {
+	SOUTH('s', new TraverseDirection(0,1)),
+	WEST('w', new TraverseDirection(-1,0)),
+	NORTH('n', new TraverseDirection(0,-1)),
+	EAST('e', new TraverseDirection(1,0)),
+	EMPTY('-', null);
+	private char sign;
+	private TraverseDirection traverseDirection;
+
+	private LightTileState(char c, TraverseDirection d) {
+		sign              = c;
+		traverseDirection = d;
+	}
+	
+	public TraverseDirection getTraverseDirection() {
+		return traverseDirection;
 	}
 
 	public char getSign() {
 		return sign;
-	}
-
-	public double getTheta() {
-		return theta;
 	}
 
 	public static LightTileState signToState(char c){

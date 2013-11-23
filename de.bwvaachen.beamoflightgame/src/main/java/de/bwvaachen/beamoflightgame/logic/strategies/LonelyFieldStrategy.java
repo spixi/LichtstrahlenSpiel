@@ -3,51 +3,77 @@ package de.bwvaachen.beamoflightgame.logic.strategies;
 import java.util.Iterator;
 
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
+import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.logic.PuzzleException;
 import de.bwvaachen.beamoflightgame.logic.solver.IStrategy;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ILightTile;
 import de.bwvaachen.beamoflightgame.model.INumberTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
+import de.bwvaachen.beamoflightgame.model.ITileState;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 
-public class LonelyFieldStrategy implements IStrategy {
+public class LonelyFieldStrategy extends AbstractStrategy {
+	private BoardTraverser traverser;
+	
+	protected void _init() {
+		traverser = new BoardTraverser(board, tile.getRow(), tile.getCol());
+	}
+	
 	@Override
-	public boolean tryToSolve(IBeamsOfLightPuzzleBoard b, ITile t) throws PuzzleException {
-		BoardTraverser traverser = new BoardTraverser(b, t.getRow(), t.getCol());
+	public boolean tryToSolve() throws PuzzleException {
 		//get the next NumberTiles which could reach the tile
+		
+		//TODO ...
 		
 		ITile currentTile;
 	    ILightTile neighbour = null;
 		
-	    findNeighbour: {
-	    	//west neighbor
-	    	while (traverser.shift(0, -1)) {
-	    		currentTile = traverser.get();
-	    		switch (currentTile.getClass().getSimpleName()) {
-	    		case("ILightTile"):  //found an ILightTile
-	    			if (((ILightTile)currentTile ).getState() != LightTileState.NORTH)
-	    				break findNeighbour;
-	    		case("INumberTile"): break;
-	    		//prüfe, ob dieses Feld noch mit den Restfeldern erreichbar ist
-	    		    
-	    			
-	    		}
-	    		/*
-				if (currentTile instanceof ILightTile);
-				neighbour = (ILightTile)currentTile;
-				*/
-	    	}
-
-	    }
-		
-		
-		return false;
+	    findNeighbour(LightTileState.NORTH);
+	    findNeighbour(LightTileState.EAST);
+	    findNeighbour(LightTileState.SOUTH);
+	    findNeighbour(LightTileState.WEST);
+	    //Check if the rest range is enough;
+	    
+	    //Are there more than one neighbours?
+	    //unsolvable, try next step
+	    return false; 
+	    
+	    //only one neighbour
+	    //we can solve this tile
 		
 
 
 
 	}
+
+    private boolean doesCross(ITileState a, ITileState b) {
+    	return ( (a==b) || (a==LightTileState.EMPTY) );
+    }
+    
+    
+    private INumberTile findNeighbour(LightTileState lts) {
+    	ITile currentTile = null;
+    	
+    	while (traverser.shift(lts.getTraverseDirection())) {
+    		currentTile = traverser.get();
+    		if(currentTile instanceof ILightTile)  //found an ILightTile 
+    		{
+    			//Does another ILightTile cross the line?
+    			//Then stop looking for the neighbour.
+    			if (doesCross(currentTile.getTileState(), lts ))
+    				return null;
+    		}
+    		else 
+    		
+    		if(currentTile instanceof INumberTile) //found an INumberTile
+    			                                   //This is our neighbour.
+    			return (INumberTile) currentTile;    
+    		}
+    	//We have reached the end of the board ...
+    	//So there is no neighbour.
+	    return null;
+    }
 
 
 	@Override

@@ -5,7 +5,8 @@ import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 
 public interface IStrategy {
-	public boolean tryToSolve(IBeamsOfLightPuzzleBoard b, ITile t) throws PuzzleException;
+	public void init(IBeamsOfLightPuzzleBoard b, ITile t);
+	public boolean tryToSolve() throws PuzzleException;
 	public boolean isAppliableForTile(ITile t);
 	
 	//The complexity states how difficult a strategy is.

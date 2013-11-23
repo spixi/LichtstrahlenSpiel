@@ -6,11 +6,18 @@ public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 	private final int row, col;
 	private final Class<T> allowedStateClass;
 	private ITileState tileState;
+	
+	public boolean isStateChangeable() {
+		return this instanceof IChangeableTile;
+	}
 
 	public final void storeState(Hashtable<Object, Object> state) {
+		if (! isStateChangeable()) throw new UnsupportedOperationException();
 		state.put("state", tileState);
 	}
+	
 	public final void restoreState(Hashtable<?, ?> state) {
+		if (! isStateChangeable()) throw new UnsupportedOperationException();
 		ITileState received      = (ITileState) state.get("state");
         
 		if(received == null) {
@@ -45,8 +52,12 @@ public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 		return (T)tileState;
 	}
 	
-	protected void setTileState(T tileState) {
+	protected final void setTileState(T tileState) {
 		this.tileState = tileState;
+	}
+	
+	public String toString() {
+		return getTileState().toString();
 	}
 	
 }
