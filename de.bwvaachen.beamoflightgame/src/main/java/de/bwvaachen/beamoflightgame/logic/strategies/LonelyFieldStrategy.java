@@ -1,10 +1,13 @@
 package de.bwvaachen.beamoflightgame.logic.strategies;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.logic.PuzzleException;
+import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
 import de.bwvaachen.beamoflightgame.logic.solver.IStrategy;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ILightTile;
@@ -27,23 +30,41 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 		//TODO ...
 		
 		ITile currentTile;
-	    ILightTile neighbour = null;
-		
-	    findNeighbour(LightTileState.NORTH);
-	    findNeighbour(LightTileState.EAST);
-	    findNeighbour(LightTileState.SOUTH);
-	    findNeighbour(LightTileState.WEST);
-	    //Check if the rest range is enough;
+	    INumberTile neighbour = null;
+	    Collection<INumberTile> neighbours
+	    	= new ArrayList<INumberTile>(2);
 	    
-	    //Are there more than one neighbours?
-	    //unsolvable, try next step
-	    return false; 
-	    
-	    //only one neighbour
-	    //we can solve this tile
+	    for(LightTileState lts :
+	    	new LightTileState[]{
+	    		LightTileState.NORTH,
+	    		LightTileState.EAST,
+	    		LightTileState.SOUTH,
+	    		LightTileState.WEST}) {
 		
-
-
+	    	
+	    	neighbour = findNeighbour(lts);
+	    	if (neighbour != null) {
+	    		
+	    		//determine the distance to the neighbour INumberTile.
+	    		int distance =  Math.abs(tile.getRow()-neighbour.getRow())
+	    		              + Math.abs(tile.getCol()-neighbour.getCol());
+	    		
+	    		//Check whether the neighbour INumberTile actually can reach the ITile
+	    		if (distance > neighbour.getRemainingLightRange()) {
+	    			neighbours.add(neighbour);
+	    		}     
+	    		     
+	    	}
+	    	
+	    	if (neighbours.size() > 1) break;
+	    
+	    }
+	    
+	    switch(neighbours.size()) {
+	    case 0: throw new UnsolvablePuzzleException(); //The tile is unreachable 
+	    case 1: ;//TODO: implement the only solution here !!!
+	    default: return false; //Ambigious solution => try next Step
+	    }
 
 	}
 
