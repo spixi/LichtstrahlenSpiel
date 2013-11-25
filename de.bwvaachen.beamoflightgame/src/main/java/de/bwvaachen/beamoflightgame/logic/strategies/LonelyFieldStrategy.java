@@ -1,15 +1,12 @@
 package de.bwvaachen.beamoflightgame.logic.strategies;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.Map;
 
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
+import de.bwvaachen.beamoflightgame.helper.IndexedMap;
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.logic.PuzzleException;
 import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
-import de.bwvaachen.beamoflightgame.logic.solver.IStrategy;
-import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ILightTile;
 import de.bwvaachen.beamoflightgame.model.INumberTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
@@ -31,8 +28,8 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 		
 		ITile currentTile;
 	    INumberTile neighbour = null;
-	    Collection<INumberTile> neighbours
-	    	= new ArrayList<INumberTile>(2);
+	    IndexedMap<LightTileState,INumberTile> neighbours
+	    	= new IndexedMap<LightTileState,INumberTile>();
 	    
 	    for(LightTileState lts :
 	    	new LightTileState[]{
@@ -51,7 +48,7 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 	    		
 	    		//Check whether the neighbour INumberTile actually can reach the ITile
 	    		if (distance > neighbour.getRemainingLightRange()) {
-	    			neighbours.add(neighbour);
+	    			neighbours.put(lts,neighbour);
 	    		}     
 	    		     
 	    	}
@@ -62,10 +59,28 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 	    
 	    switch(neighbours.size()) {
 	    case 0: throw new UnsolvablePuzzleException(); //The tile is unreachable 
-	    case 1: ;//TODO: implement the only solution here !!!
-	    default: return false; //Ambigious solution => try next Step
+	    case 1: { 
+	    	Map.Entry<LightTileState,INumberTile> entry = neighbours.getEntryByIndex(0);
+	    	fillBoard(entry.getValue(), entry.getKey());
+	    	return true;
+	    	}
+	    default: return false; //Ambiguous solution => try next Step
 	    }
 
+	}
+	
+	private void fillBoard(INumberTile neighbour, LightTileState direction) {
+		TraverseDirection traverseDirection = direction.getTraverseDirection();
+		
+		traverser.reset();
+		ITile next = traverser.get();
+		
+		while(next != neighbour) {
+			traverser.shift(traverseDirection);
+			assert next instanceof ILightTile;
+			((ILightTile) next).setState(direction);
+			next = traverser.get();
+		}
 	}
 
     private boolean doesCross(ITileState a, ITileState b) {
