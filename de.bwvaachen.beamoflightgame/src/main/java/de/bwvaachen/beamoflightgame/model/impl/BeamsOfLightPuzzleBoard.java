@@ -16,7 +16,7 @@ import de.bwvaachen.beamoflightgame.model.LightTileState;
 public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 
 	private int width, height;
-	private TreeMap<Long, ITile> tiles;
+	private TreeMap<Long, ITile<?>> tiles;
 	private TreeMap<Long, INumberTile> numberTiles;
 
 
@@ -24,7 +24,7 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 		this.width = width;
 		this.height = heigth;
 		
-		tiles       = new TreeMap<Long, ITile>();
+		tiles       = new TreeMap<Long, ITile<?>>();
 		numberTiles = new TreeMap<Long, INumberTile>();
 		
 		for (INumberTile nt : nrs) {
