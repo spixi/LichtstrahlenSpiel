@@ -1,7 +1,7 @@
 package de.bwvaachen.beamoflightgame.model;
 
 public class NumberTile extends AbstractTile<NumberTileState> implements INumberTile {
-	protected NumberTile(final int number, int row, int col) {
+	public NumberTile(final int number, int row, int col) {
 		super(row, col, NumberTileState.class);
 		setTileState(new NumberTileState(number));
 	}

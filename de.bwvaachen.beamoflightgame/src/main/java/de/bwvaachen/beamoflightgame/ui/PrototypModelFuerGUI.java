@@ -7,11 +7,12 @@ import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
+import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.NumberTileState;
 
 public class PrototypModelFuerGUI implements IBeamsOfLightPuzzleBoard {
 
-	ArrayList<Object[]> tiles = new ArrayList<Object[]>();
+	ArrayList<ITile[]> tiles = new ArrayList<ITile[]>();
 	
 	
 	//	 _______________________
@@ -40,11 +41,11 @@ public class PrototypModelFuerGUI implements IBeamsOfLightPuzzleBoard {
 	
 	public PrototypModelFuerGUI()
 	{
+		tiles.add(new ITile[]{new LightTile(0, 0),new LightTile(0, 1), new LightTile(0, 2)});
+		tiles.add(new ITile[]{new NumberTile(2, 1, 0),new NumberTile(2, 1, 1), new LightTile(1, 2)});
+		tiles.add(new ITile[]{new LightTile(2, 0),new LightTile(2, 1), new LightTile(2, 2)});
+		tiles.add(new ITile[]{new LightTile(3, 0),new LightTile(3, 1), new NumberTile(5,3, 2)});
 		
-		tiles.add(new Object[]{new LightTile(0, 0),new LightTile(0, 1),new LightTile(0, 2)});
-		tiles.add(new Object[]{new LightTile(1, 0),new LightTile(1, 1),new LightTile(1, 2)});
-		tiles.add(new Object[]{new LightTile(2, 0),new LightTile(2, 1),new LightTile(2, 2)});
-		tiles.add(new Object[]{new LightTile(3, 0),new LightTile(3, 1),new LightTile(3, 2)});
 	}
 	
 	@Override
@@ -74,13 +75,7 @@ public class PrototypModelFuerGUI implements IBeamsOfLightPuzzleBoard {
 	@Override
 	public ITile getTileAt(int row, int col) throws IndexOutOfBoundsException {
 
-		Object pfui = tiles.get(row)[col];
-		try{
-			return (ITile<NumberTileState>) pfui;
-		}
-		catch (Exception e){
-			return (ITile<LightTileState>) pfui;
-		}
+		return tiles.get(row)[col];
 	}
 
 	@Override
@@ -98,8 +93,7 @@ public class PrototypModelFuerGUI implements IBeamsOfLightPuzzleBoard {
 
 	@Override
 	public boolean hasField(int row, int col) {
-		// TODO Auto-generated method stub
-		return false;
+		return(tiles.size()>row && tiles.get(0).length > col);
 	}
 
 }
