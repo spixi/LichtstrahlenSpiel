@@ -1,5 +1,5 @@
 package de.bwvaachen.beamoflightgame.model;
 
-public interface ITileState {
+public interface ITileState  {
 
 }
