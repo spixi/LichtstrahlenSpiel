@@ -10,42 +10,15 @@ import java.util.Set;
 public class IndexedMap<K,V> extends HashMap<K,V> {
 	
 	private IndexedSet<Map.Entry<K, V>> entries;
-	private HashMap<K,V> actualMap;
 	
 	public IndexedMap() {
 		super();
 		entries   = new IndexedSet<Map.Entry<K, V>>();
-		actualMap = new HashMap<K, V>();
 	}
 
 	@Override
 	public Set<Map.Entry<K, V>> entrySet() {
 		return entries;
-	}
-
-	@Override
-	public int size() {
-		return actualMap.size();
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return actualMap.isEmpty();
-	}
-
-	@Override
-	public boolean containsKey(Object key) {
-		return actualMap.containsKey(key);
-	}
-
-	@Override
-	public boolean containsValue(Object value) {
-		return actualMap.containsValue(value);
-	}
-
-	@Override
-	public V get(Object key) {
-		return actualMap.get(key);
 	}
 	
 	public Map.Entry<K,V> getEntryByIndex(int index) {
@@ -62,8 +35,7 @@ public class IndexedMap<K,V> extends HashMap<K,V> {
 
 	@Override
 	public V put(K key, V value) {
-		V oldValue = actualMap.get(key);
-		actualMap.put(key, value);
+		V oldValue = super.put(key, value);
 		entries.add(new AbstractMap.SimpleEntry<K,V>(key, value) {
 			@Override
 			public V setValue(V value) {
@@ -71,24 +43,37 @@ public class IndexedMap<K,V> extends HashMap<K,V> {
 			}
 		}
 		);
-		
 		return oldValue;
 	}
 
 	@Override
 	public V remove(Object key) {
-		throw new UnsupportedOperationException();
+		//Sequential search ...
+		int i = 0;
+		for(Map.Entry<K,V> entry: entries) {
+			if (entry.getKey() == key) {
+				break;
+			}
+			i++;
+		}
+		
+		if(i==entries.size()) return null;
+		
+		entries.remove(i);
+		return super.remove(i);
 	}
 
 	@Override
 	public void putAll(Map<? extends K, ? extends V> m) {
-		throw new UnsupportedOperationException();
+		for(Map.Entry<? extends K, ? extends V> entry : m.entrySet()) {
+			put(entry.getKey(), entry.getValue());
+		}
 	}
 
 	@Override
 	public void clear() {
 		entries.clear();
-		actualMap.clear();	
+		super.clear();	
 	}
 
 	@Override
