@@ -1,6 +1,7 @@
 package de.bwvaachen.beamoflightgame.logic.solver;
 
 import de.bwvaachen.beamoflightgame.logic.ISolver;
+import de.bwvaachen.beamoflightgame.logic.IStrategy;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 
 public interface ISolverBuilderContext {

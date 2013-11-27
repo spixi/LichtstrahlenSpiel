@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 
 import de.bwvaachen.beamoflightgame.logic.ISolver;
+import de.bwvaachen.beamoflightgame.logic.IStrategy;
 import de.bwvaachen.beamoflightgame.logic.PuzzleException;
 import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;

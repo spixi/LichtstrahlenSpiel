@@ -5,17 +5,16 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
-import de.bwvaachen.beamoflightgame.model.ILightTile;
-import de.bwvaachen.beamoflightgame.model.INumberTile;
+import de.bwvaachen.beamoflightgame.model.LightTile;
 
-public class NumberTileSkippingIteratorAdapter<ITile> implements Iterator<ILightTile> {
+public class NumberTileSkippingIteratorAdapter<ITile> implements Iterator<LightTile> {
 	private Iterator<ITile> adaptee;
-	private Queue<ILightTile> buffer;
+	private Queue<LightTile> buffer;
 	
 	
 	public NumberTileSkippingIteratorAdapter(Iterator<ITile> it) {
 		adaptee = it;
-		buffer  = new LinkedList<ILightTile>();
+		buffer  = new LinkedList<LightTile>();
 	}
 
 	@Override
@@ -24,8 +23,8 @@ public class NumberTileSkippingIteratorAdapter<ITile> implements Iterator<ILight
 			if (adaptee.hasNext()) {
 				do {
 					ITile next = adaptee.next();
-					if(next instanceof ILightTile) {
-						buffer.add((ILightTile) next);
+					if(next instanceof LightTile) {
+						buffer.add((LightTile) next);
 						return true;
 					}
 				}
@@ -39,7 +38,7 @@ public class NumberTileSkippingIteratorAdapter<ITile> implements Iterator<ILight
 	}
 
 	@Override
-	public ILightTile next() throws NoSuchElementException {
+	public LightTile next() throws NoSuchElementException {
 		if (!hasNext()) throw new NoSuchElementException();
 		return buffer.poll();
 	}

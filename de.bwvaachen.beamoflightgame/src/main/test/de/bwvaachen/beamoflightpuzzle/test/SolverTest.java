@@ -15,7 +15,7 @@ import de.bwvaachen.beamoflightgame.logic.PuzzleException;
 import de.bwvaachen.beamoflightgame.logic.solver.SolverBuilder;
 import de.bwvaachen.beamoflightgame.logic.strategies.*;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
-import de.bwvaachen.beamoflightgame.model.INumberTile;
+import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 //import org.junit.runner.RunWith;
@@ -40,11 +40,12 @@ public class SolverTest {
 	
 	@Test
 	public void lonelyFieldStrategyTest() throws InstantiationException, IllegalAccessException, PuzzleException {
-		List<INumberTile> numberTiles = Arrays.asList(new INumberTile[] {null, null});
+		List<NumberTile> numberTiles = Arrays.asList(new NumberTile[] {null, null});
 		
 		//Board: 1 _ _ _ 2
 		
-		IBeamsOfLightPuzzleBoard b = new BeamsOfLightPuzzleBoard(5, 1, numberTiles);
+		IBeamsOfLightPuzzleBoard b = new BeamsOfLightPuzzleBoard();
+		b.init(5, 1, numberTiles);
 		//TODO !!!
 		
 		System.out.println(b.toString());

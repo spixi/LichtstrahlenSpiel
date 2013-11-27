@@ -11,8 +11,8 @@ import java.util.Scanner;
 
 import de.bwvaachen.beamoflightgame.controller.Turn;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
-import de.bwvaachen.beamoflightgame.model.ILightTile;
-import de.bwvaachen.beamoflightgame.model.INumberTile;
+import de.bwvaachen.beamoflightgame.model.LightTile;
+import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.builder.BeamOfLightPuzzleBoardBuilder;
@@ -30,8 +30,8 @@ public class SimpleASCIICodec implements ICodec {
 			for (int col = 0; col < board.getWidth(); col++) {
 				ITile tile = board.getTileAt(row, col);
 				//TODO This is ugly. Please use tile.toString() here!
-				if (tile instanceof INumberTile) {
-					builder.append(((INumberTile) tile).getNumber() + " ");
+				if (tile instanceof NumberTile) {
+					builder.append(((NumberTile) tile).getNumber() + " ");
 				} else {
 					builder.append("_ ");
 				}
@@ -59,7 +59,7 @@ public class SimpleASCIICodec implements ICodec {
 
 	@Override
 	public IBeamsOfLightPuzzleBoard boardFromInputstream(InputStream input)
-			throws WrongCodecException {
+			throws WrongCodecException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		Scanner scanner = new Scanner(input);
 
 		Integer width = null;
@@ -87,8 +87,7 @@ public class SimpleASCIICodec implements ICodec {
 			row++;
 		}
 		
-		IBeamsOfLightPuzzleBoard puzzle = builder
-				.createBeamOfLightPuzzleBoard();
+		IBeamsOfLightPuzzleBoard puzzle = builder.create();
 		return puzzle;
 	}
 

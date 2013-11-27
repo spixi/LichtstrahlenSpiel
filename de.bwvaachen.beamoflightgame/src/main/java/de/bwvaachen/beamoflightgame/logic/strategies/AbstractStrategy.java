@@ -1,7 +1,7 @@
 package de.bwvaachen.beamoflightgame.logic.strategies;
 
+import de.bwvaachen.beamoflightgame.logic.IStrategy;
 import de.bwvaachen.beamoflightgame.logic.PuzzleException;
-import de.bwvaachen.beamoflightgame.logic.solver.IStrategy;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 

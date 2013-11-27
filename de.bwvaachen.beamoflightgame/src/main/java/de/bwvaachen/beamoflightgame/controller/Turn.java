@@ -31,7 +31,7 @@ import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoableEdit;
 
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
-import de.bwvaachen.beamoflightgame.model.ILightTile;
+import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 
@@ -126,7 +126,7 @@ public class Turn implements UndoableEdit, Serializable  {
 		if(!canRedo()) throw new CannotRedoException();
 		setFlag(FLAG_HAS_BEEN_DONE);
 		ITile tile = board.getTileAt(x, y);
-		((ILightTile) tile).setState(newTileState);
+		((LightTile) tile).setState(newTileState);
 	}
 
 	public boolean replaceEdit(UndoableEdit anEdit) {
@@ -137,7 +137,7 @@ public class Turn implements UndoableEdit, Serializable  {
 		if(!canUndo()) throw new CannotUndoException();
 		unsetFlag(FLAG_HAS_BEEN_DONE);
 		ITile tile = board.getTileAt(x, y);
-		((ILightTile) tile).setState(oldTileState);
+		((LightTile) tile).setState(oldTileState);
 	}
 
 

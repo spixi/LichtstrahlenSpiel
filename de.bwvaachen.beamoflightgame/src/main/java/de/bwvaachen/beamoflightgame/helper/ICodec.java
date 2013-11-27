@@ -11,7 +11,7 @@ public interface ICodec {
 	void boardToOutputstream(OutputStream output, IBeamsOfLightPuzzleBoard board);
 	void turnsToOutputstream(OutputStream output, List<Turn> turns) ;
 	
-	IBeamsOfLightPuzzleBoard boardFromInputstream(InputStream input) throws WrongCodecException;
+	IBeamsOfLightPuzzleBoard boardFromInputstream(InputStream input) throws WrongCodecException, InstantiationException, IllegalAccessException, ClassNotFoundException;
 	List<Turn> turnsFromInputstream(InputStream input, IBeamsOfLightPuzzleBoard board) throws WrongCodecException;
 
 }

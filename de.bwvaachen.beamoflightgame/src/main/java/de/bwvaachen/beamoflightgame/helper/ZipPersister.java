@@ -48,7 +48,7 @@ public class ZipPersister implements IPersistenceHelper {
 	}
 
 	@Override
-	public void load(File path) throws IOException, WrongCodecException {
+	public void load(File path) throws IOException, WrongCodecException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
 		ICodec codec = null;
 		for (int i = 0; i < 2; i++) {

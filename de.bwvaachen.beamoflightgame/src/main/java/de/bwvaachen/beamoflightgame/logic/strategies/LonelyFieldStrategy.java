@@ -7,8 +7,8 @@ import de.bwvaachen.beamoflightgame.helper.IndexedMap;
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.logic.PuzzleException;
 import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
-import de.bwvaachen.beamoflightgame.model.ILightTile;
-import de.bwvaachen.beamoflightgame.model.INumberTile;
+import de.bwvaachen.beamoflightgame.model.LightTile;
+import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.ITileState;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
@@ -27,9 +27,9 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 		//TODO ...
 		
 		ITile currentTile;
-	    INumberTile neighbour = null;
-	    IndexedMap<LightTileState,INumberTile> neighbours
-	    	= new IndexedMap<LightTileState,INumberTile>();
+	    NumberTile neighbour = null;
+	    IndexedMap<LightTileState,NumberTile> neighbours
+	    	= new IndexedMap<LightTileState,NumberTile>();
 	    
 	    for(LightTileState lts :
 	    	new LightTileState[]{
@@ -42,11 +42,11 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 	    	neighbour = findNeighbour(lts);
 	    	if (neighbour != null) {
 	    		
-	    		//determine the distance to the neighbour INumberTile.
+	    		//determine the distance to the neighbour NumberTile.
 	    		int distance =  Math.abs(tile.getRow()-neighbour.getRow())
 	    		              + Math.abs(tile.getCol()-neighbour.getCol());
 	    		
-	    		//Check whether the neighbour INumberTile actually can reach the ITile
+	    		//Check whether the neighbour NumberTile actually can reach the ITile
 	    		if (distance > neighbour.getRemainingLightRange()) {
 	    			neighbours.put(lts,neighbour);
 	    		}     
@@ -60,7 +60,7 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 	    switch(neighbours.size()) {
 	    case 0: throw new UnsolvablePuzzleException(); //The tile is unreachable 
 	    case 1: { 
-	    	Map.Entry<LightTileState,INumberTile> entry = neighbours.getEntryByIndex(0);
+	    	Map.Entry<LightTileState,NumberTile> entry = neighbours.getEntryByIndex(0);
 	    	fillBoard(entry.getValue(), entry.getKey());
 	    	return true;
 	    	}
@@ -69,7 +69,7 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 
 	}
 	
-	private void fillBoard(INumberTile neighbour, LightTileState direction) {
+	private void fillBoard(NumberTile neighbour, LightTileState direction) {
 		TraverseDirection traverseDirection = direction.getTraverseDirection();
 		
 		traverser.reset();
@@ -77,8 +77,8 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 		
 		while(next != neighbour) {
 			traverser.shift(traverseDirection);
-			assert next instanceof ILightTile;
-			((ILightTile) next).setState(direction);
+			assert next instanceof LightTile;
+			((LightTile) next).setState(direction);
 			next = traverser.get();
 		}
 	}
@@ -88,23 +88,23 @@ public class LonelyFieldStrategy extends AbstractStrategy {
     }
     
     
-    private INumberTile findNeighbour(LightTileState lts) {
+    private NumberTile findNeighbour(LightTileState lts) {
     	ITile currentTile = null;
     	
     	while (traverser.shift(lts.getTraverseDirection())) {
     		currentTile = traverser.get();
-    		if(currentTile instanceof ILightTile)  //found an ILightTile 
+    		if(currentTile instanceof LightTile)  //found an LightTile 
     		{
-    			//Does another ILightTile cross the line?
+    			//Does another LightTile cross the line?
     			//Then stop looking for the neighbour.
     			if (doesCross(currentTile.getTileState(), lts ))
     				return null;
     		}
     		else 
     		
-    		if(currentTile instanceof INumberTile) //found an INumberTile
+    		if(currentTile instanceof NumberTile) //found an NumberTile
     			                                   //This is our neighbour.
-    			return (INumberTile) currentTile;    
+    			return (NumberTile) currentTile;    
     		}
     	//We have reached the end of the board ...
     	//So there is no neighbour.
@@ -119,6 +119,6 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 	
 	@Override
 	public boolean isAppliableForTile(ITile t) {
-		return (t instanceof ILightTile) & t.getTileState() == LightTileState.EMPTY;
+		return (t instanceof LightTile) & t.getTileState() == LightTileState.EMPTY;
 	}
 }

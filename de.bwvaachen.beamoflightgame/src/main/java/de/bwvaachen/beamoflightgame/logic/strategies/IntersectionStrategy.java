@@ -1,10 +1,8 @@
 package de.bwvaachen.beamoflightgame.logic.strategies;
 
 import de.bwvaachen.beamoflightgame.logic.PuzzleException;
-import de.bwvaachen.beamoflightgame.logic.solver.IStrategy;
-import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
-import de.bwvaachen.beamoflightgame.model.INumberTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
+import de.bwvaachen.beamoflightgame.model.NumberTile;
 
 public class IntersectionStrategy extends AbstractStrategy {
 
@@ -26,7 +24,7 @@ public class IntersectionStrategy extends AbstractStrategy {
 
 	@Override
 	public boolean isAppliableForTile(ITile t) {
-		return (t instanceof INumberTile && ((INumberTile) t).getRemainingLightRange() > 0);
+		return (t instanceof NumberTile && ((NumberTile) t).getRemainingLightRange() > 0);
 	}
 
 }

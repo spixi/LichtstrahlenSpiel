@@ -38,7 +38,7 @@ import org.junit.Test;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
-import de.bwvaachen.beamoflightgame.model.ILightTile;
+import de.bwvaachen.beamoflightgame.model.LightTile;
 
 //@RunWith(PowerMockRunner.class)
 @PrepareForTest({IBeamsOfLightPuzzleBoard.class})
