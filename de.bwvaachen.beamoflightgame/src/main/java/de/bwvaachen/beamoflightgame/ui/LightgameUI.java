@@ -111,20 +111,26 @@ public class LightgameUI extends JFrame {
 		JPanel rasterPanel = new JPanel();
 		contentPane.add(rasterPanel, BorderLayout.CENTER);
 
-		
+		// TODO temporär feste Werte für Tests eingetragen.
 		int rows = 4 ; // = currentModel.getHeight() ;
 		int cols = 4 ; // = currentModel.getWidth() ;
 		
 		IBeamsOfLightPuzzleBoard currentModel = controller . getCurrentModel();
 		rasterPanel . setLayout ( new GridLayout ( rows , cols , 0 , 0 ) ) ;
+		
+		// Schleife über das "Spielfeld"
 		for ( int row=0 ; row<rows ; row++ ) {
 			for ( int col=0 ;col<cols ; col++ ) {
-				JButton btn = new JButton();
-				btn = addIcon(btn);
-				btn.addActionListener(new TileButtonListener());
+
+				// Neuen Button erzeugen
+				TileButton newTileButton = new TileButton ( row, col ) ;
+				// Icon hinzufügen
+				newTileButton = addIcon ( newTileButton ) ;
+				// Action verbinden
+				newTileButton . addActionListener ( new TileButtonListener() ) ;					
+				// Aufs Panel setzen
+				rasterPanel . add ( newTileButton ) ;
 				
-				
-				rasterPanel.add(btn);
 			} // for ( int col=0 ;col<cols ; col++ )
 		} // for ( int row=0 ; row<rows ; row++ )
 	} // public LightgameUI()
@@ -134,11 +140,11 @@ public class LightgameUI extends JFrame {
 	 * @param btn 
 	 * @return Button mit Icon
 	 */
-	private JButton addIcon(JButton btn)
+	private TileButton addIcon(TileButton btn)
 	{
-		File f = new File("resources/themes/alternativ/LightBeam-end.png");
-		ImageIcon ii =null;
-		URL u = this.getClass().getClassLoader().getResource("themes/alternativ/LightBeam-row.png");
+		File f 		 = new File("resources/themes/alternativ/LightBeam-end.png");
+		ImageIcon ii = null;
+		URL u 		 = this.getClass().getClassLoader().getResource("themes/alternativ/LightBeam-row.png");
 		
 		ii = new ImageIcon(u);
 
@@ -280,16 +286,29 @@ public class LightgameUI extends JFrame {
 		    return false;
 		  }
 		}
+	
+	
+	/**
+	 * Action für den Klick auf ein Tile
+	 * 
+	 * @author gbraun, pauls_and
+	 */
 	class TileButtonListener implements ActionListener
 	{
 
+		/**
+		 * Ändert die Hintergrundfarbe.
+		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JButton btn = (JButton)e.getSource();
+			TileButton btn = (TileButton)e.getSource();
 			btn.setBackground(new Color(255,0,0));
-		}
+		} // public void actionPerformed(ActionEvent e) 
+		
+	} // class TileButtonListener 
 	
-	}
+	
+	
 	class Selection
 	{
 		
