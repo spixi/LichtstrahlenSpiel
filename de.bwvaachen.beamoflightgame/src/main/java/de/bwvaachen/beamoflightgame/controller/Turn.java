@@ -24,8 +24,6 @@
 
 package de.bwvaachen.beamoflightgame.controller;
 
-import java.io.Serializable;
-
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoableEdit;
@@ -35,8 +33,14 @@ import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 
-public class Turn implements UndoableEdit, Serializable  {
-	private static transient final int FLAG_ALIVE = 0x1, FLAG_HAS_BEEN_DONE = 0x2, FLAG_SIGNIFICANT = 0x4;
+/**
+ * @author mspix
+ * @author cfruehholz
+ *
+ */
+public class Turn implements UndoableEdit  
+{
+	public static transient final int FLAG_ALIVE = 0x1, FLAG_HAS_BEEN_DONE = 0x2, FLAG_SIGNIFICANT = 0x4, FLAG_ERROR = 0x10;
 	private int flags;
 	private IBeamsOfLightPuzzleBoard board;
 	private int x, y;
@@ -58,6 +62,7 @@ public class Turn implements UndoableEdit, Serializable  {
 		this.newTileState = newTileState;
 		flags |= FLAG_ALIVE;
 		flags |= FLAG_HAS_BEEN_DONE;
+		redo();
 	}
 
 	public int getFlags() {
@@ -85,11 +90,11 @@ public class Turn implements UndoableEdit, Serializable  {
 	}
 
 	public boolean canRedo() {
-		return (flags & FLAG_ALIVE | ~FLAG_HAS_BEEN_DONE) != 0 ? board.isPlacementOfTileStatePossible(newTileState, x, y) : false;
+		return (flags & FLAG_ALIVE | ~FLAG_HAS_BEEN_DONE ) == 1;
 	}
 
 	public boolean canUndo() {
-		return (flags & FLAG_ALIVE & FLAG_HAS_BEEN_DONE) != 0 ? board.isPlacementOfTileStatePossible(oldTileState, x, y) : false;
+		return (flags & FLAG_ALIVE & FLAG_HAS_BEEN_DONE) == 1;
 	}
 
 	public void die() {

@@ -3,17 +3,24 @@ package de.bwvaachen.beamoflightgame.controller.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Iterator;
 
 import javax.swing.undo.UndoManager;
 
 import org.easymock.EasyMock;
 
 import de.bwvaachen.beamoflightgame.controller.ILightController;
+import de.bwvaachen.beamoflightgame.controller.Turn;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.model.ITile;
+import de.bwvaachen.beamoflightgame.model.LightTileState;
+import de.bwvaachen.beamoflightgame.model.NumberTile;
+import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 
 public class LightController implements ILightController {
 	private UndoManager              turnManager;
 	private IBeamsOfLightPuzzleBoard puzzleBoard;
+	private Turn					 currentTurn;
 
 	/*
 	@Override
@@ -88,41 +95,47 @@ public class LightController implements ILightController {
 	
 
 	@Override
-	public IBeamsOfLightPuzzleBoard getCurrentModel() {
-		
-		return EasyMock . createMock ( IBeamsOfLightPuzzleBoard.class ) ;
+	public IBeamsOfLightPuzzleBoard getCurrentModel() 
+	{
+		return puzzleBoard;
 		
 	} // public IBeamsOfLightPuzzleBoard getCurrentModel()
 	
 
 	@Override
-	public IBeamsOfLightPuzzleBoard newGame(int x, int y) throws Exception {
+	public IBeamsOfLightPuzzleBoard newGame(int x, int y) throws Exception 
+	{
+		puzzleBoard = new BeamsOfLightPuzzleBoard();
 		return null;
 	} // public IBeamsOfLightPuzzleBoard newGame(int x, int y)
 	
 
 	@Override
-	public void doTurn(int x, int y, char orientaion, boolean isEnd)
-			throws Exception {
+	public Turn doTurn(int x, int y, LightTileState oldTileState, LightTileState newTileState) throws Exception 
+	{
+		Turn oTurn = new Turn(puzzleBoard, x, y, oldTileState, newTileState);
+		turnManager.addEdit(oTurn);
+		currentTurn = oTurn;
 		
+		return oTurn;
 	} // public void doTurn(int x, int y, char orientaion, boolean isEnd)
 	
 
 	@Override
 	public boolean isUndoable() throws Exception {
-		return false;
+		return turnManager.canUndo();
 	} // public boolean isUndoable() 
 	
 
 	@Override
 	public boolean isRedoable() throws Exception {
-		return false;
+		return turnManager.canRedo();
 	} // public boolean isRedoable()
 	
 
 	@Override
 	public void setUndoMark() throws Exception {
-		
+		currentTurn.mark();
 	} // public void setUndoMark()
 	
 
@@ -133,9 +146,13 @@ public class LightController implements ILightController {
 	
 
 	@Override
-	public IBeamsOfLightPuzzleBoard returnToStableStaate() throws Exception {
+	public IBeamsOfLightPuzzleBoard returnToStableState() throws Exception {
 		return null;
 		
 	} // public IBeamsOfLightPuzzleBoard returnToStableStaate() s
 
+	public void undo()
+	{
+		turnManager.undo();
+	}
 } // public class LightController

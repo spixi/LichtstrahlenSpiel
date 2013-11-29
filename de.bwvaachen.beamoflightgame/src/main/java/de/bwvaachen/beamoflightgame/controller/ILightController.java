@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.model.LightTileState;
  
 public interface ILightController {
 	
@@ -19,11 +20,11 @@ public interface ILightController {
 	public void 					loadGame (File f) throws FileNotFoundException, IOException, ClassNotFoundException;
 	
 	// Spielzüge
-	public void 					doTurn ( int x , int y , char orientaion , boolean isEnd ) throws Exception ;
+	public Turn 					doTurn ( int x , int y , LightTileState oldTileState, LightTileState newTileState ) throws Exception ;
 	public boolean 					isUndoable () throws Exception ;
 	public boolean 					isRedoable () throws Exception ;
 	public void 			        setUndoMark () throws Exception ;
 	public IBeamsOfLightPuzzleBoard returnToNextUndoMark () throws Exception ;
-	public IBeamsOfLightPuzzleBoard returnToStableStaate () throws Exception ;
+	public IBeamsOfLightPuzzleBoard returnToStableState () throws Exception ;
 	
 } // public interface ILightController
