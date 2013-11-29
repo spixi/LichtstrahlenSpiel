@@ -6,7 +6,8 @@ public class LightTile extends AbstractTile<LightTileState> implements IChangeab
 	}
 	
 	public LightTile(int row, int col, LightTileState state) {
-		super(row, col,LightTileState.class);
+		super(row, col, LightTileState.class);
+		if (state == null) state = LightTileState.EMPTY;
 		setState(state);
 	}
 

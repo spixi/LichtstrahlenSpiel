@@ -45,7 +45,7 @@ public class SolverTest {
 		//Board: 1 _ _ _ 2
 		
 		IBeamsOfLightPuzzleBoard b = new BeamsOfLightPuzzleBoard();
-		b.init(5, 1, numberTiles);
+		b.init(1, 5, numberTiles);
 		//TODO !!!
 		
 		System.out.println(b.toString());
@@ -53,6 +53,8 @@ public class SolverTest {
 		ISolver s = SolverBuilder.buildWith(LonelyFieldStrategy.class).forBoard(b);
 		
 		s.solve();
+		
+		System.out.println(b.toString());
 		
 	}
 
