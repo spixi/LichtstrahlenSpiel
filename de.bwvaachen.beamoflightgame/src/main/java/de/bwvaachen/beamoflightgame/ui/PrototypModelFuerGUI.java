@@ -134,6 +134,11 @@ public class PrototypModelFuerGUI implements IBeamsOfLightPuzzleBoard {
 		return(row <= getHeight() && col <= getWidth());
 	}
 
+	public PrototypModelFuerGUI()
+	{
+		init(0,0,null);
+	}
+	
 	@Override
 	public void init(int rows, int cols, Iterable<NumberTile> nrs) {
 		tiles[0][0] = new LightTile(0, 0);
@@ -151,8 +156,7 @@ public class PrototypModelFuerGUI implements IBeamsOfLightPuzzleBoard {
 		tiles[3][0] = new LightTile(3, 0);
 		tiles[3][1] = new LightTile(3, 1);
 		tiles[3][2] = new NumberTile(5,3, 2);
-		
-		
+				
 		}
 
 }
