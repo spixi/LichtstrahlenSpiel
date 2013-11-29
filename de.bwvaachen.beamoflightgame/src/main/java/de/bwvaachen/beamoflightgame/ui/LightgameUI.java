@@ -135,9 +135,10 @@ public class LightgameUI extends JFrame {
 	} // public LightgameUI()
 
 	/**
+	 * Add Icon to Button
 	 * @author pauls_and
 	 * @param btn 
-	 * @return Button mit Icon
+	 * @return Button with (new) Icon
 	 */
 	private TileButton addIcon(TileButton btn, Icon ico)
 	{
@@ -146,12 +147,13 @@ public class LightgameUI extends JFrame {
 	} 
 	
 	/**
+	 * Paints the GUI (Buttons) based on a Model Object
 	 * @author pauls 
 	 * @param model
 	 */
 	private void Update(IBeamsOfLightPuzzleBoard model)
 	{
-		GraficFactory gf = new GraficFactory();
+		GraficFactory gf = new GraficFactory(model);
 		for(TileButton btn : buttons)
 		{
 			int row = btn.getRow();
@@ -163,7 +165,9 @@ public class LightgameUI extends JFrame {
 	}
 	
 
-	
+	/**
+	 * Builds the Menubar
+	 */
 	private void buildMenu() {
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -230,6 +234,8 @@ public class LightgameUI extends JFrame {
 				}
 				try {
 					//im Design ist das hier nicht void sondern gibt ein Puzzle zurueck, das sollten wir dann aufbauen
+					//Update(controller.loadGame(new File("")));
+					//TODO obrigen Code einbinden sobald der Controller implementiert ist
 					controller.loadGame(new File(""));
 				} catch (ClassNotFoundException
 						| IOException e1) {

@@ -30,7 +30,11 @@ public class BoardTraverser {
 		this.y += y;
 		return true;
 	}
-	
+	/**
+	 * Verify a turn or a move on the Board
+	 * @param d
+	 * @return false if move impossible - otherwise true
+	 */
 	public boolean shift(TraverseDirection d) {
 		return shift(d.x, d.y);
 	}

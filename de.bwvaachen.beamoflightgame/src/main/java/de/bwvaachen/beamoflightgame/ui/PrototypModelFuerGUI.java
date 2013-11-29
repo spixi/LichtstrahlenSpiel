@@ -131,7 +131,7 @@ public class PrototypModelFuerGUI implements IBeamsOfLightPuzzleBoard {
 
 	@Override
 	public boolean hasField(int row, int col) {
-		return(row <= getHeight() && col <= getWidth());
+		return(row <= getHeight() && col <= getWidth() && row >=0 && col >= 0);
 	}
 
 	public PrototypModelFuerGUI()
