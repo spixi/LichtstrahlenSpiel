@@ -25,7 +25,7 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 			int x = 0, y = 0;
 
 			public boolean hasNext() {
-				return (x == width) && (y == height);
+				return (x <= width) && (y <= height);
 			}
 
 			public ITile next() {
@@ -67,8 +67,8 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		
-		for(int y=0; y<=height; y++) {
-			for(int x=0; x<=height; y++) {
+		for(int y=0; y<height; y++) {
+			for(int x=0; x<width; x++) {
 				sb.append(getTileAt(x,y));
 			}
 			sb.append('\n');
@@ -85,18 +85,19 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 
 	@Override
 	public void init(int rows, int cols, Iterable<NumberTile> nrs) {
-		this.height = rows;
-		this.width = cols;
+		height = rows;
+		width  = cols;
 		
-		tiles = new ITile[rows][cols];
+		tiles       = new ITile[width][height];
+		numberTiles = new LinkedList<NumberTile>();
 		
 		for (NumberTile nt : nrs) {
 			numberTiles.add(nt);
-			tiles[nt.getRow()][nt.getCol()] = nt;
+			tiles[nt.getCol()][nt.getRow()] = nt;
 		}
 		
-		for(int y=0; y<=height; y++) {
-			for(int x=0; x<=width; y++) {
+		for(int x=0; x<width; x++) {
+			for(int y=0; y<height; y++) {
 				if(tiles[x][y] == null)
 				  tiles[x][y] = new LightTile(x,y);
 			}
