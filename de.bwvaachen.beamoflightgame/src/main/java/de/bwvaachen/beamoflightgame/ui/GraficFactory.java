@@ -2,12 +2,15 @@ package de.bwvaachen.beamoflightgame.ui;
 
 import java.net.URL;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
+import de.bwvaachen.beamoflightgame.ui.RotatedIcon.Rotate;
 
 public class GraficFactory {
 	
@@ -16,7 +19,7 @@ public class GraficFactory {
 	 * @param meineKachel darzustellenden Kachel
 	 * @return
 	 */
-	public ImageIcon getImage(ITile meineKachel)
+	public Icon getImage(ITile meineKachel)
 	{
 		ImageIcon ii = null;
 		try{
@@ -34,33 +37,55 @@ public class GraficFactory {
 		String url ="";
 		switch(lig.getTileState())
 		{
-		case EAST:
-			 url = "themes/happiness/darkness.png";
-			 
-			break;
 		case NORTH:
-			 url = "themes/happiness/darkness.png";
-			break;
+			if(isEnd(meineKachel))
+				url = "themes/happiness/light1.png";
+			else url = "themes/happiness/light2.png";
+			return ii = new ImageIcon(this.getClass().getClassLoader().getResource(url));
+			
+			
+		case EAST:
+			if(isEnd(meineKachel))
+				url = "themes/happiness/light1.png";
+			else url = "themes/happiness/light2.png";
+			ii = new ImageIcon(this.getClass().getClassLoader().getResource(url));
+			return rotateIcon(ii, Rotate.DOWN);
 		case SOUTH:
-			 url = "themes/happiness/darkness.png";
-			break;
+			if(isEnd(meineKachel))
+				url = "themes/happiness/light1.png";
+			else url = "themes/happiness/light2.png";
+			ii = new ImageIcon(this.getClass().getClassLoader().getResource(url));
+			return rotateIcon(ii, Rotate.UPSIDE_DOWN);
+			
 		case WEST:
-			 url = "themes/happiness/darkness.png";
-			break;
+			if(isEnd(meineKachel))
+				url = "themes/happiness/light1.png";
+			else url = "themes/happiness/light2.png";
+			ii = new ImageIcon(this.getClass().getClassLoader().getResource(url));
+			return rotateIcon(ii, Rotate.UP);
+			
 		case EMPTY:
 			 url = "themes/happiness/darkness.png";
 			break;
 			
 			default:
-				return null; //nicht schön aber einfach
+				return null; //nicht schoen aber einfach
 		}
-		
-		//Ansonsten zunaechst eine leere Kachel ausgeben
-		
+				
 		URL u = this.getClass().getClassLoader().getResource(url);
 		ii = new ImageIcon(u);
 		
 		return ii;
+	}
+	private Icon rotateIcon(ImageIcon ii, Rotate r)
+	{
+		RotatedIcon ri = new RotatedIcon(ii, r);
+		return ri;
+	}
+	private boolean isEnd(ITile tile)
+	{
+		//Noch zu implementieren: Wenn das Ende des Strahl erreicht ist: true 
+		return false;
 	}
 	
 	

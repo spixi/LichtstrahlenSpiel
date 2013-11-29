@@ -7,15 +7,11 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileNotFoundException;
+
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
+import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -27,14 +23,10 @@ import javax.swing.JSeparator;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 
-import org.easymock.EasyMock;
 
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.impl.LightController;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
-import de.bwvaachen.beamoflightgame.model.ITile;
-import de.bwvaachen.beamoflightgame.model.ITileState;
-import de.bwvaachen.beamoflightgame.model.LightTile;
 
 public class LightgameUI extends JFrame {
 
@@ -43,7 +35,7 @@ public class LightgameUI extends JFrame {
 	 */
 	private static final long serialVersionUID = -3961364231837270604L;
 	private JPanel contentPane;
-	private File lastSaveFile=null;
+	//private File lastSaveFile=null;
 	private ILightController controller = new LightController() ;
 	private ArrayList<TileButton> buttons = new ArrayList<TileButton>();
 	
@@ -120,7 +112,7 @@ public class LightgameUI extends JFrame {
 		int rows = 4 ; // = currentModel.getHeight() ;
 		int cols = 3 ; // = currentModel.getWidth() ;
 		
-		IBeamsOfLightPuzzleBoard currentModel = controller . getCurrentModel();
+		//IBeamsOfLightPuzzleBoard currentModel = controller . getCurrentModel();
 		rasterPanel . setLayout ( new GridLayout ( rows , cols , 0 , 0 ) ) ;
 		
 		// Schleife über das "Spielfeld"
@@ -147,7 +139,7 @@ public class LightgameUI extends JFrame {
 	 * @param btn 
 	 * @return Button mit Icon
 	 */
-	private TileButton addIcon(TileButton btn, ImageIcon ico)
+	private TileButton addIcon(TileButton btn, Icon ico)
 	{
 		btn.setIcon(ico);
 		return btn;

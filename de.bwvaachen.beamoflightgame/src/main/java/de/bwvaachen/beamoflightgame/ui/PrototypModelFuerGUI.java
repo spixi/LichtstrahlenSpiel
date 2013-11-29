@@ -145,6 +145,8 @@ public class PrototypModelFuerGUI implements IBeamsOfLightPuzzleBoard {
 		tiles[0][1] = new LightTile(0, 1);
 		tiles[0][2] = new LightTile(0, 2);
 		
+		((LightTile)tiles[0][0]).setState(LightTileState.NORTH);
+		
 		tiles[1][0] = new NumberTile(2, 1, 0);
 		tiles[1][1] = new NumberTile(2, 1, 1);
 		tiles[1][2] = new LightTile(1, 2);
