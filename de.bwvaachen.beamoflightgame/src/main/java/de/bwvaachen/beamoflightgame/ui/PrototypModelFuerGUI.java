@@ -16,12 +16,8 @@ import de.bwvaachen.beamoflightgame.model.NumberTileState;
 
 public class PrototypModelFuerGUI implements IBeamsOfLightPuzzleBoard {
 
-	ArrayList<ITile[]> tiles = new ArrayList<ITile[]>();
-	//maybe a Vector<ITile> would be better
-	//We could determine an index with the formula
-	//int x, y;
-	//long index = (x*width)+y;
-	
+	ITile[][] tiles = new ITile[4][3];
+		
 	
 	//	 _______________________
 	//	|	  	|	  	|	  	|
@@ -48,6 +44,7 @@ public class PrototypModelFuerGUI implements IBeamsOfLightPuzzleBoard {
 	
 	@Override
 	public Iterator<ITile> iterator() {
+		
 		//ugly, but working for now
 		return new Iterator<ITile>() {
 			int x=0, y=0;
@@ -55,7 +52,6 @@ public class PrototypModelFuerGUI implements IBeamsOfLightPuzzleBoard {
 
 			@Override
 			public boolean hasNext() {
-				// TODO Auto-generated method stub
 				return hasField(x,y);
 			}
 
@@ -80,7 +76,9 @@ public class PrototypModelFuerGUI implements IBeamsOfLightPuzzleBoard {
 				
 			}
 			
+			
 		};
+		
 	}
 
 	@Override
@@ -113,7 +111,7 @@ public class PrototypModelFuerGUI implements IBeamsOfLightPuzzleBoard {
 	@Override
 	public ITile getTileAt(int row, int col) throws IndexOutOfBoundsException {
 
-		return tiles.get(row)[col];
+		return tiles[row][col];
 	}
 
 	@Override
@@ -124,6 +122,7 @@ public class PrototypModelFuerGUI implements IBeamsOfLightPuzzleBoard {
 	}
 
 	@Override
+	@Deprecated
 	public ITile getTileByIndex(long index) {
 		// We can drop this unneccessary method soon, 
 		// because it is only confusing
@@ -132,15 +131,28 @@ public class PrototypModelFuerGUI implements IBeamsOfLightPuzzleBoard {
 
 	@Override
 	public boolean hasField(int row, int col) {
-		return(tiles.size()>row && tiles.get(0).length > col);
+		return(row <= getHeight() && col <= getWidth());
 	}
 
 	@Override
 	public void init(int rows, int cols, Iterable<NumberTile> nrs) {
-		tiles.add(new ITile[]{new LightTile(0, 0),new LightTile(0, 1), new LightTile(0, 2)});
-		tiles.add(new ITile[]{new NumberTile(2, 1, 0),new NumberTile(2, 1, 1), new LightTile(1, 2)});
-		tiles.add(new ITile[]{new LightTile(2, 0),new LightTile(2, 1), new LightTile(2, 2)});
-		tiles.add(new ITile[]{new LightTile(3, 0),new LightTile(3, 1), new NumberTile(5,3, 2)});
-	}
+		tiles[0][0] = new LightTile(0, 0);
+		tiles[0][1] = new LightTile(0, 1);
+		tiles[0][2] = new LightTile(0, 2);
+		
+		tiles[1][0] = new NumberTile(2, 1, 0);
+		tiles[1][1] = new NumberTile(2, 1, 1);
+		tiles[1][2] = new LightTile(1, 2);
+		
+		tiles[2][0] = new LightTile(2, 0);
+		tiles[2][1] = new LightTile(2, 1);
+		tiles[2][2] = new LightTile(2, 2);
+		
+		tiles[3][0] = new LightTile(3, 0);
+		tiles[3][1] = new LightTile(3, 1);
+		tiles[3][2] = new NumberTile(5,3, 2);
+		
+		
+		}
 
 }

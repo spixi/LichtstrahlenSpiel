@@ -152,6 +152,12 @@ public class LightgameUI extends JFrame {
 		btn.setIcon(ri);
 		return btn;
 	} 
+	
+	private void Update(IBeamsOfLightPuzzleBoard model)
+	{
+		
+	}
+	
 
 	
 	private void buildMenu() {
