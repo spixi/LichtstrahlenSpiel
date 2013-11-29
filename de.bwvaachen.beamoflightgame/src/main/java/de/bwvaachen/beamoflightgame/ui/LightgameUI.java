@@ -7,14 +7,11 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -26,7 +23,6 @@ import javax.swing.JSeparator;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 
-import org.easymock.EasyMock;
 
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.impl.LightController;
@@ -39,8 +35,9 @@ public class LightgameUI extends JFrame {
 	 */
 	private static final long serialVersionUID = -3961364231837270604L;
 	private JPanel contentPane;
-	private File lastSaveFile=null;
+	//private File lastSaveFile=null;
 	private ILightController controller = new LightController() ;
+	private ArrayList<TileButton> buttons = new ArrayList<TileButton>();
 	
 	/*
 	private ILightController controller=new ILightController() {
@@ -113,9 +110,9 @@ public class LightgameUI extends JFrame {
 
 		// TODO temporär feste Werte für Tests eingetragen.
 		int rows = 4 ; // = currentModel.getHeight() ;
-		int cols = 4 ; // = currentModel.getWidth() ;
+		int cols = 3 ; // = currentModel.getWidth() ;
 		
-		IBeamsOfLightPuzzleBoard currentModel = controller . getCurrentModel();
+		//IBeamsOfLightPuzzleBoard currentModel = controller . getCurrentModel();
 		rasterPanel . setLayout ( new GridLayout ( rows , cols , 0 , 0 ) ) ;
 		
 		// Schleife über das "Spielfeld"
@@ -125,14 +122,16 @@ public class LightgameUI extends JFrame {
 				// Neuen Button erzeugen
 				TileButton newTileButton = new TileButton ( row, col ) ;
 				// Icon hinzufügen
-				newTileButton = addIcon ( newTileButton ) ;
+				//newTileButton = addIcon ( newTileButton ) ;
 				// Action verbinden
 				newTileButton . addActionListener ( new TileButtonListener() ) ;					
 				// Aufs Panel setzen
 				rasterPanel . add ( newTileButton ) ;
+				buttons . add (newTileButton);
 				
 			} // for ( int col=0 ;col<cols ; col++ )
 		} // for ( int row=0 ; row<rows ; row++ )
+		Update(new PrototypModelFuerGUI());
 	} // public LightgameUI()
 
 	/**
@@ -140,22 +139,27 @@ public class LightgameUI extends JFrame {
 	 * @param btn 
 	 * @return Button mit Icon
 	 */
-	private TileButton addIcon(TileButton btn)
+	private TileButton addIcon(TileButton btn, Icon ico)
 	{
-		File f 		 = new File("resources/themes/alternativ/LightBeam-end.png");
-		ImageIcon ii = null;
-		URL u 		 = this.getClass().getClassLoader().getResource("themes/alternativ/LightBeam-row.png");
-		
-		ii = new ImageIcon(u);
-
-		RotatedIcon ri = new RotatedIcon(ii,RotatedIcon.Rotate.UP);
-		btn.setIcon(ri);
+		btn.setIcon(ico);
 		return btn;
 	} 
 	
+	/**
+	 * @author pauls 
+	 * @param model
+	 */
 	private void Update(IBeamsOfLightPuzzleBoard model)
 	{
-		
+		GraficFactory gf = new GraficFactory();
+		for(TileButton btn : buttons)
+		{
+			int row = btn.getRow();
+			int col = btn.getCol();
+
+			addIcon(btn, gf.getImage(model.getTileAt(row, col)));		
+			
+		}
 	}
 	
 
@@ -220,7 +224,7 @@ public class LightgameUI extends JFrame {
 				if(fileChooser.showOpenDialog(LightgameUI.this)!=JFileChooser.CANCEL_OPTION){
 					File selectedFile = fileChooser.getSelectedFile();
 					if(selectedFile!=null&& selectedFile.exists()){
-							//ï¿½ffnen
+							//oeffnen
 					}
 					
 				}
