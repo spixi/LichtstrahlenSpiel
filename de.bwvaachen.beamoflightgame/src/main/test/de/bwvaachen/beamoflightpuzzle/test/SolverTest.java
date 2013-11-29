@@ -39,8 +39,8 @@ public class SolverTest {
 	}
 	
 	@Test
-	public void lonelyFieldStrategyTest() throws InstantiationException, IllegalAccessException, PuzzleException {
-		List<NumberTile> numberTiles = Arrays.asList(new NumberTile[] {null, null});
+	public void lonelyFieldStrategyTest() throws PuzzleException, InstantiationException, IllegalAccessException {
+		List<NumberTile> numberTiles = Arrays.asList(new NumberTile[] {new NumberTile(1,0,0), new NumberTile(2,0,4)});
 		
 		//Board: 1 _ _ _ 2
 		
