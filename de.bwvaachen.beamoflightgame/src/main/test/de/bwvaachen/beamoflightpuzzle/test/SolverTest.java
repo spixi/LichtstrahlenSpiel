@@ -15,6 +15,7 @@ import de.bwvaachen.beamoflightgame.logic.PuzzleException;
 import de.bwvaachen.beamoflightgame.logic.solver.SolverBuilder;
 import de.bwvaachen.beamoflightgame.logic.strategies.*;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
@@ -45,7 +46,12 @@ public class SolverTest {
 		//Board: 1 _ _ _ 2
 		
 		IBeamsOfLightPuzzleBoard b = new BeamsOfLightPuzzleBoard();
-		b.init(1, 5, numberTiles);
+		b.init(1, 5);
+		b.putTile(new NumberTile(1,0,0));
+		b.putTile(new LightTile(0,1));
+		b.putTile(new LightTile(0,2));
+		b.putTile(new LightTile(0,3));
+		b.putTile(new NumberTile(2,0,4));
 		//TODO !!!
 		
 		System.out.println(b.toString());

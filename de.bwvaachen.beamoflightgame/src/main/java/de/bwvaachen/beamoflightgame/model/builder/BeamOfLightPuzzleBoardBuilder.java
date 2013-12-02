@@ -34,7 +34,7 @@ public class BeamOfLightPuzzleBoardBuilder {
 		//Use context classes instead (See SolverBuilder and ISolverBuilderContext)
 		if(board==null){
 			board = clazz.newInstance();
-			board.init(rows, cols, null); //TODO
+			board.init(rows, cols); //TODO
 			contentChanged=false;
 		}
 		return board;

@@ -2,10 +2,6 @@ package de.bwvaachen.beamoflightgame.model.impl;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.TreeMap;
-
-import org.easymock.EasyMock;
-
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
@@ -17,7 +13,6 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 	private int width, height;
 	private ITile[][] tiles;
 	private LinkedList<NumberTile> numberTiles;
-
 
 	@Override
 	public Iterator<ITile> iterator() {
@@ -82,33 +77,28 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 		return (row>0) && (row<getWidth()) && (col>0) && (col<getWidth());
 	}
 
-
 	@Override
-	public void init(int rows, int cols, Iterable<NumberTile> nrs) {
+	public void init(int rows, int cols) {
 		height = rows;
 		width  = cols;
 		
 		tiles       = new ITile[width][height];
 		numberTiles = new LinkedList<NumberTile>();
-		
-		for (NumberTile nt : nrs) {
-			numberTiles.add(nt);
-			tiles[nt.getCol()][nt.getRow()] = nt;
-		}
-		
-		for(int x=0; x<width; x++) {
-			for(int y=0; y<height; y++) {
-				if(tiles[x][y] == null)
-				  tiles[x][y] = new LightTile(x,y);
-			}
-		}
 	}
 
 	@Override
-	@Deprecated 
-	public ITile getTileByIndex(long index) {
-		// TODO Auto-generated method stub
-		return null;
+	public void putTile(NumberTile tile) {
+		putTileInternal(tile);
+		numberTiles.add(tile);
+	}
+	
+	@Override
+	public void putTile(LightTile tile) {
+		putTileInternal(tile);
+	}
+	
+	private void putTileInternal(ITile tile) {
+		tiles[tile.getCol()][tile.getRow()] = tile;
 	}
 
 }

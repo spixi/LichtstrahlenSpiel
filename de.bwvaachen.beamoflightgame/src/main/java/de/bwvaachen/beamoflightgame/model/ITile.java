@@ -1,11 +1,12 @@
 package de.bwvaachen.beamoflightgame.model;
 
-import java.io.Serializable;
-
-import javax.swing.undo.StateEditable;
+import javax.swing.event.ChangeListener;
 
 public interface ITile<T extends ITileState> {
 	public int getRow();
 	public int getCol();
+	public void addChangeListener(ChangeListener cl);
+	public void removeChangeListener(ChangeListener cl);
 	public T getTileState();
+	public boolean isStateChangeable();
 }

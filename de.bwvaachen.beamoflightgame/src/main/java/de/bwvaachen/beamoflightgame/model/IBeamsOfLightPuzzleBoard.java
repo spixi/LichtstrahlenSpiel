@@ -8,12 +8,13 @@ public interface IBeamsOfLightPuzzleBoard extends Iterable<ITile> {
 	public int getHeight();
 	
 	public int getNumOfNumberTiles();
-	
 	public ITile getTileAt(int row, int col) throws IndexOutOfBoundsException;
 	
 	public boolean isPlacementOfTileStatePossible(LightTileState state, int row, int col);
-	public ITile getTileByIndex(long index);
-	public boolean hasField(int row, int col);
 	
-	public void init(int rows, int cols, Iterable<NumberTile> nrs);
+	public boolean hasField(int row, int col);
+	public void init(int rows, int cols);
+
+	public void putTile(LightTile tile);
+	public void putTile(NumberTile tile);
 }

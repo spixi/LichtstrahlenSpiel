@@ -3,6 +3,11 @@ package de.bwvaachen.beamoflightgame.helper;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 
+/**
+ * 
+ * @author Marius
+ *
+ */
 public class BoardTraverser {
 	private final IBeamsOfLightPuzzleBoard board;
 	int x, y, startX, startY;
@@ -25,7 +30,7 @@ public class BoardTraverser {
 
 	//Move the cursor relative 
 	public boolean shift(int x, int y) {
-		if (! board.hasField(x, y)) return false;
+		if (! board.hasField(this.x+x, this.y+y)) return false;
 		this.x += x;
 		this.y += y;
 		return true;

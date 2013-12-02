@@ -1,11 +1,17 @@
 package de.bwvaachen.beamoflightgame.model;
 
 import java.util.Hashtable;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 	private final int row, col;
 	private final Class<T> allowedStateClass;
 	private ITileState tileState;
+	protected LinkedHashSet<ChangeListener> changeListeners;
 	
 	public boolean isStateChangeable() {
 		return this instanceof IChangeableTile;
@@ -35,6 +41,7 @@ public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 		this.row               = row;
 		this.col               = col;
 		this.allowedStateClass = allowedStateClass;
+		this.changeListeners   = new LinkedHashSet<ChangeListener>();
 	}
 
 	@Override
@@ -54,6 +61,17 @@ public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 	
 	protected final void setTileState(T tileState) {
 		this.tileState = tileState;
+		for(ChangeListener l : changeListeners) {
+			l.stateChanged(new ChangeEvent(this));
+		}
+	}
+	
+	public void addChangeListener(ChangeListener cl) {
+		changeListeners.add(cl);
+	}
+	
+	public void removeChangeListener(ChangeListener cl) {
+		changeListeners.remove(cl);
 	}
 	
 	public String toString() {

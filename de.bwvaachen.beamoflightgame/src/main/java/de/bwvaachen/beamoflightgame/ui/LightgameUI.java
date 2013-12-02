@@ -27,6 +27,7 @@ import javax.swing.filechooser.FileFilter;
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.impl.LightController;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.model.LightTile;
 
 public class LightgameUI extends JFrame {
 
@@ -108,20 +109,20 @@ public class LightgameUI extends JFrame {
 		JPanel rasterPanel = new JPanel();
 		contentPane.add(rasterPanel, BorderLayout.CENTER);
 
-		// TODO temporär feste Werte für Tests eingetragen.
+		// TODO temporï¿½r feste Werte fï¿½r Tests eingetragen.
 		int rows = 4 ; // = currentModel.getHeight() ;
 		int cols = 3 ; // = currentModel.getWidth() ;
 		
 		//IBeamsOfLightPuzzleBoard currentModel = controller . getCurrentModel();
 		rasterPanel . setLayout ( new GridLayout ( rows , cols , 0 , 0 ) ) ;
 		
-		// Schleife über das "Spielfeld"
+		// Schleife ï¿½ber das "Spielfeld"
 		for ( int row=0 ; row<rows ; row++ ) {
 			for ( int col=0 ;col<cols ; col++ ) {
 
 				// Neuen Button erzeugen
-				TileButton newTileButton = new TileButton ( row, col ) ;
-				// Icon hinzufügen
+				TileButton newTileButton = new TileButton ( new LightTile(row,col) ) ;
+				// Icon hinzufï¿½gen
 				//newTileButton = addIcon ( newTileButton ) ;
 				// Action verbinden
 				newTileButton . addActionListener ( new TileButtonListener() ) ;					
@@ -131,6 +132,9 @@ public class LightgameUI extends JFrame {
 				
 			} // for ( int col=0 ;col<cols ; col++ )
 		} // for ( int row=0 ; row<rows ; row++ )
+		
+		//Der JButton implementiert ImageObserver ... Wir brauchen also eigentlich nur das Bild
+		//austauschen und -schwupp- sollte der Button sich mitÃ¤ndern, oder etwa nicht?
 		Update(new PrototypModelFuerGUI());
 	} // public LightgameUI()
 
@@ -159,8 +163,7 @@ public class LightgameUI extends JFrame {
 			int row = btn.getRow();
 			int col = btn.getCol();
 
-			addIcon(btn, gf.getImage(model.getTileAt(row, col)));		
-			
+			addIcon(btn, gf.getImage(model.getTileAt(col, row)));		
 		}
 	}
 	
@@ -305,7 +308,7 @@ public class LightgameUI extends JFrame {
 	
 	
 	/**
-	 * Action für den Klick auf ein Tile
+	 * Action fï¿½r den Klick auf ein Tile
 	 * 
 	 * @author gbraun, pauls_and
 	 */
@@ -313,7 +316,7 @@ public class LightgameUI extends JFrame {
 	{
 
 		/**
-		 * Ändert die Hintergrundfarbe.
+		 * ï¿½ndert die Hintergrundfarbe.
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {

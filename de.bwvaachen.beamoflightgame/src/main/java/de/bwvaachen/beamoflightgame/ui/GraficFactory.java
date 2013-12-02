@@ -32,7 +32,7 @@ public class GraficFactory {
 	private BoardTraverser traverser;
 	
 	/**
-	 * Liefert das passende Picture für die Kachel  zurück
+	 * Liefert das passende Picture fï¿½r die Kachel  zurï¿½ck
 	 * @param meineKachel Das ITile welches gesetzt werdem soll
 	 * @return Das passende Image :D
 	 */
@@ -105,42 +105,30 @@ public class GraficFactory {
 	}
 	
 	/**
-	 * Gibt an ob der Lichtstrah zuende ist
-	 * @param tile  Das Lighttile welches geprüft werden soll
-	 * @return true wenn das Licht an diesem Punkz zu Ende ist.
+	 * Gibt an, ob der Lichtstrahl zu Ende ist
+	 * @param tile  Das LightTile welches geprueft werden soll
+	 * @return true, wenn das Licht an diesem Punkt zu Ende ist
+	 * @author Marius
 	 */
 	private boolean isEnd(LightTile tile)
 	{
-		//traverser auf die Position der aktuellen Kachel schieben
-		traverser.shift(tile.getCol(), tile.getRow());
+		//Traverser auf die Position der aktuellen Kachel schieben
+		traverser.moveTo(tile.getCol(), tile.getRow());
+		//Traverser-Richtung holen
+		TraverseDirection td = tile.getTileState().getTraverseDirection();
 		
-		LightTileState lst = tile . getTileState();
-		//Traversobjekt anlegen zu dem sich bewegt werden soll
-		int x=tile.getCol(), 
-			y = tile.getRow();
+		//end of the board: shift() will return false
+		//else: has the neighbour tile another state?
 		
-		switch(lst)
-		{
-		case EAST:
-			x++;
-			break;
-		case NORTH:
-			y--;
-			break;
-		case SOUTH:
-			y++;
-			break;
-		case WEST:
-			x--;
-			break;
-		default:
-			throw new IllegalArgumentException("Es wurde kein gueltiger LightTileState uebergeben!");		
+		System.out.println(td.y);
+		if(traverser.shift(td)) {
+			
+			return traverser.get().getTileState() != tile.getTileState();
 		}
-		
-		TraverseDirection td = new TraverseDirection(x,y);
-		
-		
-		return !traverser.shift(td);
+		else {
+			//End of the board:
+			return true;
+		}
 	}
 	
 	
