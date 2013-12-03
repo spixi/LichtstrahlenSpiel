@@ -30,12 +30,12 @@ public class TileButton extends JButton implements ChangeListener {
 	}
 	
 	public int getRow() {
-		return tile.getRow();
+		return tile.getY();
 	}
 
 
 	public int getCol() {
-		return tile.getCol();
+		return tile.getX();
 	}
 
 	@Override

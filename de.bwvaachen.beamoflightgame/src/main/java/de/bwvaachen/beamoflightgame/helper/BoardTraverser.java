@@ -17,7 +17,6 @@ public class BoardTraverser {
 		y = startY;
 	}
 	
-	
 	public BoardTraverser(final IBeamsOfLightPuzzleBoard b, int x, int y) {
 		this.board = b;
 		this.x = startX = x;
@@ -28,15 +27,12 @@ public class BoardTraverser {
 		return board.getTileAt(x, y);
 	}
 
-	//Move the cursor relative 
+	//Move the cursor relatively
 	public boolean shift(int x, int y) {
-		if (! board.hasField(this.x+x, this.y+y)) return false;
-		this.x += x;
-		this.y += y;
-		return true;
+		return moveTo(this.x+x,this.y+y);
 	}
 	/**
-	 * Verify a turn or a move on the Board
+	 * Shift the cursor using a TraverseDirection object
 	 * @param d
 	 * @return false if move impossible - otherwise true
 	 */
@@ -53,6 +49,7 @@ public class BoardTraverser {
 	}
 	
 	public boolean moveTo(int x, int y) {
+		System.out.printf("moveTo: %d,%d,%b\n", x, y, board.hasField(x, y));
 		if (! board.hasField(x, y)) return false;
 		this.x = x;
 		this.y = y;

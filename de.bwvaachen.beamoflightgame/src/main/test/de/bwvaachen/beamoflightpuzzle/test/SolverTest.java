@@ -40,18 +40,16 @@ public class SolverTest {
 	}
 	
 	@Test
-	public void lonelyFieldStrategyTest() throws PuzzleException, InstantiationException, IllegalAccessException {
-		List<NumberTile> numberTiles = Arrays.asList(new NumberTile[] {new NumberTile(1,0,0), new NumberTile(2,0,4)});
-		
+	public void lonelyFieldStrategyTest() throws PuzzleException, InstantiationException, IllegalAccessException {		
 		//Board: 1 _ _ _ 2
 		
 		IBeamsOfLightPuzzleBoard b = new BeamsOfLightPuzzleBoard();
-		b.init(1, 5);
-		b.putTile(new NumberTile(1,0,0));
-		b.putTile(new LightTile(0,1));
-		b.putTile(new LightTile(0,2));
-		b.putTile(new LightTile(0,3));
-		b.putTile(new NumberTile(2,0,4));
+		b.init(5,1);
+		b.putTile(new NumberTile(b,1,0,0));
+		b.putTile(new LightTile(b,1,0));
+		b.putTile(new LightTile(b,2,0));
+		b.putTile(new LightTile(b,3,0));
+		b.putTile(new NumberTile(b,2,4,0));
 		//TODO !!!
 		
 		System.out.println(b.toString());

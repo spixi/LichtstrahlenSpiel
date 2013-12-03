@@ -20,11 +20,16 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 			int x = 0, y = 0;
 
 			public boolean hasNext() {
-				return (x <= width) && (y <= height);
+				return (x < getWidth());
 			}
 
 			public ITile next() {
-				return getTileAt(x,y);
+				ITile next = getTileAt(x,y);
+				if (++y==getHeight()) {
+					y=0;
+					x++;
+				};
+				return next;
 			}
 
 			public void remove() throws UnsupportedOperationException {
@@ -43,13 +48,13 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 	}
 
 	@Override
-	public ITile getTileAt(int row, int col) throws IndexOutOfBoundsException {
-		return tiles[row][col];
+	public ITile getTileAt(int x, int y) throws IndexOutOfBoundsException {
+		return tiles[x][y];
 	}
 
 	@Override
 	public boolean isPlacementOfTileStatePossible(LightTileState state,
-			int row, int col) {
+			int x, int y) {
 		return true;
 	}
 
@@ -73,14 +78,14 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 	}
 
 	@Override
-	public boolean hasField(int row, int col) {
-		return (row>0) && (row<getWidth()) && (col>0) && (col<getWidth());
+	public boolean hasField(int x, int y) {
+		return ( (x>(-1)) && (x<getWidth()) && (y>(-1)) && (y<getHeight()) );
 	}
 
 	@Override
-	public void init(int rows, int cols) {
-		height = rows;
-		width  = cols;
+	public void init(int x, int y) {
+		width  = x;
+		height = y;
 		
 		tiles       = new ITile[width][height];
 		numberTiles = new LinkedList<NumberTile>();
@@ -98,7 +103,7 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 	}
 	
 	private void putTileInternal(ITile tile) {
-		tiles[tile.getCol()][tile.getRow()] = tile;
+		tiles[tile.getX()][tile.getY()] = tile;
 	}
 
 }

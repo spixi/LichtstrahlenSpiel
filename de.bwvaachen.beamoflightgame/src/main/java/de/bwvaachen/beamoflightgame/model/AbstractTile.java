@@ -8,7 +8,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
-	private final int row, col;
+	protected final IBeamsOfLightPuzzleBoard board;
+	private final int y, x;
 	private final Class<T> allowedStateClass;
 	private ITileState tileState;
 	protected LinkedHashSet<ChangeListener> changeListeners;
@@ -37,21 +38,22 @@ public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 		tileState = (ITileState) received;
 	}
 	
-	protected AbstractTile(final int row, final int col, Class<T> allowedStateClass) {
-		this.row               = row;
-		this.col               = col;
+	protected AbstractTile(final IBeamsOfLightPuzzleBoard board, final int x, final int y, Class<T> allowedStateClass) {
+		this.board             = board;
+		this.y               = y;
+		this.x               = x;
 		this.allowedStateClass = allowedStateClass;
 		this.changeListeners   = new LinkedHashSet<ChangeListener>();
 	}
-
+	
 	@Override
-	public int getRow() {
-		return row;
+	public final int getX() {
+		return x;
 	}
 
 	@Override
-	public int getCol() {
-		return col;
+	public final int getY() {
+		return y;
 	}
 	
 	@SuppressWarnings("unchecked")

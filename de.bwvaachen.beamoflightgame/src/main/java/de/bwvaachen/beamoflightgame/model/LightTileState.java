@@ -7,10 +7,30 @@ import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 
 public enum LightTileState implements ITileState {
-	SOUTH('s', new TraverseDirection(0,1)),
-	WEST('w', new TraverseDirection(-1,0)),
-	NORTH('n', new TraverseDirection(0,-1)),
-	EAST('e', new TraverseDirection(1,0)),
+	SOUTH('s', new TraverseDirection(0,1)) {
+		@Override
+		public LightTileState reverse() {
+			return NORTH;
+		}
+	},
+	WEST('w', new TraverseDirection(-1,0)) {
+		@Override
+		public LightTileState reverse() {
+			return EAST;
+		}
+	},
+	NORTH('n', new TraverseDirection(0,-1)) {
+		@Override
+		public LightTileState reverse() {
+			return SOUTH;
+		}
+	},
+	EAST('e', new TraverseDirection(1,0)) {
+		@Override
+		public LightTileState reverse() {
+			return WEST;
+		}
+	},
 	EMPTY('-', null);
 	private char sign;
 	private TraverseDirection traverseDirection;
@@ -26,6 +46,10 @@ public enum LightTileState implements ITileState {
 
 	public char getSign() {
 		return sign;
+	}
+	
+	public LightTileState reverse() {
+		return this;
 	}
 
 	public static LightTileState signToState(char c){

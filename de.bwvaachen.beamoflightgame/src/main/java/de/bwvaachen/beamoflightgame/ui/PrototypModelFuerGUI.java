@@ -31,39 +31,39 @@ public class PrototypModelFuerGUI extends BeamsOfLightPuzzleBoard {
 	//	|_______|_______|_______|
 
 	public PrototypModelFuerGUI() {
-		init(4,3);
+		init(3,4);
 	}
 	
 
 	@Override
-	public void init(int rows, int cols) {
-		super.init(rows,cols);
+	public void init(int x, int y) {
+		super.init(x,y);
 		
 		IChangeableTile t;
 		
-		putTile(new LightTile(0, 0));
-		putTile(new LightTile(0, 1));
-		putTile(new LightTile(0, 2));
-		t = (IChangeableTile)getTileAt(0, 0);
+		putTile(new LightTile(this,0,0));
+		putTile(new LightTile(this,1,0));
+		putTile(new LightTile(this,2,0));
+		putTile(new NumberTile(this,2,0,1));
+		putTile(new NumberTile(this,2,1,1));
+		putTile(new LightTile(this,2,1));
+		putTile(new LightTile(this,0,2));
+		putTile(new LightTile(this,1,2));
+		putTile(new LightTile(this,2,2));
+		putTile(new LightTile(this,0,3));
+		putTile(new LightTile(this,1,3));
+		putTile(new NumberTile(this,5,2,3));
+
+		t = (IChangeableTile)getTileAt(0,0);
 		t.setState(LightTileState.NORTH);
 		
-		putTile(new NumberTile(2, 1, 0));
-		putTile(new NumberTile(2, 1, 1));
-		putTile(new LightTile(1, 2));
-		putTile(new LightTile(2, 0));
-		
-		putTile(new LightTile(2, 1));
 		t = (IChangeableTile)getTileAt(2,1);
 		t.setState(LightTileState.NORTH);
-		
-		putTile(new LightTile(2, 2));
+
 		t = (IChangeableTile)getTileAt(2,2);
 		t.setState(LightTileState.NORTH);
 		
-		putTile(new LightTile(3, 0));
-		putTile(new LightTile(3, 1));
-		
-		putTile(new NumberTile(5, 3, 2));
+		System.out.println(this);
 		
 	}
 

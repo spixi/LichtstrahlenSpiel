@@ -35,7 +35,9 @@ public class SolverBuilder {
 
 				
 				private void step(ITile tile, int stackPointer) throws PuzzleException {
-					if (stackPointer == strategies.size()) throw new UnsolvablePuzzleException();
+					//if (stackPointer == strategies.size()) throw new UnsolvablePuzzleException();
+					if (stackPointer == strategies.size()) return;
+					
 					IStrategy currentStrategy = strategies.get(stackPointer);
 					
 					if ( !currentStrategy.isAppliableForTile(tile) ) {
@@ -44,7 +46,7 @@ public class SolverBuilder {
 					else {
 						currentStrategy.init(board, tile);
 						boolean canSolve = currentStrategy.tryToSolve();
-						if(!canSolve) step(tile, stackPointer+1);
+						//if(!canSolve) step(tile, stackPointer+1);
 					}
 				}
 				

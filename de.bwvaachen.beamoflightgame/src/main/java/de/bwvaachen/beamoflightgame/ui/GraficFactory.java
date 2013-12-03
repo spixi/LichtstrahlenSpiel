@@ -113,14 +113,13 @@ public class GraficFactory {
 	private boolean isEnd(LightTile tile)
 	{
 		//Traverser auf die Position der aktuellen Kachel schieben
-		traverser.moveTo(tile.getCol(), tile.getRow());
+		traverser.moveTo(tile.getX(), tile.getY());
 		//Traverser-Richtung holen
 		TraverseDirection td = tile.getTileState().getTraverseDirection();
 		
 		//end of the board: shift() will return false
 		//else: has the neighbour tile another state?
 		
-		System.out.println(td.y);
 		if(traverser.shift(td)) {
 			
 			return traverser.get().getTileState() != tile.getTileState();

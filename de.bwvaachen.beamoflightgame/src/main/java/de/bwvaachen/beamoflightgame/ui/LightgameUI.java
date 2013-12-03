@@ -121,7 +121,7 @@ public class LightgameUI extends JFrame {
 			for ( int col=0 ;col<cols ; col++ ) {
 
 				// Neuen Button erzeugen
-				TileButton newTileButton = new TileButton ( new LightTile(row,col) ) ;
+				TileButton newTileButton = new TileButton ( new LightTile(controller.getCurrentModel(), row, col) ) ;
 				// Icon hinzuf�gen
 				//newTileButton = addIcon ( newTileButton ) ;
 				// Action verbinden
@@ -163,7 +163,7 @@ public class LightgameUI extends JFrame {
 			int row = btn.getRow();
 			int col = btn.getCol();
 
-			addIcon(btn, gf.getImage(model.getTileAt(col, row)));		
+			addIcon(btn, gf.getImage(model.getTileAt(row,col)));		
 		}
 	}
 	

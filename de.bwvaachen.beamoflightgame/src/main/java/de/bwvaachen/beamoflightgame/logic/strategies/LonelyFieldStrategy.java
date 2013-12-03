@@ -17,15 +17,12 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 	private BoardTraverser traverser;
 	
 	protected void _init() {
-		traverser = new BoardTraverser(board, tile.getRow(), tile.getCol());
+		traverser = new BoardTraverser(board, tile.getX(), tile.getY());
 	}
 	
 	@Override
 	public boolean tryToSolve() throws PuzzleException {
 		//get the next NumberTiles which could reach the tile
-		
-		//TODO ...
-		
 		ITile currentTile;
 	    NumberTile neighbour = null;
 	    IndexedMap<LightTileState,NumberTile> neighbours
@@ -37,29 +34,29 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 	    		LightTileState.EAST,
 	    		LightTileState.SOUTH,
 	    		LightTileState.WEST}) {
-		
 	    	
 	    	neighbour = findNeighbour(lts);
+
 	    	if (neighbour != null) {
-	    		
 	    		//determine the distance to the neighbour NumberTile.
-	    		int distance =  Math.abs(tile.getRow()-neighbour.getRow())
-	    		              + Math.abs(tile.getCol()-neighbour.getCol());
+	    		int distance =  Math.abs(tile.getX()-neighbour.getX())
+	    		              + Math.abs(tile.getY()-neighbour.getY());
 	    		
-	    		//Check whether the neighbour NumberTile actually can reach the ITile
-	    		if (distance > neighbour.getRemainingLightRange()) {
+	    		if (distance <= neighbour.getRemainingLightRange()) {
 	    			neighbours.put(lts,neighbour);
 	    		}     
 	    		     
 	    	}
+	    	
+	    	System.out.printf("%d, %d, %s: %d\n", tile.getX(), tile.getY(), lts, neighbours.size());
 	    	
 	    	if (neighbours.size() > 1) break;
 	    
 	    }
 	    
 	    switch(neighbours.size()) {
-	    case 0: throw new UnsolvablePuzzleException(); //The tile is unreachable 
-	    case 1: { 
+	    case 0: return false;  //throw new UnsolvablePuzzleException(); //The tile is unreachable 
+	    case 1: {              //only one neighbour can reach this field
 	    	Map.Entry<LightTileState,NumberTile> entry = neighbours.getEntryByIndex(0);
 	    	fillBoard(entry.getValue(), entry.getKey());
 	    	return true;
@@ -72,24 +69,28 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 	private void fillBoard(NumberTile neighbour, LightTileState direction) {
 		TraverseDirection traverseDirection = direction.getTraverseDirection();
 		
+		BoardTraverser t = new BoardTraverser(board, neighbour.getX(), neighbour.getY());
 		traverser.reset();
-		ITile next = traverser.get();
 		
-		while(next != neighbour) {
+		ITile next = traverser.get();
+		for (int i = neighbour.getRemainingLightRange(); i>=0; --i) {
+			if(next == neighbour) break; //We already reached the neighbour: then break
 			traverser.shift(traverseDirection);
 			assert next instanceof LightTile;
-			((LightTile) next).setState(direction);
+			((LightTile) next).setState(direction.reverse());
 			next = traverser.get();
 		}
 	}
 
     private boolean doesCross(ITileState a, ITileState b) {
-    	return ( (a==b) || (a==LightTileState.EMPTY) );
+    	return !( (a==LightTileState.EMPTY) || (a!=b) );
     }
     
     
     private NumberTile findNeighbour(LightTileState lts) {
     	ITile currentTile = null;
+
+    	traverser.reset();
     	
     	while (traverser.shift(lts.getTraverseDirection())) {
     		currentTile = traverser.get();
@@ -100,12 +101,11 @@ public class LonelyFieldStrategy extends AbstractStrategy {
     			if (doesCross(currentTile.getTileState(), lts ))
     				return null;
     		}
-    		else 
-    		
-    		if(currentTile instanceof NumberTile) //found an NumberTile
+    		else if(currentTile instanceof NumberTile) { //found an NumberTile
     			                                   //This is our neighbour.
     			return (NumberTile) currentTile;    
     		}
+    	}
     	//We have reached the end of the board ...
     	//So there is no neighbour.
 	    return null;
