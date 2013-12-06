@@ -79,5 +79,8 @@ public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 	public String toString() {
 		return getTileState().toString();
 	}
-	
+	public boolean equals(ITile t)
+	{
+		return t.getTileState().equals(this.getTileState());
+	}
 }

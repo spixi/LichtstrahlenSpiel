@@ -32,7 +32,7 @@ public class GraficFactory {
 	private BoardTraverser traverser;
 	
 	/**
-	 * Liefert das passende Picture f�r die Kachel  zur�ck
+	 * Liefert das passende Picture fuer die Kachel  zurueck
 	 * @param meineKachel Das ITile welches gesetzt werdem soll
 	 * @return Das passende Image :D
 	 */
@@ -57,7 +57,7 @@ public class GraficFactory {
 			if(isEnd(lig))
 				url = "themes/happiness/light2.png";
 			else url = "themes/happiness/light1.png";
-			return ii = new ImageIcon(this.getClass().getClassLoader().getResource(url));
+			return new ImageIcon(this.getClass().getClassLoader().getResource(url));
 			
 			
 		case EAST:
@@ -66,6 +66,7 @@ public class GraficFactory {
 			else url = "themes/happiness/light1.png";
 			ii = new ImageIcon(this.getClass().getClassLoader().getResource(url));
 			return rotateIcon(ii, Rotate.DOWN);
+			
 		case SOUTH:
 			if(isEnd(lig))
 				url = "themes/happiness/light2.png";

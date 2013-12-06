@@ -9,4 +9,5 @@ public interface ITile<T extends ITileState> {
 	public void removeChangeListener(ChangeListener cl);
 	public T getTileState();
 	public boolean isStateChangeable();
+	public boolean equals(ITile t);
 }

@@ -54,15 +54,15 @@ public class PrototypModelFuerGUI extends BeamsOfLightPuzzleBoard {
 		putTile(new LightTile(this,1,3));
 		putTile(new NumberTile(this,5,2,3));
 
-		t = (IChangeableTile)getTileAt(0,0);
-		t.setState(LightTileState.NORTH);
+		//t = (IChangeableTile)getTileAt(0,0);
+		//t.setState(LightTileState.NORTH);
 		
-		t = (IChangeableTile)getTileAt(2,1);
-		t.setState(LightTileState.NORTH);
-
-		t = (IChangeableTile)getTileAt(2,2);
-		t.setState(LightTileState.NORTH);
-		
+//		t = (IChangeableTile)getTileAt(2,1);
+//		t.setState(LightTileState.NORTH);
+//
+//		t = (IChangeableTile)getTileAt(2,2);
+//		t.setState(LightTileState.NORTH);
+//		
 		System.out.println(this);
 		
 	}

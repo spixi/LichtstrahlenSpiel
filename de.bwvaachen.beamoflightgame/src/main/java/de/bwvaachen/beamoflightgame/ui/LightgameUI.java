@@ -125,7 +125,8 @@ public class LightgameUI extends JFrame {
 				// Icon hinzuf�gen
 				//newTileButton = addIcon ( newTileButton ) ;
 				// Action verbinden
-				newTileButton . addActionListener ( new TileButtonListener() ) ;					
+				newTileButton . addActionListener ( new TileButtonListener() ) ;
+				
 				// Aufs Panel setzen
 				rasterPanel . add ( newTileButton ) ;
 				buttons . add (newTileButton);
