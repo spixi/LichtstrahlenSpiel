@@ -23,6 +23,10 @@ public class BoardTraverser {
 		this.y = startY = y;
 	}
 	
+	public BoardTraverser(final IBeamsOfLightPuzzleBoard b, final ITile t) {
+		this(b, t.getX(), t.getY());
+	}
+	
 	public ITile get() {
 		return board.getTileAt(x, y);
 	}
