@@ -22,11 +22,6 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 	
 	@Override
 	public boolean tryToSolve() throws PuzzleException {
-		//get the next NumberTiles which could reach the tile
-		if ((tile.getX() == 2) && (tile.getY() == 0)) {
-			new Integer(1);
-		}
-		
 	    NumberTile neighbour = null;
 	    IndexedMap<LightTileState,NumberTile> neighbours
 	    	= new IndexedMap<LightTileState,NumberTile>();
