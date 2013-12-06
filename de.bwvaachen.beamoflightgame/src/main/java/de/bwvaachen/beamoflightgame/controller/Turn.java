@@ -41,7 +41,7 @@ import de.bwvaachen.beamoflightgame.model.LightTileState;
 public class Turn implements UndoableEdit  
 {
 	public static transient final int FLAG_ALIVE = 0x1, FLAG_HAS_BEEN_DONE = 0x2, FLAG_SIGNIFICANT = 0x4, FLAG_ERROR = 0x10;
-	private static int flags;
+	private int flags;
 	private IBeamsOfLightPuzzleBoard board;
 	private int x, y;
 	private LightTileState oldTileState, newTileState;
@@ -65,7 +65,7 @@ public class Turn implements UndoableEdit
 		redo();
 	}
 
-	public static int getFlags() {
+	public int getFlags() {
 		return flags;
 	}
 

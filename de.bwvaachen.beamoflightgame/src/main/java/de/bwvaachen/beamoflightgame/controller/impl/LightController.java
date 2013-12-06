@@ -3,6 +3,9 @@ package de.bwvaachen.beamoflightgame.controller.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import javax.swing.undo.CannotUndoException;
+
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.Turn;
 import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
@@ -114,42 +117,32 @@ public class LightController implements ILightController {
 	
 
 	@Override
-	public boolean isUndoable() throws Exception {
+	public boolean isUndoable() {
 		return turnManager.canUndo();
 	} // public boolean isUndoable() 
 	
 
 	@Override
-	public boolean isRedoable() throws Exception {
+	public boolean isRedoable() {
 		return turnManager.canRedo();
 	} // public boolean isRedoable()
 	
 
 	@Override
-	public void setUndoMark() throws Exception {
+	public void setUndoMark() {
 		turnManager.addMarker();
 	} // public void setUndoMark()
 	
 
 	@Override
-	public IBeamsOfLightPuzzleBoard returnToNextUndoMark() throws Exception {
-		while ((Turn.getFlags() & Turn.FLAG_SIGNIFICANT) != 0)
-		{
-			undo();	
-		}
-		return null;
+	public void returnToNextUndoMark() throws CannotUndoException {
+	    turnManager.undoToMarker();
 	} // public IBeamsOfLightPuzzleBoard returnToNextUndoMark()
 	
 
 	@Override
-	public IBeamsOfLightPuzzleBoard returnToStableState() throws Exception {
-		
-		while ((Turn.getFlags() & Turn.FLAG_ERROR) != 0)
-		{
-			undo();	
-		}
-		
-		return puzzleBoard;
+	public void returnToStableState() throws CannotUndoException {
+		turnManager.undoToLastStableState();
 		
 	} // public IBeamsOfLightPuzzleBoard returnToStableStaate() s
 
