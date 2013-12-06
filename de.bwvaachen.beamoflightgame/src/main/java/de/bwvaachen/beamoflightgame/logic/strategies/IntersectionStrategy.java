@@ -6,8 +6,16 @@ import de.bwvaachen.beamoflightgame.model.NumberTile;
 
 public class IntersectionStrategy extends AbstractStrategy {
 
+
 	@Override
 	public boolean tryToSolve()  throws PuzzleException {
+		//Overshadow the tile
+		NumberTile tile = (NumberTile) super.tile;
+		
+		int remainingLightRange = tile.getRemainingLightRange();
+		
+		//TODO
+		
 		return false;
 		// TODO Auto-generated method stub
 	}
