@@ -19,6 +19,7 @@ import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.ui.PrototypModelFuerGUI;
 //import org.junit.runner.RunWith;
 //import org.powermock.api.easymock.PowerMock.*;
 //import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -41,16 +42,8 @@ public class SolverTest {
 	
 	@Test
 	public void lonelyFieldStrategyTest() throws PuzzleException, InstantiationException, IllegalAccessException {		
-		//Board: 1 _ _ _ 2
 		
-		IBeamsOfLightPuzzleBoard b = new BeamsOfLightPuzzleBoard();
-		b.init(5,1);
-		b.putTile(new NumberTile(b,1,0,0));
-		b.putTile(new LightTile(b,1,0));
-		b.putTile(new LightTile(b,2,0));
-		b.putTile(new LightTile(b,3,0));
-		b.putTile(new NumberTile(b,2,4,0));
-		//TODO !!!
+		IBeamsOfLightPuzzleBoard b = new PrototypModelFuerGUI();
 		
 		System.out.println(b.toString());
 		
