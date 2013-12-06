@@ -1,9 +1,5 @@
 package de.bwvaachen.beamoflightgame.model;
 
-import java.io.ObjectStreamException;
-import java.io.Serializable;
-
-import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 
 public enum LightTileState implements ITileState {

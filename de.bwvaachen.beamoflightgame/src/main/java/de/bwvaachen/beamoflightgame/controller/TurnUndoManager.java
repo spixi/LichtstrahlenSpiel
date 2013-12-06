@@ -1,11 +1,24 @@
 package de.bwvaachen.beamoflightgame.controller;
 
 import javax.swing.undo.UndoManager;
-import javax.swing.undo.UndoableEdit;
 
 public class TurnUndoManager extends UndoManager
 {
+	boolean hasMarker = false;
 	
-	//UndoableEdit marker = new UndoableEdit();
+	public boolean undoToMarker() 
+	{
+		if(!hasMarker)
+			return false;
+		
+		this.undoTo(Marker.instance);
+		return true;
+	}
+	
+	public void addMarker()
+	{
+		this.addEdit(Marker.instance);
+		hasMarker = true;
+	}
 	
 }
