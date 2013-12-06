@@ -42,14 +42,11 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 	    		}     	     
 	    	}
 	    	
-	    	System.out.printf("%d, %d, %s: %d\n", tile.getX(), tile.getY(), lts, neighbours.size());
-	    	
 	    	if (neighbours.size() > 1) break;
-	    
 	    }
 	    
 	    switch(neighbours.size()) {
-	    case 0: return false;  //throw new UnsolvablePuzzleException(); //The tile is unreachable 
+	    case 0: throw new UnsolvablePuzzleException(); //The tile is unreachable 
 	    case 1: {              //only one neighbour can reach this field
 	    	Map.Entry<LightTileState,NumberTile> entry = neighbours.getEntryByIndex(0);
 	    	fillBoard(entry.getValue(), entry.getKey());
