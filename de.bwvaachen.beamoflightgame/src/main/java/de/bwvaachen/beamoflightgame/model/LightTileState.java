@@ -62,4 +62,14 @@ public enum LightTileState implements ITileState {
 			return LightTileState.EMPTY;
 		}
 	}
+	public boolean equals(ITileState tileState)
+	{
+		try{
+			LightTileState lts = (LightTileState) tileState;
+			return lts == this;
+		}
+		catch (Exception e){
+		return false;
+		}
+	}
 }

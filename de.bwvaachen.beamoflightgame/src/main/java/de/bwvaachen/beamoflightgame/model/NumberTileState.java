@@ -9,4 +9,14 @@ public class NumberTileState implements ITileState {
 	public int getNumber() {
 		return number;
 	}
+	public boolean equals(ITileState tileState)
+	{
+		try{
+			NumberTileState lts = (NumberTileState) tileState;
+			return lts == this;
+		}
+		catch (Exception e){
+		return false;
+		}
+	}
 }
