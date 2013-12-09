@@ -45,7 +45,9 @@ public class GraficFactory {
 			String url = "themes/happiness/"+ num.getNumber() + ".png";
 			URL u = this.getClass().getClassLoader().getResource(url);
 			
-			return ii = new ImageIcon(u);	
+			ii = new ImageIcon(u);
+			return ii ;
+			
 		}catch (Exception e){/*Kein Exception handling da in allen anderen Faellen ein LightTile vorhanden ist*/} 
 			
 		

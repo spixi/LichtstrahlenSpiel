@@ -27,8 +27,13 @@ import javax.swing.filechooser.FileFilter;
 
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.impl.LightController;
+import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
+import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.LightTile;
+import de.bwvaachen.beamoflightgame.model.LightTileState;
+import de.bwvaachen.beamoflightgame.model.NumberTile;
+import de.bwvaachen.beamoflightgame.model.NumberTileState;
 
 public class LightgameUI extends JFrame {
 
@@ -54,11 +59,11 @@ public class LightgameUI extends JFrame {
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
-				}
-			}
-		});
+				} // try .. catch
+			} // public void run()
+		}); // EventQueue.invokeLater ( .. )
 		
-	}
+	} // public static void main(String[] args) 
 
 	/**
 	 *  Constructor
@@ -128,7 +133,8 @@ public class LightgameUI extends JFrame {
 			
 		} catch (Exception e) {
 			// TODO: handle exception
-		}
+		} // try .. catch
+		
 	} // public LightgameUI()
 
 	
@@ -308,13 +314,84 @@ public class LightgameUI extends JFrame {
 	{
 
 		/**
-		 * ï¿½ndert die Hintergrundfarbe.
+		 * Ändert die Hintergrundfarbe.
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			TileButton btn = (TileButton)e.getSource();
-			btn.setBackground(new Color(255,0,0));
-		} // public void actionPerformed(ActionEvent e) 
+		
+			try {	
+				
+				// Die Hintergrundfarbe aller Buttons zurücksetzen.
+				for ( TileButton aktButton : buttons ) {
+					aktButton . setBackground ( new Color(238,238,238) ) ;
+				} // for ( TileButton aktButton : buttons ) 
+				
+				// Den auslösenden Button holen
+				TileButton btn = (TileButton) e.getSource();
+
+				// Prüfen ob es sich um ein NumberTile handelt.
+				if ( btn . getTile() instanceof NumberTile ) {
+				
+					// Variable deklarieren, die bei der Anzeige der möglichen Felder hilft.
+					boolean CurrentTileIsLightTile ;
+	
+					// Strahlstärke holen
+					int strahlStaerke = ((NumberTileState) btn . getTile() . getTileState() ) . getNumber() ;					
+					
+					// Den Traverser initialisieren.
+					BoardTraverser traverser = new BoardTraverser ( controller.getBoard() , btn.getTile() ) ;
+					// Das Modell vom Controller holen.
+					IBeamsOfLightPuzzleBoard currentModel = controller . getBoard() ;
+					
+					
+					// Schleife über alle "Himmelsrichtungen" (West, Ost, Süd, Nord). Dafür nehm ich den Aufzählungstyp LightTileState.
+					for ( LightTileState aktState : LightTileState . values() ) {
+						
+						// Zu dem LightTileState zählt auch das Element "Empty", welches ich aber nicht für die "Zug-Überprüfung" brauche.
+						if ( aktState != LightTileState . EMPTY ) {
+							
+	
+							// Den Traverser auf den Button Ausgangsbutton (NumberTile) setzen.
+							traverser . moveTo ( btn . getCol() , btn . getRow() ) ;
+							TraverseDirection traverseDirection = aktState . getTraverseDirection() ;
+													
+							// Initial ist diese Aussage falsch, da man den Traverser auf das Ausgangs-Numbertile setzt. Ich setz das trotzdem auf true, 
+							// da man sich so ein paar Abfragen spart. Der Status wird direkt als erstes in der Schleife geupdatet und ist ab dort "richtig".
+							CurrentTileIsLightTile = true ;
+							
+							int verbrauchteStaerke = 0 ;
+							
+							// Wandern in die aktuelle Himmelsrichtung unter folgenden Bedinungen:
+							// 1. Es ist noch möglich weiter in die Richtung zu gehen
+							// 2. Es handelt sich um ein LightTile Feld
+							// 3. Die Anzahl der Felder (aus dem NumberTile) wird nicht überschritten.
+							while ( ( traverser . shift ( traverseDirection ) ) && ( CurrentTileIsLightTile ) && ( verbrauchteStaerke < strahlStaerke ) ) {							
+								
+								// Prüfen auf was für einem Feld der Traverser aktuell steht.
+								CurrentTileIsLightTile = ( currentModel . getTileAt( traverser . getX(), traverser . getY() ) instanceof LightTile );
+								
+								if ( CurrentTileIsLightTile ) {
+									// Den Button holen, der das aktuelle Tile repräsentiert.
+									int buttonArrayPos = ( ( traverser . getY() * currentModel . getWidth() ) + traverser . getX() )  ;
+									TileButton aktButton = buttons . get ( buttonArrayPos ) ;
+									// Einfärben des Buttons
+									aktButton . setBackground(new Color(255,0,0)) ;
+									// Die "verbrauchte Stärke" erhöhen.
+									verbrauchteStaerke += 1 ;
+								} // if ( CurrentTileIsLightTile ) 
+												
+							} // while ( .. ) 
+							
+						} // if ( aktState != LightTileState . EMPTY )
+							
+					} // for ( LightTileState aktState : LightTileState . values() ) 
+				}
+				
+			} catch (Exception e2) {
+				
+			} // try .. catch
+			
+		} // public void actionPerformed(ActionEvent e)
 		
 	} // class TileButtonListener 
 	

@@ -44,7 +44,7 @@ public class PrototypModelFuerGUI extends BeamsOfLightPuzzleBoard {
 		putTile(new LightTile(this,0,0));
 		putTile(new LightTile(this,1,0));
 		putTile(new LightTile(this,2,0));
-		putTile(new NumberTile(this,2,0,1));
+		putTile(new NumberTile(this,1,0,1));
 		putTile(new NumberTile(this,2,1,1));
 		putTile(new LightTile(this,2,1));
 		putTile(new LightTile(this,0,2));
