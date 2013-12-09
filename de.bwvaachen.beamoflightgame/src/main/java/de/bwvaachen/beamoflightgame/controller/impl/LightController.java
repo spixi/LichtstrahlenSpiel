@@ -150,4 +150,20 @@ public class LightController implements ILightController {
 	{
 		turnManager.undo();
 	}
+
+
+	@Override
+	public void setBoard(IBeamsOfLightPuzzleBoard _board) throws Exception {
+		
+		puzzleBoard = _board ;
+		
+	}
+
+
+	@Override
+	public IBeamsOfLightPuzzleBoard getBoard() throws Exception {
+		
+		return puzzleBoard ;
+		
+	}
 } // public class LightController

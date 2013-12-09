@@ -20,8 +20,23 @@ import de.bwvaachen.beamoflightgame.model.ITile;
  */
 public class TileButton extends JButton implements ChangeListener {
 	
+	/**
+	 *  Referenz auf das Tile aus dem Modell
+	 */
 	private final ITile tile;
 	
+	/**
+	 * Getter vom Tile
+	 * @return Das Tile aus dem Modell
+	 */
+	public ITile getTile() {
+		return tile;
+	}
+
+	/**
+	 * Constructor
+	 * @param t Das Tile aus dem Modell
+	 */
 	public TileButton(final ITile t) {
 		tile = t;
 		if(t.isStateChangeable()) {
@@ -29,11 +44,17 @@ public class TileButton extends JButton implements ChangeListener {
 		}
 	}
 	
+	/**
+	 * @return Die Zeile von dem Tile.
+	 */
 	public int getRow() {
 		return tile.getY();
 	}
 
 
+	/**
+	 * @return Die Spalte von dem Tile.
+	 */
 	public int getCol() {
 		return tile.getX();
 	}

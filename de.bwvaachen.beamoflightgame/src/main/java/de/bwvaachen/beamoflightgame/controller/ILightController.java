@@ -19,7 +19,9 @@ public interface ILightController {
 	// Spiel erzeugen/laden/speichern
 	public IBeamsOfLightPuzzleBoard newGame  ( int x , int y ) throws Exception ;	//TODO Bitte Exception spezifizieren
     public void 					saveGame (File f) throws IOException;
-	public void 					loadGame (File f) throws FileNotFoundException, IOException, ClassNotFoundException;
+	public void 					loadGame (File f) throws FileNotFoundException, IOException, ClassNotFoundException; 
+	public void						setBoard ( IBeamsOfLightPuzzleBoard _board ) throws Exception ;
+	public IBeamsOfLightPuzzleBoard getBoard ( ) throws Exception ;
 	
 	// Spielzüge
 	public Turn 					doTurn ( int x , int y , LightTileState oldTileState, LightTileState newTileState ) throws Exception ; //TODO Bitte Exception spezifizieren
