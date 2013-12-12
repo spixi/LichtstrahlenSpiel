@@ -25,6 +25,8 @@ public class TileButton extends JButton implements ChangeListener {
 	 */
 	private final ITile tile;
 	
+	public boolean markiert = false ;
+	
 	/**
 	 * Getter vom Tile
 	 * @return Das Tile aus dem Modell

@@ -30,6 +30,7 @@ import de.bwvaachen.beamoflightgame.controller.impl.LightController;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
@@ -45,6 +46,7 @@ public class LightgameUI extends JFrame {
 	//private File lastSaveFile=null;
 	private ILightController controller = new LightController() ;
 	private ArrayList<TileButton> buttons = new ArrayList<TileButton>();
+	private ITile activeNumberTile = null ;
 	
 	
 	/**
@@ -116,7 +118,13 @@ public class LightgameUI extends JFrame {
 					TileButton newTileButton = new TileButton ( currentModel . getTileAt ( col , row ) ) ;
 
 					// Action hinzufügen
-					newTileButton . addActionListener ( new TileButtonListener() ) ;
+					if ( currentModel . getTileAt ( col , row ) instanceof NumberTile ) {
+						newTileButton . addActionListener ( new NumberTileButtonListener() ) ;
+					}
+					else 
+					{
+						newTileButton . addActionListener ( new LightTileListener() ) ;
+					}
 					
 					// Button auf das Panel setzen
 					rasterPanel . add ( newTileButton ) ;
@@ -310,7 +318,7 @@ public class LightgameUI extends JFrame {
 	 * 
 	 * @author gbraun, pauls_and
 	 */
-	class TileButtonListener implements ActionListener
+	class NumberTileButtonListener implements ActionListener
 	{
 
 		/**
@@ -321,8 +329,11 @@ public class LightgameUI extends JFrame {
 		
 			try {	
 				
+				activeNumberTile = null ;
+				
 				// Die Hintergrundfarbe aller Buttons zurücksetzen.
 				for ( TileButton aktButton : buttons ) {
+					aktButton . markiert = false ;
 					aktButton . setBackground ( new Color(238,238,238) ) ;
 				} // for ( TileButton aktButton : buttons ) 
 				
@@ -375,9 +386,11 @@ public class LightgameUI extends JFrame {
 									int buttonArrayPos = ( ( traverser . getY() * currentModel . getWidth() ) + traverser . getX() )  ;
 									TileButton aktButton = buttons . get ( buttonArrayPos ) ;
 									// Einfärben des Buttons
+									aktButton . markiert = true ;
 									aktButton . setBackground(new Color(255,0,0)) ;
 									// Die "verbrauchte Stärke" erhöhen.
 									verbrauchteStaerke += 1 ;
+									activeNumberTile = btn . getTile() ;
 								} // if ( CurrentTileIsLightTile ) 
 												
 							} // while ( .. ) 
@@ -394,6 +407,77 @@ public class LightgameUI extends JFrame {
 		} // public void actionPerformed(ActionEvent e)
 		
 	} // class TileButtonListener 
+	
+	class LightTileListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+			try {
+				// Den auslösenden Button holen
+				TileButton btn = (TileButton) e.getSource();
+							
+				if ( ( activeNumberTile != null ) && ( btn . markiert ) )  {
+					
+					int lightTileX = btn . getCol() ;
+					int lightTileY = btn . getRow () ;
+					int numberTileX = activeNumberTile . getX() ;
+					int numberTileY = activeNumberTile . getY() ;
+					
+					LightTileState lichtRichtung ;
+					
+					if ( lightTileY == numberTileY ) {
+						if ( lightTileX < numberTileX ) {
+							lichtRichtung = LightTileState.WEST ;
+						} 
+						else
+						{
+							lichtRichtung = LightTileState.EAST ;
+						}
+							
+					} 
+					else
+					{
+						if ( lightTileY < numberTileY ) {
+							lichtRichtung = LightTileState.NORTH ;
+						}
+						else {
+							lichtRichtung = LightTileState.SOUTH ;
+						}
+							 
+					} // if ( lightTileY == numberTileY ) 
+					
+					IBeamsOfLightPuzzleBoard currentBoard = controller.getBoard() ;
+					
+					// Den Traverser initialisieren.
+					BoardTraverser traverser = new BoardTraverser ( currentBoard , btn.getTile() ) ;
+					
+					// Den Traverser auf den Button Ausgangsbutton (NumberTile) setzen.
+					traverser . moveTo ( numberTileX , numberTileY ) ;
+					TraverseDirection traverseDirection = lichtRichtung . getTraverseDirection() ;
+					
+					boolean alleGezeichnet = false ;
+					while ( ( traverser . shift ( traverseDirection ) ) && alleGezeichnet == false )  {
+						if ( ( lightTileX == traverser . getX() ) && ( lightTileY == traverser . getY() ) ) {
+							alleGezeichnet = true ;
+						}
+						LightTile currentTile = (LightTile) currentBoard . getTileAt( traverser . getX() , traverser . getY() ) ; 
+						currentTile . setState( lichtRichtung ) ;
+					} 
+					
+					activeNumberTile = null ;
+					
+					Update( currentBoard ) ;
+				} // if ( ( activeNumberTile != null ) && ( btn . markiert ) )
+				
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} 	
+		
+		}
+		
+	}
 	
 	
 	
