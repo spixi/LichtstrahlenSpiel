@@ -473,22 +473,23 @@ public class LightgameUI extends JFrame {
 					// Den Traverser initialisieren.
 					BoardTraverser traverser = new BoardTraverser ( currentBoard , btn.getTile() ) ;
 					
-					// Den Traverser auf den Button Ausgangsbutton (NumberTile) setzen.
-					traverser . moveTo ( numberTileX , numberTileY ) ;
-					TraverseDirection traverseDirection = lichtRichtung . getTraverseDirection() ;
+					// Den Traverser auf den Button Zielbutton (LightTile) setzen.
+					traverser . moveTo ( lightTileX , lightTileY ) ;
+					TraverseDirection traverseDirection = lichtRichtung . reverse() . getTraverseDirection() ;
 					
 					boolean alleGezeichnet = false ;
-					while ( ( traverser . shift ( traverseDirection ) ) && alleGezeichnet == false )  {
-						if ( ( lightTileX == traverser . getX() ) && ( lightTileY == traverser . getY() ) ) {
-							alleGezeichnet = true ;
+					do  {
+						if ( ( numberTileX == traverser . getX() ) && ( numberTileY == traverser . getY() ) ) {
+							break;
 						}
-						LightTile currentTile = (LightTile) currentBoard . getTileAt( traverser . getX() , traverser . getY() ) ; 
+						LightTile currentTile = (LightTile) traverser.get() ; 
 						currentTile . setState( lichtRichtung ) ;
-					} 
+						traverser . shift ( traverseDirection ) ;
+					} while(true);
 					
 					activeNumberTile = null ;
 					
-					Update( currentBoard ) ;
+					//Update( currentBoard ) ;
 				} // if ( ( activeNumberTile != null ) && ( btn . markiert ) )
 				
 			} catch (Exception e1) {
