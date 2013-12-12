@@ -29,6 +29,9 @@ import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.impl.LightController;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
+import de.bwvaachen.beamoflightgame.logic.ISolver;
+import de.bwvaachen.beamoflightgame.logic.solver.SolverBuilder;
+import de.bwvaachen.beamoflightgame.logic.strategies.LonelyFieldStrategy;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
@@ -95,8 +98,29 @@ public class LightgameUI extends JFrame {
 			JPanel rasterPanel = new JPanel();
 			contentPane.add(rasterPanel, BorderLayout.CENTER);
 	
-			// Controller mit Test Prototyp für GUI füllen.
+			// Controller mit Test Prototyp fï¿½r GUI fï¿½llen.
 			controller . setBoard ( new PrototypModelFuerGUI() ) ;
+			
+			javax.swing.JButton solverButton = new javax.swing.JButton("RÃ¤tsel auflÃ¶sen");
+			solverButton.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					try {
+						ISolver s = SolverBuilder.buildWith(LonelyFieldStrategy.class).forBoard(controller.getBoard());
+					    s.solve();
+					
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+				}
+				
+			});
+			
+			
+			contentPane.add(solverButton,BorderLayout.NORTH);
 			
 			// Das Spielfeld vom Controller holen:
 			IBeamsOfLightPuzzleBoard currentModel = controller . getBoard() ;
@@ -115,13 +139,13 @@ public class LightgameUI extends JFrame {
 					// Neuen Button erzeugen
 					TileButton newTileButton = new TileButton ( currentModel . getTileAt ( col , row ) ) ;
 
-					// Action hinzufügen
+					// Action hinzufï¿½gen
 					newTileButton . addActionListener ( new TileButtonListener() ) ;
 					
 					// Button auf das Panel setzen
 					rasterPanel . add ( newTileButton ) ;
 					
-					// Aktuelle Button dem Button-Array hinzufügen.
+					// Aktuelle Button dem Button-Array hinzufï¿½gen.
 					buttons . add (newTileButton);
 					
 				} // for ( int col=0 ;col<cols ; col++ )
@@ -314,28 +338,28 @@ public class LightgameUI extends JFrame {
 	{
 
 		/**
-		 * Ändert die Hintergrundfarbe.
+		 * ï¿½ndert die Hintergrundfarbe.
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		
 			try {	
 				
-				// Die Hintergrundfarbe aller Buttons zurücksetzen.
+				// Die Hintergrundfarbe aller Buttons zurï¿½cksetzen.
 				for ( TileButton aktButton : buttons ) {
 					aktButton . setBackground ( new Color(238,238,238) ) ;
 				} // for ( TileButton aktButton : buttons ) 
 				
-				// Den auslösenden Button holen
+				// Den auslï¿½senden Button holen
 				TileButton btn = (TileButton) e.getSource();
 
-				// Prüfen ob es sich um ein NumberTile handelt.
+				// Prï¿½fen ob es sich um ein NumberTile handelt.
 				if ( btn . getTile() instanceof NumberTile ) {
 				
-					// Variable deklarieren, die bei der Anzeige der möglichen Felder hilft.
+					// Variable deklarieren, die bei der Anzeige der mï¿½glichen Felder hilft.
 					boolean CurrentTileIsLightTile ;
 	
-					// Strahlstärke holen
+					// Strahlstï¿½rke holen
 					int strahlStaerke = ((NumberTileState) btn . getTile() . getTileState() ) . getNumber() ;					
 					
 					// Den Traverser initialisieren.
@@ -344,10 +368,10 @@ public class LightgameUI extends JFrame {
 					IBeamsOfLightPuzzleBoard currentModel = controller . getBoard() ;
 					
 					
-					// Schleife über alle "Himmelsrichtungen" (West, Ost, Süd, Nord). Dafür nehm ich den Aufzählungstyp LightTileState.
+					// Schleife ï¿½ber alle "Himmelsrichtungen" (West, Ost, Sï¿½d, Nord). Dafï¿½r nehm ich den Aufzï¿½hlungstyp LightTileState.
 					for ( LightTileState aktState : LightTileState . values() ) {
 						
-						// Zu dem LightTileState zählt auch das Element "Empty", welches ich aber nicht für die "Zug-Überprüfung" brauche.
+						// Zu dem LightTileState zï¿½hlt auch das Element "Empty", welches ich aber nicht fï¿½r die "Zug-ï¿½berprï¿½fung" brauche.
 						if ( aktState != LightTileState . EMPTY ) {
 							
 	
@@ -362,21 +386,21 @@ public class LightgameUI extends JFrame {
 							int verbrauchteStaerke = 0 ;
 							
 							// Wandern in die aktuelle Himmelsrichtung unter folgenden Bedinungen:
-							// 1. Es ist noch möglich weiter in die Richtung zu gehen
+							// 1. Es ist noch mï¿½glich weiter in die Richtung zu gehen
 							// 2. Es handelt sich um ein LightTile Feld
-							// 3. Die Anzahl der Felder (aus dem NumberTile) wird nicht überschritten.
+							// 3. Die Anzahl der Felder (aus dem NumberTile) wird nicht ï¿½berschritten.
 							while ( ( traverser . shift ( traverseDirection ) ) && ( CurrentTileIsLightTile ) && ( verbrauchteStaerke < strahlStaerke ) ) {							
 								
-								// Prüfen auf was für einem Feld der Traverser aktuell steht.
+								// Prï¿½fen auf was fï¿½r einem Feld der Traverser aktuell steht.
 								CurrentTileIsLightTile = ( currentModel . getTileAt( traverser . getX(), traverser . getY() ) instanceof LightTile );
 								
 								if ( CurrentTileIsLightTile ) {
-									// Den Button holen, der das aktuelle Tile repräsentiert.
+									// Den Button holen, der das aktuelle Tile reprï¿½sentiert.
 									int buttonArrayPos = ( ( traverser . getY() * currentModel . getWidth() ) + traverser . getX() )  ;
 									TileButton aktButton = buttons . get ( buttonArrayPos ) ;
-									// Einfärben des Buttons
+									// Einfï¿½rben des Buttons
 									aktButton . setBackground(new Color(255,0,0)) ;
-									// Die "verbrauchte Stärke" erhöhen.
+									// Die "verbrauchte Stï¿½rke" erhï¿½hen.
 									verbrauchteStaerke += 1 ;
 								} // if ( CurrentTileIsLightTile ) 
 												

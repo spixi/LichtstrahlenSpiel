@@ -20,6 +20,8 @@ import de.bwvaachen.beamoflightgame.model.ITile;
  */
 public class TileButton extends JButton implements ChangeListener {
 	
+	private GraficFactory graphicFactory;
+	
 	/**
 	 *  Referenz auf das Tile aus dem Modell
 	 */
@@ -42,6 +44,9 @@ public class TileButton extends JButton implements ChangeListener {
 		if(t.isStateChangeable()) {
 			t.addChangeListener(this);
 		}
+		
+		//TODO: Remove this ugly stuff here:
+		graphicFactory = new GraficFactory(t.getBoard());
 	}
 	
 	/**
@@ -67,8 +72,17 @@ public class TileButton extends JButton implements ChangeListener {
 		tile.storeState(foo);
 		//tile.getPresentation()
 		
-		//this.imageUpdate(img, infoflags, x, y, w, h)
-		System.out.printf("Change: %s\n", foo);
+		//TODO
+		try {
+			Thread.sleep(800);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		//TODO
+		this.setIcon(graphicFactory.getImage(tile));
+		this.ui.update(this.getGraphics(), this);
 	}
 
 }

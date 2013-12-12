@@ -76,6 +76,10 @@ public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 		changeListeners.remove(cl);
 	}
 	
+	public IBeamsOfLightPuzzleBoard getBoard() {
+		return board;
+	}
+	
 	public String toString() {
 		return getTileState().toString();
 	}
