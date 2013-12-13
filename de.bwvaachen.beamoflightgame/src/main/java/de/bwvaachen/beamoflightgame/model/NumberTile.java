@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 
-public class NumberTile extends AbstractTile<NumberTileState> implements ITile<NumberTileState> {
+public class NumberTile extends AbstractTile<NumberTileState> implements IChangeableTile<NumberTileState> {
 	public NumberTile(final IBeamsOfLightPuzzleBoard board, final int number, int x, int y) {
 		super(board, x, y, NumberTileState.class);
 		setTileState(new NumberTileState(number));
@@ -33,6 +33,11 @@ public class NumberTile extends AbstractTile<NumberTileState> implements ITile<N
 	public int getNumber() {
 		// TODO Auto-generated method stub
 		return getTileState().getNumber();
+	}
+
+	@Override
+	public void setState(NumberTileState state) {
+		setTileState(state);	
 	}
 
 }
