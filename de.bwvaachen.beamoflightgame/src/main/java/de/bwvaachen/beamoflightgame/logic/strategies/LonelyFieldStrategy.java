@@ -83,7 +83,7 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 	}
 
     private boolean doesCross(ITileState a, ITileState b) {
-    	return !( (a==LightTileState.EMPTY) || (a!=b) );
+    	return !( (a==LightTileState.EMPTY) || (a.equals(b)) );
     }
     
     
