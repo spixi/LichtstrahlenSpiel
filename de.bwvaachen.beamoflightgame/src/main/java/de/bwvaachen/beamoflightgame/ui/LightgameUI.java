@@ -27,6 +27,7 @@ import javax.swing.filechooser.FileFilter;
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.impl.LightController;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
+import de.bwvaachen.beamoflightgame.helper.TileVisitor;
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.logic.ISolver;
 import de.bwvaachen.beamoflightgame.logic.solver.SolverBuilder;
@@ -138,15 +139,22 @@ public class LightgameUI extends JFrame {
 				for ( int col=0 ;col<cols ; col++ ) {
 	
 					// Neuen Button erzeugen
-					TileButton newTileButton = new TileButton ( currentModel . getTileAt ( col , row ) ) ;
+					final TileButton newTileButton = new TileButton ( currentModel . getTileAt ( col , row ) ) ;
 					// Action hinzuf�gen
-					if ( currentModel . getTileAt ( col , row ) instanceof NumberTile ) {
-						newTileButton . addActionListener ( new NumberTileButtonListener() ) ;
-					}
-					else 
-					{
-						newTileButton . addActionListener ( new LightTileListener() ) ;
-					}
+					
+					currentModel . getTileAt ( col , row ) . accept( new TileVisitor() {
+
+						public void visitLightTile(LightTile t) {
+							newTileButton . addActionListener ( new LightTileListener() ) ;
+							
+						}
+
+						public void visitNumberTile(NumberTile t) {
+							newTileButton . addActionListener ( new NumberTileButtonListener() ) ;
+							
+						}
+						
+					} );
 					
 					// Button auf das Panel setzen
 					rasterPanel . add ( newTileButton ) ;

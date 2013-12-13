@@ -2,6 +2,8 @@ package de.bwvaachen.beamoflightgame.model.impl;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+
+import de.bwvaachen.beamoflightgame.helper.TileVisitor;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
@@ -92,14 +94,18 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 	}
 
 	@Override
-	public void putTile(NumberTile tile) {
-		putTileInternal(tile);
-		numberTiles.add(tile);
-	}
-	
-	@Override
-	public void putTile(LightTile tile) {
-		putTileInternal(tile);
+	public void putTile(ITile t) {
+		t.accept(new TileVisitor() {
+			public void visitLightTile(LightTile t) {
+				BeamsOfLightPuzzleBoard.this.putTileInternal(t);
+				
+			}
+			
+			public void visitNumberTile(NumberTile t) {
+				BeamsOfLightPuzzleBoard.this.putTileInternal(t);
+				BeamsOfLightPuzzleBoard.this.numberTiles.add(t);
+			}
+		});
 	}
 	
 	private void putTileInternal(ITile tile) {

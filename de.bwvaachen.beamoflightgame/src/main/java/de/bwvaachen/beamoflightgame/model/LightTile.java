@@ -1,5 +1,7 @@
 package de.bwvaachen.beamoflightgame.model;
 
+import de.bwvaachen.beamoflightgame.helper.TileVisitor;
+
 public class LightTile extends AbstractTile<LightTileState> implements IChangeableTile<LightTileState>  {
 	public LightTile(IBeamsOfLightPuzzleBoard board, int x, int y) {
 		this(board, x, y, null);
@@ -14,4 +16,11 @@ public class LightTile extends AbstractTile<LightTileState> implements IChangeab
 		if(state == null) state = LightTileState.EMPTY;
 		setTileState(state);	
 	}
+
+	@Override
+	public void accept(TileVisitor v) {
+		v.visitLightTile(this);
+	}
+	
+	
 }

@@ -87,4 +87,8 @@ public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 	{
 		return t.getTileState().equals(this.getTileState());
 	}
+	
+	public void put() {
+		board.putTile(this);
+	}
 }

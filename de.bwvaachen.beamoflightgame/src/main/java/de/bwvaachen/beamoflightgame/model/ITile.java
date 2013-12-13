@@ -2,7 +2,9 @@ package de.bwvaachen.beamoflightgame.model;
 
 import javax.swing.event.ChangeListener;
 
-public interface ITile<T extends ITileState> {
+import de.bwvaachen.beamoflightgame.helper.Visitable;
+
+public interface ITile<T extends ITileState> extends Visitable {
 	public int getX();
 	public int getY();
 	public IBeamsOfLightPuzzleBoard getBoard();
