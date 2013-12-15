@@ -17,7 +17,7 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 	private BoardTraverser traverser;
 	
 	protected void _init() {
-		traverser = new BoardTraverser(board, tile.getX(), tile.getY());
+		traverser = tile.getTraverser();
 	}
 	
 	@Override

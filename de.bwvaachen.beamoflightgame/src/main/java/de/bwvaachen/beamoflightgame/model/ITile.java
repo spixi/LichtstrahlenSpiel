@@ -2,6 +2,7 @@ package de.bwvaachen.beamoflightgame.model;
 
 import javax.swing.event.ChangeListener;
 
+import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.Visitable;
 
 public interface ITile<T extends ITileState> extends Visitable {
@@ -14,4 +15,5 @@ public interface ITile<T extends ITileState> extends Visitable {
 	public boolean isStateChangeable();
 	public boolean equals(ITile t);
 	public void put();
+	public BoardTraverser getTraverser();
 }

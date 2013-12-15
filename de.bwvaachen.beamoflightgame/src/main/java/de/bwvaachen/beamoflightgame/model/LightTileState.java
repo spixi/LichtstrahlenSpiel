@@ -1,5 +1,10 @@
 package de.bwvaachen.beamoflightgame.model;
 
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
+
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 
 public enum LightTileState implements ITileState {
@@ -28,6 +33,15 @@ public enum LightTileState implements ITileState {
 		}
 	},
 	EMPTY('-', null);
+	
+	private final static Map<Character,LightTileState> map;
+	static {
+		map = new HashMap<Character,LightTileState>();
+		for(LightTileState value: values()) {
+			map.put(value.getSign(),value);
+		}
+	}
+	
 	private char sign;
 	private TraverseDirection traverseDirection;
 
@@ -53,19 +67,9 @@ public enum LightTileState implements ITileState {
 	}
 
 	public static LightTileState signToState(char c){
-		switch (c) {
-		case 's':
-			return LightTileState.SOUTH;
-		case 'w':
-			return LightTileState.WEST;
-		case 'n':
-			return LightTileState.NORTH;
-		case 'e':
-			return LightTileState.EAST;
-		default:
-			return LightTileState.EMPTY;
-		}
+		return map.get(c);
 	}
+	
 	public boolean equals(ITileState tileState)
 	{
 		try{

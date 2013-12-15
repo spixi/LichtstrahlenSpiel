@@ -3,7 +3,7 @@ package de.bwvaachen.beamoflightgame.model;
 import java.io.Serializable;
 import java.util.List;
 
-import de.bwvaachen.beamoflightgame.helper.TileVisitor;
+import de.bwvaachen.beamoflightgame.helper.ITileVisitor;
 import de.bwvaachen.beamoflightgame.helper.Visitable;
 
 public interface IBeamsOfLightPuzzleBoard extends Iterable<ITile> {

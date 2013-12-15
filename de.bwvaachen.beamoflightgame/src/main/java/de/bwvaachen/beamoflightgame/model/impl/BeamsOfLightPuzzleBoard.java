@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import de.bwvaachen.beamoflightgame.helper.TileVisitor;
+import de.bwvaachen.beamoflightgame.helper.ITileVisitor;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
@@ -97,7 +97,7 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 
 	@Override
 	public void putTile(ITile t) {
-		t.accept(new TileVisitor() {
+		t.accept(new ITileVisitor() {
 			public void visitLightTile(LightTile t) {
 				BeamsOfLightPuzzleBoard.this.putTileInternal(t);
 				

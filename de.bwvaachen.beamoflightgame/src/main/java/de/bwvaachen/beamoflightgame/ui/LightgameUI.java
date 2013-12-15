@@ -27,7 +27,7 @@ import javax.swing.filechooser.FileFilter;
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.impl.LightController;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
-import de.bwvaachen.beamoflightgame.helper.TileVisitor;
+import de.bwvaachen.beamoflightgame.helper.ITileVisitor;
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.logic.ISolver;
 import de.bwvaachen.beamoflightgame.logic.solver.SolverBuilder;
@@ -142,7 +142,7 @@ public class LightgameUI extends JFrame {
 					final TileButton newTileButton = new TileButton ( currentModel . getTileAt ( col , row ) ) ;
 					// Action hinzuf�gen
 					
-					currentModel . getTileAt ( col , row ) . accept( new TileVisitor() {
+					currentModel . getTileAt ( col , row ) . accept( new ITileVisitor() {
 
 						public void visitLightTile(LightTile t) {
 							newTileButton . addActionListener ( new LightTileListener() ) ;

@@ -4,7 +4,7 @@ import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 
 public interface IStrategy {
-	public void init(IBeamsOfLightPuzzleBoard b, ITile t);
+	public void init(ITile t);
 	public boolean tryToSolve() throws PuzzleException;
 	public boolean isAppliableForTile(ITile t);
 	

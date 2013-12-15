@@ -23,8 +23,13 @@ public class BoardTraverser {
 		this.y = startY = y;
 	}
 	
+	@Deprecated
 	public BoardTraverser(final IBeamsOfLightPuzzleBoard b, final ITile t) {
-		this(b, t.getX(), t.getY());
+		this(t);
+	}
+	
+	public BoardTraverser(final ITile t) {
+		this(t.getBoard(), t.getX(), t.getY());
 	}
 	
 	public ITile get() {
@@ -53,7 +58,6 @@ public class BoardTraverser {
 	}
 	
 	public boolean moveTo(int x, int y) {
-		System.out.printf("moveTo: %d,%d,%b\n", x, y, board.hasField(x, y));
 		if (! board.hasField(x, y)) return false;
 		this.x = x;
 		this.y = y;

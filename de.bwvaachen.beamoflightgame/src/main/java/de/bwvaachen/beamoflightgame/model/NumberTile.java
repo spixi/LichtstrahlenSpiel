@@ -3,7 +3,7 @@ package de.bwvaachen.beamoflightgame.model;
 import java.util.Arrays;
 
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
-import de.bwvaachen.beamoflightgame.helper.TileVisitor;
+import de.bwvaachen.beamoflightgame.helper.ITileVisitor;
 
 public class NumberTile extends AbstractTile<NumberTileState> implements IChangeableTile<NumberTileState> {
 	public NumberTile(final IBeamsOfLightPuzzleBoard board, final int number, int x, int y) {
@@ -42,7 +42,7 @@ public class NumberTile extends AbstractTile<NumberTileState> implements IChange
 	}
 	
 	@Override
-	public void accept(TileVisitor v) {
+	public void accept(ITileVisitor v) {
 		v.visitNumberTile(this);
 	}
 	

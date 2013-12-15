@@ -44,7 +44,7 @@ public class SolverBuilder {
 						step(tile, stackPointer+1);
 					}
 					else {
-						currentStrategy.init(board, tile);
+						currentStrategy.init(tile);
 						boolean canSolve = currentStrategy.tryToSolve();
 						//if(!canSolve) step(tile, stackPointer+1);
 					}

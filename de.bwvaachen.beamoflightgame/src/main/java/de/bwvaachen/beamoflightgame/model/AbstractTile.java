@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
+
 public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 	protected final IBeamsOfLightPuzzleBoard board;
 	private final int y, x;
@@ -90,5 +92,9 @@ public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 	
 	public void put() {
 		board.putTile(this);
+	}
+	
+	public BoardTraverser getTraverser() {
+		return new BoardTraverser(this);
 	}
 }

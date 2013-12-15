@@ -40,7 +40,7 @@ public class SolverTest {
 		assertNotNull("Pr�fe, ob der Builder einen funktionsf�higen Solver erstellen kann ...",s);
 	}
 	
-	@Test
+	@Ignore
 	public void lonelyFieldStrategyTest() throws PuzzleException, InstantiationException, IllegalAccessException {		
 		
 		IBeamsOfLightPuzzleBoard b = new PrototypModelFuerGUI();
@@ -54,5 +54,21 @@ public class SolverTest {
 		System.out.println(b.toString());
 		
 	}
+	
+	@Test
+	public void intersectionStrategyTest() throws PuzzleException, InstantiationException, IllegalAccessException {		
+		
+		IBeamsOfLightPuzzleBoard b = new PrototypModelFuerGUI();
+		
+		System.out.println(b.toString());
+		
+		ISolver s = SolverBuilder.buildWith(IntersectionStrategy.class).forBoard(b);
+		
+		s.solve();
+		
+		System.out.println(b.toString());
+		
+	}
+
 
 }
