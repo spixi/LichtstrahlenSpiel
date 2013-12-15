@@ -2,6 +2,7 @@ package de.bwvaachen.beamoflightgame.model.impl;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import de.bwvaachen.beamoflightgame.helper.TileVisitor;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
@@ -15,6 +16,7 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 	private int width, height;
 	private ITile[][] tiles;
 	private LinkedList<NumberTile> numberTiles;
+	private ConcurrentLinkedQueue<ITile> tileQueue = new ConcurrentLinkedQueue<ITile>();
 
 	@Override
 	public Iterator<ITile> iterator() {
@@ -71,7 +73,7 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 		
 		for(int y=0; y<height; y++) {
 			for(int x=0; x<width; x++) {
-				sb.append(getTileAt(x,y));
+				sb.append(getTileAt(x,y)+" ");
 			}
 			sb.append('\n');
 		}
@@ -110,6 +112,30 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 	
 	private void putTileInternal(ITile tile) {
 		tiles[tile.getX()][tile.getY()] = tile;
+	}
+
+	/**
+	 * @author Marius
+	 * @param tile The tile to enqueue
+	 * 
+	 * A thread-safe method to add tiles, also if the board has not been initialized yet.
+	 * The tiles are stored in an internal list and committed when the flush() method is called.
+	 */
+	@Override
+	public void enqueueTile(ITile tile) {
+		tileQueue.add(tile);
+	}
+
+	/**
+	 * @author Marius
+	 * 
+	 * @see enqueueTile(ITile tile)
+	 */
+	@Override
+	public void flush() {
+		for(ITile t: tileQueue) {
+			putTile(t);
+		}
 	}
 
 }

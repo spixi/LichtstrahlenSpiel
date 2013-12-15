@@ -1,17 +1,33 @@
 package de.bwvaachen.beamoflightgame.helper;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringBufferInputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import de.bwvaachen.beamoflightgame.controller.Turn;
+import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.ui.PrototypModelFuerGUI;
 
 public class ZipPersister implements IPersistenceHelper {
 
@@ -31,12 +47,18 @@ public class ZipPersister implements IPersistenceHelper {
 
 			zipOut.putNextEntry(new ZipEntry("codec"));
 			zipOut.write(codec.getClass().toString().getBytes());
+			zipOut.closeEntry();
 
 			zipOut.putNextEntry(new ZipEntry("board"));
 			codec.boardToOutputstream(zipOut, board);
+			zipOut.closeEntry();
 
 			zipOut.putNextEntry(new ZipEntry("turns"));
 			codec.turnsToOutputstream(zipOut, turns);
+			zipOut.closeEntry();
+			
+			zipOut.finish();
+			
 			zipOut.flush();
 			fileOutputStream.flush();
 		} catch (Throwable t) {
@@ -48,55 +70,38 @@ public class ZipPersister implements IPersistenceHelper {
 	}
 
 	@Override
-	public void load(File path) throws IOException, WrongCodecException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+	public Pair<IBeamsOfLightPuzzleBoard,List<Turn>> load(File path) throws IOException, WrongCodecException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-		ICodec codec = null;
-		for (int i = 0; i < 2; i++) {
-
+		    ICodec codec = null;
 			FileInputStream fileInputStream = new FileInputStream(path);
 			ZipInputStream zipIn = new ZipInputStream(fileInputStream);
-			ZipEntry entry = zipIn.getNextEntry();
+			ZipEntry entry;
 			IBeamsOfLightPuzzleBoard board = null;
 			List<Turn> turns=null;
-			while (entry != null) {
-				String name = entry.getName();
-				System.out.println(name);
-				if (codec == null && name.equals("codec")) {
-					byte[] buffer = new byte[2048];
-					int countBytes = zipIn.read(buffer);
-					String codecName = new String(Arrays.copyOf(buffer,
-							countBytes));
-					try {
-						codec = (ICodec) fileInputStream.getClass()
-								.getClassLoader().loadClass(codecName)
-								.newInstance();
-					} catch (Exception e) {
-						throw new WrongCodecException("");
-					}
-					break;
-				} else if (codec != null && board != null
-						&& name.equals("turns")) {
+			
+			Map<String,String> sections = new HashMap<String,String>();
 
-					turns= codec.turnsFromInputstream(zipIn, board);
-
-				} else if (name.equals("board")) {
-					board = codec.boardFromInputstream(zipIn);
+			while ((entry = zipIn.getNextEntry()) != null) {
+				StringWriter sw = new StringWriter();
+				int data;
+				while((data = zipIn.read()) != -1) {
+					sw.append((char)data);
 				}
-
+				sections.put(entry.getName(),sw.toString());
 			}
-			entry = zipIn.getNextEntry();
 
-		}
-	}
-
-	public static void main(String[] args) {
-		ZipPersister test = new ZipPersister(new SimpleASCIICodec());
-		try {
-			test.save(new File("Test.zip"), null, null);
-			test.load(new File("Test.zip"));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			if(!sections.containsKey("codec")) throw new WrongCodecException();
+			if(!sections.containsKey("board")) throw new WrongCodecException();
+			if(!sections.containsKey("turns")) throw new WrongCodecException();
+			
+			codec = //(ICodec)Class.forName(sections.get("codec")).newInstance();
+					new de.bwvaachen.beamoflightgame.helper.SimpleASCIICodec();
+			
+			//TODO: Refactor this stuff, we could also try to get rid of the codec trash
+			board = codec.boardFromInputstream(new StringBufferInputStream(sections.get("board")));
+			turns = codec.turnsFromInputstream(new StringBufferInputStream(sections.get("turns")),board);
+			
+			return new Pair<IBeamsOfLightPuzzleBoard, List<Turn>>(board,turns);
 	}
 
 }

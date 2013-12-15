@@ -1,10 +1,9 @@
 package de.bwvaachen.beamoflightgame.helper;
 
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.nio.ByteOrder;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -15,7 +14,6 @@ import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
-import de.bwvaachen.beamoflightgame.model.builder.BeamOfLightPuzzleBoardBuilder;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 
 public class SimpleASCIICodec implements ICodec {
@@ -28,13 +26,8 @@ public class SimpleASCIICodec implements ICodec {
 		for (int row = 0; row < board.getHeight(); row++) {
 			builder.append(lineBreak);
 			for (int col = 0; col < board.getWidth(); col++) {
-				ITile tile = board.getTileAt(row, col);
-				//TODO This is ugly. Please use tile.toString() here!
-				if (tile instanceof NumberTile) {
-					builder.append(((NumberTile) tile).getNumber() + " ");
-				} else {
-					builder.append("_ ");
-				}
+				ITile tile = board.getTileAt(col, row);
+				builder.append(tile.toString() + " ");
 			}
 			lineBreak = "\n";
 		}
@@ -48,8 +41,8 @@ public class SimpleASCIICodec implements ICodec {
 		StringBuilder builder = new StringBuilder();
 		for (Turn turn : turns) {
 			builder.append(turn.getX() + " " + turn.getY() + " "
-					+ turn.getOldTileState().getSign() + " "
-					+ turn.getNewTileState().getSign() + " " + turn.getFlags()
+					+ turn.getOldTileState() + " "
+					+ turn.getNewTileState() + " " + turn.getFlags()
 					+ "\n");
 		}
 		PrintWriter writer = new PrintWriter(output);
@@ -61,34 +54,47 @@ public class SimpleASCIICodec implements ICodec {
 	public IBeamsOfLightPuzzleBoard boardFromInputstream(InputStream input)
 			throws WrongCodecException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		Scanner scanner = new Scanner(input);
-
-		Integer width = null;
-
-		LinkedList<String> rowList = new LinkedList<>();
-		while (scanner.hasNextLine()) {
-			String line = scanner.nextLine();
-		}
-		width = rowList.getFirst().split(" ").length;
-		int height = rowList.size();
-
-		BeamOfLightPuzzleBoardBuilder builder = new BeamOfLightPuzzleBoardBuilder(
-				width, height);
-
-		int row = 0;
-		for (String rowLine : rowList) {
-
-			String[] split = rowLine.split(" ");
-			for (int col = 0; col < split.length; col++) {
-				if (split[col].matches("[0-9]+")) {
-					builder.setNumberTiles(row, col,
-							Integer.parseInt(split[col]));
-				}
-			}
+		
+		final IBeamsOfLightPuzzleBoard puzzle = new BeamsOfLightPuzzleBoard();
+		
+		int row = -1, col = 0, maxCol = 0;
+		
+		while(scanner.hasNextLine()) {
 			row++;
+		    String line   = scanner.nextLine();
+			if(!line.matches("([nesw\\-(\\d+)] )+")){
+				throw new WrongCodecException();
+			}
+		    
+		    final LinkedList<ITile> tileList = new LinkedList<ITile>();
+		    col = 0;
+		    for(String token: line.split(" ")) {
+		    	ITile tile = getTileByToken(token, puzzle, col, row);
+		    	puzzle.enqueueTile(tile);
+		    	col++;
+		    	maxCol = Math.max(maxCol,col);
+		    }
 		}
 		
-		IBeamsOfLightPuzzleBoard puzzle = builder.create();
+		puzzle.init(maxCol,row+1);
+		puzzle.flush();
+	
 		return puzzle;
+	}
+	
+	private ITile getTileByToken(String token, IBeamsOfLightPuzzleBoard b, int row, int col) {
+		if(token.matches("[0-9]+")) {
+				return new NumberTile((IBeamsOfLightPuzzleBoard) b, Integer.parseInt(token), row, col);
+		}
+		else {
+			char sign = '\0';
+			try {
+				sign = token.charAt(0); 
+			}
+			catch (StringIndexOutOfBoundsException e) {
+			}
+			return new LightTile((IBeamsOfLightPuzzleBoard) b, row, col, LightTileState.signToState(sign));
+		}
 	}
 
 	@Override
@@ -106,7 +112,6 @@ public class SimpleASCIICodec implements ICodec {
 			int col=lineScanner.nextInt();
 			LightTileState oldState=LightTileState.signToState(lineScanner.next().charAt(0));
 			LightTileState newState=LightTileState.signToState(lineScanner.next().charAt(0));
-			byte flag=lineScanner.nextByte();
 			turns.add(new Turn(board, row, col, oldState, newState));
 			
 		}

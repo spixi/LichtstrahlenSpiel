@@ -47,6 +47,10 @@ public enum LightTileState implements ITileState {
 	public LightTileState reverse() {
 		return this;
 	}
+	
+	public String toString() {
+		return ((Character) getSign()).toString();
+	}
 
 	public static LightTileState signToState(char c){
 		switch (c) {

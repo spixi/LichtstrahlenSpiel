@@ -16,5 +16,5 @@ public interface IPersistenceHelper {
 	 * @throws IOException
 	 */
 	void save(File path,IBeamsOfLightPuzzleBoard board, List<Turn> turns) throws IOException;
-	void load(File path) throws IOException, WrongCodecException, InstantiationException, IllegalAccessException, ClassNotFoundException;
+	Pair<IBeamsOfLightPuzzleBoard, List<Turn>> load(File path) throws IOException, WrongCodecException, InstantiationException, IllegalAccessException, ClassNotFoundException;
 }

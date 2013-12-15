@@ -19,4 +19,7 @@ public class NumberTileState implements ITileState {
 		return false;
 		}
 	}
+	public String toString() {
+		return ((Integer) number).toString();
+	}
 }

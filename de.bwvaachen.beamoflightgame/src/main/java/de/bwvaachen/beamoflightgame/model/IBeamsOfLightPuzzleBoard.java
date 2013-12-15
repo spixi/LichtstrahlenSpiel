@@ -17,6 +17,9 @@ public interface IBeamsOfLightPuzzleBoard extends Iterable<ITile> {
 	
 	public boolean hasField(int x, int y);
 	public void init(int x, int y);
-
+    
 	public void putTile(ITile tile);
+	
+	public void enqueueTile(ITile tile);
+	public void flush();
 }

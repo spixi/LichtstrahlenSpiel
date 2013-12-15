@@ -13,4 +13,5 @@ public interface ITile<T extends ITileState> extends Visitable {
 	public T getTileState();
 	public boolean isStateChangeable();
 	public boolean equals(ITile t);
+	public void put();
 }
