@@ -5,6 +5,7 @@ import java.util.TreeMap;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.logic.PuzzleException;
+import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.ITileState;
 import de.bwvaachen.beamoflightgame.model.LightTile;
@@ -44,6 +45,9 @@ public class IntersectionStrategy extends AbstractStrategy {
 				counter ++;
 			}
 			
+			//maxRange[state.ordinal()] = counter
+			//This is not save because a bad guy could change the order of the LightTileState enum
+			
 			maxRange[index++] = counter;
 		}
 		
@@ -51,6 +55,94 @@ public class IntersectionStrategy extends AbstractStrategy {
 		for(int m : maxRange) System.out.printf("%d ", m);
 		System.out.println("}");
 		
+		int availableRange;
+		
+		//TODO
+		//  Configure the ant preprocessor to replace the tokens
+		//  "@IF_JAVA8@"          with "*/" and
+		//  "@NO_JAVA8*///@"      with ""
+		//  if we compile with Java >= 1.8
+		
+		/* @IF_JAVA8@
+		availableRange = IntStream.of(maxRange).sum();)
+		/* @NO_JAVA8*///@
+		availableRange = (maxRange[0]+maxRange[1]+maxRange[2]+maxRange[3]);
+		/**/
+		
+		
+		//case 1: the remaining range of the NumberTile cannot be covered by the
+		//        all four directions together
+		if(availableRange < remainingLightRange) 
+			throw new UnsolvablePuzzleException();
+		
+		//case 2: there is only one possibility to cover the remaining range of the
+		//        NumberTile
+		else if(availableRange == remainingLightRange) {
+			//TODO: We have only one possible solution
+			
+		}
+		
+		//case 2: there is more than one possibility to cover the whole remaining range of
+		//        the number tile
+
+		else {
+			//TODO: We have more than one possible solutions
+			//Now we have to check if some LightTiles are filled by every possible solution
+			//first: determine how many LightTiles can be filled by each combination of
+			//three, two or one direction
+			//
+			//The difference of the availableRange and the remainingRange determines
+			//how many LightTiles are forced to be covered by the other directions
+			//
+			// E. g.:
+			//
+			//          [X]
+			//          [ ]
+			// [X][ ][ ][6][ ][ ][ ][ ][X]
+			//          [ ]
+			//          [X]
+			//
+			// The NumberTile 6 has a remainingRange of 6
+			// Because NORTH+SOUTH can only cover up to (1 + 1 = 2) tiles
+			// the remaining 4 tiles must be covered by WEST+SOUTH
+			//
+			// We are required to distribute those 4 tiles to the WEST and SOUTH
+			// direction. We must always point the beam to the direction with the most
+			// remaining range.
+			//
+			// So we will produce this figure:
+			//
+			//          [X]
+			//          [ ]
+			// [X][ ][ ][6][-][-][ ][ ][X]
+			//          [ ]
+			//          [X]
+			//
+			//
+			//We can hard code the following terms because they are relatively comprehensible
+			//
+			//three directions
+			//maxRange[1]+maxRange[2]+maxRange[3]
+			//maxRange[0]+maxRange[2]+maxRange[3]
+			//maxRange[0]+maxRange[1]+maxRange[3]
+			//maxRange[0]+maxRange[1]+maxRange[2]
+			//
+			//two directions
+			//maxRange[0]+maxRange[1]
+			//maxRange[0]+maxRange[2]
+			//maxRange[0]+maxRange[3]
+			//maxRange[1]+maxRange[2]
+			//maxRange[1]+maxRange[3]
+			//maxRange[2]+maxRange[3]
+			//
+			//one direction
+			//maxRange[0]
+			//maxRange[1]
+			//maxRange[2]
+			//maxRange[3]
+			
+		}
+
 		
 		
 		//TODO
