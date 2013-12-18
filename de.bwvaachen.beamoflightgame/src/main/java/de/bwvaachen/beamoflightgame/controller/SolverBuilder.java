@@ -1,4 +1,4 @@
-package de.bwvaachen.beamoflightgame.logic.solver;
+package de.bwvaachen.beamoflightgame.controller;
 
 import java.util.List;
 import java.util.LinkedList;
@@ -8,6 +8,7 @@ import de.bwvaachen.beamoflightgame.logic.ISolver;
 import de.bwvaachen.beamoflightgame.logic.IStrategy;
 import de.bwvaachen.beamoflightgame.logic.PuzzleException;
 import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
+import de.bwvaachen.beamoflightgame.logic.solver.AbstractSolver;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 

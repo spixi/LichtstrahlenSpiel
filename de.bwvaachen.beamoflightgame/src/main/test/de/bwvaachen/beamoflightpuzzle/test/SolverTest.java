@@ -10,9 +10,9 @@ import java.util.List;
 import org.easymock.EasyMock;
 import org.junit.*;
 
+import de.bwvaachen.beamoflightgame.controller.SolverBuilder;
 import de.bwvaachen.beamoflightgame.logic.ISolver;
 import de.bwvaachen.beamoflightgame.logic.PuzzleException;
-import de.bwvaachen.beamoflightgame.logic.solver.SolverBuilder;
 import de.bwvaachen.beamoflightgame.logic.strategies.*;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.LightTile;

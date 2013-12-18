@@ -25,12 +25,12 @@ import javax.swing.filechooser.FileFilter;
 
 
 import de.bwvaachen.beamoflightgame.controller.ILightController;
+import de.bwvaachen.beamoflightgame.controller.SolverBuilder;
 import de.bwvaachen.beamoflightgame.controller.impl.LightController;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.ITileVisitor;
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.logic.ISolver;
-import de.bwvaachen.beamoflightgame.logic.solver.SolverBuilder;
 import de.bwvaachen.beamoflightgame.logic.strategies.LonelyFieldStrategy;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
