@@ -1,4 +1,4 @@
-package de.bwvaachen.beamoflightgame.logic.solver;
+package de.bwvaachen.beamoflightgame.controller;
 
 import de.bwvaachen.beamoflightgame.logic.ISolver;
 import de.bwvaachen.beamoflightgame.logic.IStrategy;
