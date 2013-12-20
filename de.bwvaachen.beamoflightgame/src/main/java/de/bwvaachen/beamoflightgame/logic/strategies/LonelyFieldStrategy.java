@@ -26,12 +26,7 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 	    IndexedMap<LightTileState,NumberTile> neighbours
 	    	= new IndexedMap<LightTileState,NumberTile>();
 	    
-	    for(LightTileState lts :
-	    	new LightTileState[]{
-	    		LightTileState.NORTH,
-	    		LightTileState.EAST,
-	    		LightTileState.SOUTH,
-	    		LightTileState.WEST}) {
+	    for(LightTileState lts : LightTileState.allDirections()) {
 	    	
 	    	neighbour = findNeighbour(lts);
 
@@ -83,6 +78,7 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 	}
 
     private boolean doesCross(ITileState a, ITileState b) {
+    	System.out.printf("doesCross(%s, %s)\n", a.toString(), b.toString());
     	return !( (a==LightTileState.EMPTY) || (a.equals(b)) );
     }
     
@@ -98,7 +94,7 @@ public class LonelyFieldStrategy extends AbstractStrategy {
     		{
     			//Does another LightTile cross the line?
     			//Then stop looking for the neighbour.
-    			if (doesCross(currentTile.getTileState(), lts ))
+    			if (doesCross(currentTile.getTileState(), lts.reverse() ))
     				return null;
     		}
     		else if(currentTile instanceof NumberTile) { //found an NumberTile
