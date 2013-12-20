@@ -42,7 +42,7 @@ public class GraficFactory {
 		try{
 			NumberTile num = (NumberTile) meineKachel;
 
-			String url = "themes/happiness/"+ num.getNumber() + ".png";
+			String url = "themes/moon/"+ num.getNumber() + ".png";
 			URL u = this.getClass().getClassLoader().getResource(url);
 			
 			ii = new ImageIcon(u);
@@ -57,34 +57,34 @@ public class GraficFactory {
 		{
 		case NORTH:
 			if(isEnd(lig))
-				url = "themes/happiness/light2.png";
-			else url = "themes/happiness/light1.png";
+				url = "themes/moon/light2.png";
+			else url = "themes/moon/light1.png";
 			return new ImageIcon(this.getClass().getClassLoader().getResource(url));
 			
 			
 		case EAST:
 			if(isEnd(lig))
-				url = "themes/happiness/light2.png";
-			else url = "themes/happiness/light1.png";
+				url = "themes/moon/light2.png";
+			else url = "themes/moon/light1.png";
 			ii = new ImageIcon(this.getClass().getClassLoader().getResource(url));
 			return rotateIcon(ii, Rotate.DOWN);
 			
 		case SOUTH:
 			if(isEnd(lig))
-				url = "themes/happiness/light2.png";
-			else url = "themes/happiness/light1.png";
+				url = "themes/moon/light2.png";
+			else url = "themes/moon/light1.png";
 			ii = new ImageIcon(this.getClass().getClassLoader().getResource(url));
 			return rotateIcon(ii, Rotate.UPSIDE_DOWN);
 			
 		case WEST:
 			if(isEnd(lig))
-				url = "themes/happiness/light2.png";
-			else url = "themes/happiness/light1.png";
+				url = "themes/moon/light2.png";
+			else url = "themes/moon/light1.png";
 			ii = new ImageIcon(this.getClass().getClassLoader().getResource(url));
 			return rotateIcon(ii, Rotate.UP);
 			
 		case EMPTY:
-			 url = "themes/happiness/darkness.png";
+			 url = "themes/moon/darkness.png";
 			 return new ImageIcon(this.getClass().getClassLoader().getResource(url));
 			
 			default:

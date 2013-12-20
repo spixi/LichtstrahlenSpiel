@@ -1,8 +1,10 @@
 package de.bwvaachen.beamoflightgame.model;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
@@ -35,11 +37,14 @@ public enum LightTileState implements ITileState {
 	EMPTY('-', null);
 	
 	private final static Map<Character,LightTileState> map;
+	private final static LightTileState allDirections[];
 	static {
 		map = new HashMap<Character,LightTileState>();
 		for(LightTileState value: values()) {
 			map.put(value.getSign(),value);
 		}
+		
+		allDirections = new LightTileState[] {NORTH, EAST, SOUTH, WEST};
 	}
 	
 	private char sign;
@@ -79,5 +84,9 @@ public enum LightTileState implements ITileState {
 		catch (Exception e){
 		return false;
 		}
+	}
+	
+	public static List<LightTileState> allDirections() {
+		return Arrays.asList(allDirections);
 	}
 }

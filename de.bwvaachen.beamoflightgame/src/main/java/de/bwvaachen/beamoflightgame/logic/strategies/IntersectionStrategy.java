@@ -55,20 +55,7 @@ public class IntersectionStrategy extends AbstractStrategy {
 		for(int m : maxRange) System.out.printf("%d ", m);
 		System.out.println("}");
 		
-		int availableRange;
-		
-		//TODO
-		//  Configure the ant preprocessor to replace the tokens
-		//  "@IF_JAVA8@"          with "*/" and
-		//  "@NO_JAVA8*///@"      with ""
-		//  if we compile with Java >= 1.8
-		
-		/* @IF_JAVA8@
-		availableRange = IntStream.of(maxRange).sum();)
-		/* @NO_JAVA8*///@
-		availableRange = (maxRange[0]+maxRange[1]+maxRange[2]+maxRange[3]);
-		/**/
-		
+		int availableRange = (maxRange[0]+maxRange[1]+maxRange[2]+maxRange[3]);
 		
 		//case 1: the remaining range of the NumberTile cannot be covered by the
 		//        all four directions together
@@ -79,6 +66,8 @@ public class IntersectionStrategy extends AbstractStrategy {
 		//        NumberTile
 		else if(availableRange == remainingLightRange) {
 			//TODO: We have only one possible solution
+			
+			
 			
 		}
 		
@@ -140,6 +129,8 @@ public class IntersectionStrategy extends AbstractStrategy {
 			//maxRange[1]
 			//maxRange[2]
 			//maxRange[3]
+			
+			
 			
 		}
 
