@@ -199,7 +199,14 @@ public class LightgameUI extends JFrame {
 		GraficFactory gf = new GraficFactory(model);
 		for(TileButton btn : buttons)
 		{
-			addIcon( btn , gf . getImage ( btn . getTile() ) ) ;		
+			addIcon( btn , gf . getImage ( btn . getTile() ) ) ;	
+			if ( btn . markiert ) {
+				btn . setBackground ( new Color(255,0,0) ) ;
+			}
+			else {
+				btn . setBackground ( new Color(238,238,238) ) ;
+			}
+				
 		} // for(TileButton btn : buttons)
 	} // private void Update(IBeamsOfLightPuzzleBoard model)
 	
@@ -361,8 +368,7 @@ public class LightgameUI extends JFrame {
 				
 				activeNumberTile = null ;
 				for ( TileButton aktButton : buttons ) {
-					aktButton . markiert = false ;
-					aktButton . setBackground ( new Color(238,238,238) ) ;
+					aktButton . markiert = false ;				
 				} // for ( TileButton aktButton : buttons ) 
 				
 				// Den ausl�senden Button holen
@@ -416,7 +422,6 @@ public class LightgameUI extends JFrame {
 
 									// Einf�rben des Buttons
 									aktButton . markiert = true ;
-									aktButton . setBackground(new Color(255,0,0)) ;
 									// Die "verbrauchte St�rke" erh�hen.
 									verbrauchteStaerke += 1 ;
 									activeNumberTile = btn . getTile() ;
@@ -426,8 +431,11 @@ public class LightgameUI extends JFrame {
 							
 						} // if ( aktState != LightTileState . EMPTY )
 							
-					} // for ( LightTileState aktState : LightTileState . values() ) 
-				}
+					} // for ( LightTileState aktState : LightTileState . values() )
+					
+				} // if ( btn . getTile() instanceof NumberTile ) {
+				
+				Update ( controller.getBoard() ) ;
 				
 			} catch (Exception e2) {
 				
@@ -436,6 +444,9 @@ public class LightgameUI extends JFrame {
 		} // public void actionPerformed(ActionEvent e)
 		
 	} // class TileButtonListener 
+	
+	
+	
 	
 	class LightTileListener implements ActionListener {
 
@@ -497,17 +508,24 @@ public class LightgameUI extends JFrame {
 					
 					activeNumberTile = null ;
 					
-					//Update( currentBoard ) ;
+					
+					
+					for ( TileButton aktButton : buttons ) {
+						aktButton . markiert = false ;						
+					} // for ( TileButton aktButton : buttons ) 					
+					
+					
+					Update( currentBoard ) ;
 				} // if ( ( activeNumberTile != null ) && ( btn . markiert ) )
 				
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
-			} 	
+			} // try .. catch	
 		
-		}
+		} // public void actionPerformed(ActionEvent e) 
 		
-	}
+	} // class LightTileListener implements ActionListener
 	
 	
 	

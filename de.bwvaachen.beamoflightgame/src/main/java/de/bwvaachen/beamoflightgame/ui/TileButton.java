@@ -76,7 +76,7 @@ public class TileButton extends JButton implements ChangeListener {
 		
 		//TODO
 		try {
-			Thread.sleep(800);
+			Thread.sleep(8);
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
