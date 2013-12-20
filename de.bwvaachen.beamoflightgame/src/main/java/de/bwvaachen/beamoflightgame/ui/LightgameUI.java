@@ -103,7 +103,7 @@ public class LightgameUI extends JFrame {
 			// Controller mit Test Prototyp f�r GUI f�llen.
 			controller . setBoard ( new PrototypModelFuerGUI() ) ;
 			
-			javax.swing.JButton solverButton = new javax.swing.JButton("Rätsel auflösen");
+			javax.swing.JButton solverButton = new javax.swing.JButton("Puzzel loesen");
 			solverButton.addActionListener(new ActionListener() {
 
 				@Override
@@ -120,8 +120,7 @@ public class LightgameUI extends JFrame {
 				}
 				
 			});
-			
-			
+						
 			contentPane.add(solverButton,BorderLayout.NORTH);
 			
 			// Das Spielfeld vom Controller holen:
@@ -245,11 +244,29 @@ public class LightgameUI extends JFrame {
 		JMenuItem mntmbacktoFailure = new JMenuItem("Back to failure");
 		mnGame.add(mntmbacktoFailure);
 		
+		mntmbacktoFailure . addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.returnToStableState();
+				
+			}
+		});
+		
 		JSeparator separator_3 = new JSeparator();
 		mnGame.add(separator_3);
 		
 		JMenuItem mntmsetMarker = new JMenuItem("Set mark");
 		mnGame.add(mntmsetMarker);
+		
+		mntmsetMarker . addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.setUndoMark();
+				
+			}
+		});
 		
 		JSeparator separator_4 = new JSeparator();
 		mnGame.add(separator_4);
