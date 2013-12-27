@@ -79,10 +79,10 @@ public enum LightTileState implements ITileState {
 	{
 		try{
 			LightTileState lts = (LightTileState) tileState;
-			return lts == this;
+			return lts.equals(this);
 		}
 		catch (Exception e){
-		return false;
+			return false;
 		}
 	}
 	

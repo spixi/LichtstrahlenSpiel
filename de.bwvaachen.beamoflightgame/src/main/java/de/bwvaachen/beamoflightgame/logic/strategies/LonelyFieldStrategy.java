@@ -32,7 +32,9 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 
 	    	if (neighbour != null) {
 	    		//determine the distance to the neighbour NumberTile.
-	    		if (getDistance(tile,neighbour,lts) <= neighbour.getRemainingLightRange()) {
+	    		int remainingLightRange = neighbour.getRemainingLightRange();
+	    		if (remainingLightRange > 0 &&
+	    			getDistance(tile,neighbour,lts) <= neighbour.getRemainingLightRange()) {
 	    			neighbours.put(lts,neighbour);
 	    		}     	     
 	    	}
@@ -47,7 +49,7 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 	    	fillBoard(entry.getValue(), entry.getKey());
 	    	return true;
 	    	}
-	    default: return false; //Ambiguous solution => try next Step
+	    default: return false; //Ambiguous solution => try next step
 	    }
 
 	}
@@ -68,7 +70,7 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 		
 		traverser.reset();
 		ITile next = traverser.get();
-		for (int i = neighbour.getRemainingLightRange(); i>=0; --i) {
+		for (int i = neighbour.getRemainingLightRange(); i>0; --i) {
 			if(next == neighbour) break; //We already reached the neighbour: then break
 			traverser.shift(traverseDirection);
 			assert next instanceof LightTile;
@@ -78,7 +80,6 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 	}
 
     private boolean doesCross(ITileState a, ITileState b) {
-    	System.out.printf("doesCross(%s, %s)\n", a.toString(), b.toString());
     	return !( (a==LightTileState.EMPTY) || (a.equals(b)) );
     }
     
