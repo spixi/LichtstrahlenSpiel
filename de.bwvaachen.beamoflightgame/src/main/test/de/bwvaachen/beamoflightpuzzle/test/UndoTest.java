@@ -37,8 +37,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
+import de.bwvaachen.beamoflightgame.controller.Turn;
+import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.model.IChangeableTile;
+import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
+import de.bwvaachen.beamoflightgame.model.LightTileState;
+import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.ui.PrototypModelFuerGUI;
 
 //@RunWith(PowerMockRunner.class)
 @PrepareForTest({IBeamsOfLightPuzzleBoard.class})
@@ -51,52 +58,20 @@ public class UndoTest {
 	
 	//TODO: Implement the controller first
 	
-	/*
+	
 	@Test
 	public void test() {
-		IBeamsOfLightPuzzleBoard    b = EasyMock.createStrictMock(IBeamsOfLightPuzzleBoard.class);
+		BeamsOfLightPuzzleBoard    b =
+				new PrototypModelFuerGUI();
+		TurnUndoManager um  = new TurnUndoManager();
 		
-		ILightTile before;
-		ILightTile after;
+		b.addChangeListener(um);
 		
-		Turn  t             = new Turn(b, 1, 2, before, after);
-		
-		b.setTileAt(1,2,after);
-		expect(b.isPlacementOfTilePossible(before, 1, 2)).andReturn(true);
-		b.setTileAt(1,2,before);
-		expect(b.isPlacementOfTilePossible(after, 1, 2)).andReturn(true);
-		b.setTileAt(1,2,after);
-		
-		replay(b);
-		
-		
-		b.setTileAt(1,2,after);
-		
-		//First undo must work
-		t.undo();
+		((IChangeableTile) b.getTileAt(1, 2)).setState(LightTileState.NORTH);
 
-		//Second undo must fail
-		try {
-
-			t.undo();
-		}
-		catch(Exception e) {
-			assertTrue(e instanceof CannotUndoException);
-		}
 		
-		//First redo must work
-		t.redo();
-		try {
-			t.redo();
-		}
-		
-		//Second redo must fail
-		catch(Exception e) {
-			assertTrue(e instanceof CannotRedoException);
-		}
-		
-		verify(b);
+		System.out.println(um);
 	}
-	*/
+	
 
 }

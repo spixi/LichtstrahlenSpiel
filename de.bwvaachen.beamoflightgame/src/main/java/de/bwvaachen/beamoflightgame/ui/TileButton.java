@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import de.bwvaachen.beamoflightgame.helper.Pair;
 import de.bwvaachen.beamoflightgame.model.IChangeableTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
 
@@ -70,7 +71,7 @@ public class TileButton extends JButton implements ChangeListener {
 	public void stateChanged(ChangeEvent e) {
 		// TODO Auto-generated method stub
 		Hashtable<Object,Object> foo = new Hashtable<Object,Object>();
-		IChangeableTile tile = (IChangeableTile) e.getSource();
+		IChangeableTile tile = ( (Pair<?,IChangeableTile>) e.getSource() ).right;
 		tile.storeState(foo);
 		//tile.getPresentation()
 		

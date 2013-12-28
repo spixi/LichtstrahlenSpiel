@@ -1,12 +1,16 @@
 package de.bwvaachen.beamoflightgame.model.impl;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import javax.swing.event.ChangeListener;
+
 import de.bwvaachen.beamoflightgame.helper.ITileVisitor;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
+import de.bwvaachen.beamoflightgame.model.ITileState;
 import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
@@ -17,6 +21,7 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 	private ITile[][] tiles;
 	private LinkedList<NumberTile> numberTiles;
 	private ConcurrentLinkedQueue<ITile> tileQueue = new ConcurrentLinkedQueue<ITile>();
+	private HashSet<ChangeListener> changeListeners = new HashSet<ChangeListener>();
 
 	@Override
 	public Iterator<ITile> iterator() {
@@ -57,8 +62,9 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 	}
 
 	@Override
-	public boolean isPlacementOfTileStatePossible(LightTileState state,
+	public boolean isPlacementOfTileStatePossible(ITileState state,
 			int x, int y) {
+		//TODO implementation
 		return true;
 	}
 
@@ -112,6 +118,9 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 	
 	private void putTileInternal(ITile tile) {
 		tiles[tile.getX()][tile.getY()] = tile;
+		for(ChangeListener cl: changeListeners) {
+			tile.addChangeListener(cl);
+		}
 	}
 
 	/**
@@ -136,6 +145,22 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 		for(ITile t: tileQueue) {
 			putTile(t);
 		}
+	}
+
+	@Override
+	public void addChangeListener(ChangeListener cl) {
+		for(ITile t: this) {
+			t.addChangeListener(cl);
+		}
+		changeListeners.add(cl);
+	}
+
+	@Override
+	public void removeChangeListener(ChangeListener cl) {
+		for(ITile t: this) {
+			t.removeChangeListener(cl);
+		}
+		changeListeners.remove(cl);
 	}
 
 }

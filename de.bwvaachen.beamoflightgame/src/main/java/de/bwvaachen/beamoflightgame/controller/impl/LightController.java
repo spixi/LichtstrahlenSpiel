@@ -16,6 +16,7 @@ import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 public class LightController implements ILightController {
 	private TurnUndoManager          turnManager;
 	private IBeamsOfLightPuzzleBoard puzzleBoard;
+	
 
 	/*
 	@Override
@@ -100,17 +101,18 @@ public class LightController implements ILightController {
 	@Override
 	public IBeamsOfLightPuzzleBoard newGame(int width, int height) throws Exception 
 	{
-		puzzleBoard = new BeamsOfLightPuzzleBoard();
+		setBoard(new BeamsOfLightPuzzleBoard());
 		puzzleBoard.init(width, height);
 		return null;
 	} // public IBeamsOfLightPuzzleBoard newGame(int x, int y)
 	
 
 	@Override
+	@Deprecated
 	public Turn doTurn(int x, int y, LightTileState oldTileState, LightTileState newTileState) throws Exception 
 	{
 		Turn oTurn = new Turn(puzzleBoard, x, y, oldTileState, newTileState);
-		turnManager.addEdit(oTurn);
+		//turnManager.addEdit(oTurn);
 		
 		return oTurn;
 	} // public void doTurn(int x, int y, char orientaion, boolean isEnd)
@@ -136,7 +138,7 @@ public class LightController implements ILightController {
 
 	@Override
 	public void returnToNextUndoMark() throws CannotUndoException {
-	    turnManager.undoToMarker();
+	    turnManager.undoToLastMarker();
 	} // public IBeamsOfLightPuzzleBoard returnToNextUndoMark()
 	
 
@@ -156,6 +158,8 @@ public class LightController implements ILightController {
 	public void setBoard(IBeamsOfLightPuzzleBoard _board) throws Exception {
 		
 		puzzleBoard = _board ;
+		turnManager = new TurnUndoManager();
+		puzzleBoard.addChangeListener(turnManager);
 		
 	}
 

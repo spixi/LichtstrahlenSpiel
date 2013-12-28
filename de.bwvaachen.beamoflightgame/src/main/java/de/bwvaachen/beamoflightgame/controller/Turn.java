@@ -29,6 +29,8 @@ import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoableEdit;
 
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.model.IChangeableTile;
+import de.bwvaachen.beamoflightgame.model.ITileState;
 import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
@@ -40,21 +42,22 @@ import de.bwvaachen.beamoflightgame.model.LightTileState;
  */
 public class Turn implements UndoableEdit  
 {
-	public static transient final int FLAG_ALIVE = 0x1, FLAG_HAS_BEEN_DONE = 0x2, FLAG_SIGNIFICANT = 0x4, FLAG_ERROR = 0x10;
+	public static transient final int FLAG_ALIVE = 0x1, FLAG_HAS_BEEN_DONE = 0x2, FLAG_SIGNIFICANT = 0x4, FLAG_ERROR = 0x10, FLAG_MARKER = 0x20;
+	
 	private int flags;
 	private IBeamsOfLightPuzzleBoard board;
 	private int x, y;
-	private LightTileState oldTileState, newTileState;
+	private ITileState oldTileState, newTileState;
 	
-	private void setFlag(int f) {
+	void setFlag(int f) {
 		flags |= f;
 	}
 	
-	private void unsetFlag(int f) {
+	void unsetFlag(int f) {
 		flags &= ~f;
 	}
 	
-	public Turn(IBeamsOfLightPuzzleBoard b, int x, int y, LightTileState oldTileState, LightTileState newTileState) {
+	public Turn(IBeamsOfLightPuzzleBoard b, int x, int y, ITileState oldTileState, ITileState newTileState) {
 		board        = b;
 		this.x       = x;
 		this.y       = y;
@@ -62,27 +65,11 @@ public class Turn implements UndoableEdit
 		this.newTileState = newTileState;
 		flags |= FLAG_ALIVE;
 		flags |= FLAG_HAS_BEEN_DONE;
-		redo();
+		flags |= FLAG_SIGNIFICANT;
 	}
 
 	public int getFlags() {
 		return flags;
-	}
-
-	public int getX() {
-		return x;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	public LightTileState getOldTileState() {
-		return oldTileState;
-	}
-
-	public LightTileState getNewTileState() {
-		return newTileState;
 	}
 
 	public boolean addEdit(UndoableEdit anEdit) {
@@ -90,11 +77,13 @@ public class Turn implements UndoableEdit
 	}
 
 	public boolean canRedo() {
+		//TODO
 		return (flags & FLAG_ALIVE | ~FLAG_HAS_BEEN_DONE) != 0;
 	}
 
 	public boolean canUndo() {
-		return (flags & FLAG_ALIVE & FLAG_HAS_BEEN_DONE) != 0;
+		System.out.println(flags & FLAG_ALIVE);
+		return ((flags & ((FLAG_ALIVE | FLAG_HAS_BEEN_DONE))) != 0);
 	}
 
 	public void die() {
@@ -114,14 +103,6 @@ public class Turn implements UndoableEdit
 		return getPresentationName() + " rueckgängig machen.";
 	}
 	
-	public void mark() {
-		setFlag(FLAG_SIGNIFICANT);
-	}
-	
-	public void unmark() {
-		unsetFlag(FLAG_SIGNIFICANT);
-	}
-	
 	@Override
 	public boolean isSignificant() {
 		return (flags & FLAG_SIGNIFICANT) != 0;
@@ -130,8 +111,8 @@ public class Turn implements UndoableEdit
 	public void redo() throws CannotRedoException {
 		if(!canRedo()) throw new CannotRedoException();
 		setFlag(FLAG_HAS_BEEN_DONE);
-		ITile tile = board.getTileAt(x, y);
-		((LightTile) tile).setState(newTileState);
+		IChangeableTile tile = (IChangeableTile) board.getTileAt(x, y);
+		tile.setState(newTileState);
 	}
 
 	public boolean replaceEdit(UndoableEdit anEdit) {
@@ -141,10 +122,25 @@ public class Turn implements UndoableEdit
 	public void undo() throws CannotUndoException {
 		if(!canUndo()) throw new CannotUndoException();
 		unsetFlag(FLAG_HAS_BEEN_DONE);
-		ITile tile = board.getTileAt(x, y);
-		((LightTile) tile).setState(oldTileState);
+		IChangeableTile tile = (IChangeableTile) board.getTileAt(x, y);
+		tile.setState(oldTileState);
 	}
 
+
+	public String toString() {
+		final char delimiter = ' ';
+		StringBuffer buf = new StringBuffer();
+		buf.append(x);
+		buf.append(delimiter);
+		buf.append(y);
+		buf.append(delimiter);
+		buf.append(oldTileState);
+		buf.append(delimiter);
+		buf.append(newTileState);
+		buf.append(delimiter);
+		buf.append(flags);
+		return buf.toString();
+	}
 
 
 }

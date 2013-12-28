@@ -278,7 +278,32 @@ public class LightgameUI extends JFrame {
 		mnGame.add(separator_5);
 		
 		JMenuItem mntmBackToMark = new JMenuItem("Back to mark");
+		mntmBackToMark . addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.returnToNextUndoMark();
+				
+			}
+		});
+		
 		mnGame.add(mntmBackToMark);
+		
+		//TODO: J(Toggle)Button instead of JMenuItem
+		JMenuItem mntmUndo = new JMenuItem("Undo");
+		mntmUndo . addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//TODO: Fix the interfaces
+				((LightController) controller).undo();
+			}
+			
+			//TODO getPresentationName
+		});
+		
+		mnGame.add(mntmUndo);
+		
 		
 		mntmLoad.addActionListener(new ActionListener(){
 			@Override

@@ -40,10 +40,7 @@ public class SimpleASCIICodec implements ICodec {
 	public void turnsToOutputstream(OutputStream output, List<Turn> turns) {
 		StringBuilder builder = new StringBuilder();
 		for (Turn turn : turns) {
-			builder.append(turn.getX() + " " + turn.getY() + " "
-					+ turn.getOldTileState() + " "
-					+ turn.getNewTileState() + " " + turn.getFlags()
-					+ "\n");
+			builder.append(turn + "\n");
 		}
 		PrintWriter writer = new PrintWriter(output);
 		writer.append(builder.toString());

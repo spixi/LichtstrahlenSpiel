@@ -8,6 +8,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
+import de.bwvaachen.beamoflightgame.helper.Pair;
 
 public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 	protected final IBeamsOfLightPuzzleBoard board;
@@ -63,10 +64,11 @@ public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 		return (T)tileState;
 	}
 	
-	protected final void setTileState(T tileState) {
-		this.tileState = tileState;
+	protected final void setTileState(T newState) {
+		ITileState oldState  = this.tileState;
+		this.tileState       = newState;
 		for(ChangeListener l : changeListeners) {
-			l.stateChanged(new ChangeEvent(this));
+			l.stateChanged(new ChangeEvent(new Pair<ITileState,ITile<T>>(oldState, this)));
 		}
 	}
 	

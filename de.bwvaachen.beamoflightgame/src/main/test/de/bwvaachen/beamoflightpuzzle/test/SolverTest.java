@@ -57,8 +57,16 @@ public class SolverTest {
 	
 	@Test
 	public void intersectionStrategyTest() throws PuzzleException, InstantiationException, IllegalAccessException {		
+		// 3-1-
+		// ||1-      
+		// |3--
+		// -3--
 		
-		IBeamsOfLightPuzzleBoard b = new PrototypModelFuerGUI();
+		
+		IBeamsOfLightPuzzleBoard b = new BeamsOfLightPuzzleBoard();
+		
+		//new NumberTile()
+		
 		
 		System.out.println(b.toString());
 		
