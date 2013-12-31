@@ -11,11 +11,19 @@ public class TurnUndoManager extends UndoManager
 	
 	public void addMarker()
 	{
-		UndoableEdit lastEdit = lastEdit(); 
-		if (lastEdit instanceof Turn) {
-			((Turn) lastEdit).setFlag(Turn.FLAG_MARKER);
+		UndoableEdit editToBeUndone = editToBeUndone();
+		
+		if (editToBeUndone instanceof Turn) {
+			//Does the last turn already have the flag?
+			if((((Turn) editToBeUndone).getFlags() & Turn.FLAG_MARKER) == Turn.FLAG_MARKER) return;
+			
+			
+			((Turn) editToBeUndone).setFlag(Turn.FLAG_MARKER);
 			numOfMarkers++;
+			
+			this.undo();
 		}
+		//TODO: Wir können keinen Marker vor dem ersten Zug setzen ...
 	}
 	
 	public int getNumOfMarkers() {
@@ -24,9 +32,9 @@ public class TurnUndoManager extends UndoManager
 	
 	public void setError()
 	{
-		UndoableEdit lastEdit = lastEdit(); 
-		if (lastEdit instanceof Turn) {
-			((Turn) lastEdit).setFlag(Turn.FLAG_ERROR);
+		UndoableEdit editToBeUndone = editToBeUndone(); 
+		if (editToBeUndone instanceof Turn) {
+			((Turn) editToBeUndone).setFlag(Turn.FLAG_ERROR);
 			stable = false;
 		}
 	}
@@ -34,24 +42,25 @@ public class TurnUndoManager extends UndoManager
 	public final void undoToLastMarker() throws CannotUndoException
 	{
 		if(numOfMarkers == 0) return;
-		UndoableEdit lastEdit;
+		UndoableEdit editToBeUndone;
 
-		while((lastEdit = lastEdit()) != null) {
-			if(lastEdit instanceof Turn) {
-				if ((((Turn) lastEdit).getFlags() & Turn.FLAG_MARKER) == Turn.FLAG_MARKER){
+		while((editToBeUndone = editToBeUndone()) != null && numOfMarkers > 0) {
+			if(editToBeUndone instanceof Turn) {
+				if ((((Turn) editToBeUndone).getFlags() & Turn.FLAG_MARKER) == Turn.FLAG_MARKER){
 					break;
 				}
 			}
+			if(isSignificant()) numOfMarkers--;
 			undo();
 		}
 	}
 	
 	public void undoToLastStableState() {
 		if(stable) return;
-		UndoableEdit lastEdit;
-		while((lastEdit = lastEdit()) != null) {
-			if(lastEdit instanceof Turn) {
-				if ((((Turn) lastEdit).getFlags() & Turn.FLAG_ERROR) == 0){
+		UndoableEdit editToBeUndone;
+		while((editToBeUndone = editToBeUndone()) != null) {
+			if(editToBeUndone instanceof Turn) {
+				if ((((Turn) editToBeUndone).getFlags() & Turn.FLAG_ERROR) == 0){
 					stable = true;
 					break;
 				}
@@ -60,19 +69,6 @@ public class TurnUndoManager extends UndoManager
 		}
 	}
 	
-	
-	private final void undoToStableState() throws CannotUndoException
-	{
-		UndoableEdit lastEdit;
-		while((lastEdit = lastEdit()) != null) {
-			if(lastEdit instanceof Turn) {
-				if ((((Turn) lastEdit).getFlags() & Turn.FLAG_ERROR) == 0){
-					break;
-				}
-			}
-			undo();
-		}
-	}
 
 	/*
 	@Override

@@ -6,7 +6,7 @@ import de.bwvaachen.beamoflightgame.helper.ITileVisitor;
 public class NumberTile extends AbstractTile<NumberTileState> implements IChangeableTile<NumberTileState> {
 	public NumberTile(final IBeamsOfLightPuzzleBoard board, final int number, int x, int y) {
 		super(board, x, y, NumberTileState.class);
-		setTileState(new NumberTileState(number));
+		setTileState(new NumberTileState(number), true);
 	}
 
 	@Override
@@ -40,8 +40,8 @@ public class NumberTile extends AbstractTile<NumberTileState> implements IChange
 	}
 	
 	@Override
-	public void setState(NumberTileState state) {
-		setTileState(state);	
+	public void setState(NumberTileState state, boolean significant) {
+		setTileState(state,significant);	
 	}
 	
 

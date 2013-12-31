@@ -105,7 +105,7 @@ public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 			throw new IllegalStateException("Die Zustandsklasse " + receivedClass + " ist nicht kompatibel mit " + allowedStateClass);
 		tileState = received;
 	}
-	protected final void setTileState(T newState) {
+	protected final void setTileState(T newState, boolean significant) {
 		ITileState oldState  = this.tileState;
 		this.tileState       = newState;
 		for(ChangeListener l : changeListeners) {
@@ -115,8 +115,10 @@ public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 		if (undoMode) return; // Don't raise an event in UndoMode!!!
 		
 		for (UndoableEditListener l : undoableEditListeners) {
+			Turn t = new Turn (board, x, y, oldState, newState);
+			t.setSignificant(significant);
 			l.undoableEditHappened(
-					new UndoableEditEvent(this, new Turn (board, x, y, oldState, newState))
+					new UndoableEditEvent(this, t)
 			);
 		}
 	}

@@ -135,12 +135,14 @@ public class LightgameUI extends JFrame {
 					TraverseDirection traverseDirection = lichtRichtung . reverse() . getTraverseDirection() ;
 					
 					boolean alleGezeichnet = false ;
+					boolean firstTile = true;
 					do  {
 						if ( ( numberTileX == traverser . getX() ) && ( numberTileY == traverser . getY() ) ) {
 							break;
 						}
 						LightTile currentTile = (LightTile) traverser.get() ; 
-						currentTile . setState( lichtRichtung ) ;
+						currentTile . setState( lichtRichtung, firstTile) ;
+						firstTile = false;
 						traverser . shift ( traverseDirection ) ;
 					} while(true);
 					

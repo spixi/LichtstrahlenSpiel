@@ -109,7 +109,7 @@ public class Turn implements UndoableEdit
 		if(!canRedo()) throw new CannotRedoException();
 		setFlag(FLAG_HAS_BEEN_DONE);
 		IChangeableTile tile = (IChangeableTile) board.getTileAt(x, y);
-		tile.setState(newTileState);
+		tile.setState(newTileState, false);
 	}
 	
 	@Override
@@ -144,7 +144,7 @@ public class Turn implements UndoableEdit
 		IChangeableTile tile = (IChangeableTile) board.getTileAt(x, y);
 		synchronized(tile) {
 			tile.setUndoMode(true);
-			tile.setState(oldTileState);
+			tile.setState(oldTileState,false);
 			tile.setUndoMode(false);
 		}
 	}
@@ -152,6 +152,14 @@ public class Turn implements UndoableEdit
 
 	void unsetFlag(int f) {
 		flags &= ~f;
+	}
+
+	public void setSignificant(boolean significant) {
+		if (significant)
+			setFlag(FLAG_SIGNIFICANT);
+		else
+			unsetFlag(FLAG_SIGNIFICANT);
+		
 	}
 
 

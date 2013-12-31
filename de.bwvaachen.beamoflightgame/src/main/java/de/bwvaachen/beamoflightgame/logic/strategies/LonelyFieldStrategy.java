@@ -34,7 +34,7 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 			if(next == neighbour) break; //We already reached the neighbour: then break
 			traverser.shift(traverseDirection);
 			assert next instanceof LightTile;
-			((LightTile) next).setState(direction.reverse());
+			((LightTile) next).setState(direction.reverse(), true);
 			next = traverser.get();
 		}
 	}

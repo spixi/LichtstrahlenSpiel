@@ -55,7 +55,7 @@ public class UndoTest {
 		
 		b.addUndoableEditListener(um);
 		
-		((IChangeableTile) b.getTileAt(1, 2)).setState(LightTileState.NORTH);
+		((IChangeableTile) b.getTileAt(1, 2)).setState(LightTileState.NORTH,false);
 		
 		System.out.println(um);
 	}

@@ -9,7 +9,7 @@ public class LightTile extends AbstractTile<LightTileState> implements IChangeab
 	
 	public LightTile(IBeamsOfLightPuzzleBoard board, int x, int y, LightTileState state) {
 		super(board, x, y, LightTileState.class);
-		setState(state);
+		setState(state, true);
 	}
 
 	@Override
@@ -18,9 +18,9 @@ public class LightTile extends AbstractTile<LightTileState> implements IChangeab
 	}
 
 	@Override
-	public void setState(LightTileState state) {
+	public void setState(LightTileState state, boolean significant) {
 		if(state == null) state = LightTileState.EMPTY;
-		setTileState(state);	
+		setTileState(state,significant);	
 	}
 	
 	
