@@ -12,53 +12,6 @@ public class IndexedSet<T> extends AbstractCollection<T> implements Set<T> {
     private final List<T> list = new ArrayList<T>();
     private final Set<T>   set = new HashSet<T>();
     
-    public int size() {
-        return list.size();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return list.isEmpty();
-    }
-
-    @Override
-    public boolean contains(Object o) {
-        return set.contains(o);
-    }
-
-    public Iterator<T> iterator() {
-        return new Iterator<T>() {
-            Iterator<T> realIterator = list.iterator();
-            T current = null;
-
-            public boolean hasNext() {
-                return realIterator.hasNext();
-            }
-
-            public T next() {
-                T next = realIterator.next();
-                current = next;
-                return next;
-            }
-
-            public void remove() {
-                realIterator.remove();
-                set.remove(current);
-                current = null;
-            }
-        };
-    }
-
-    @Override
-    public Object[] toArray() {
-        return list.toArray();
-    }
-
-    @Override
-    public <T> T[] toArray(T[] a) {
-        return list.toArray(a);
-    }
-
     @Override
     public boolean add(T e) {
         boolean added = set.add(e);
@@ -69,17 +22,70 @@ public class IndexedSet<T> extends AbstractCollection<T> implements Set<T> {
     }
 
     @Override
+	public void clear() {
+        set.clear();
+        list.clear();
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        return set.contains(o);
+    }
+
+    @Override
+    public boolean containsAll(Collection<?> c) {
+        return set.containsAll(c);
+    }
+
+    public T get(int index) {
+        return list.get(index);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return list.isEmpty();
+    }
+
+    @Override
+	public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            Iterator<T> realIterator = list.iterator();
+            T current = null;
+
+            @Override
+			public boolean hasNext() {
+                return realIterator.hasNext();
+            }
+
+            @Override
+			public T next() {
+                T next = realIterator.next();
+                current = next;
+                return next;
+            }
+
+            @Override
+			public void remove() {
+                realIterator.remove();
+                set.remove(current);
+                current = null;
+            }
+        };
+    }
+
+    public T remove(int index) {
+        T t = list.get(index);
+        remove(t);
+        return t;
+    }
+
+    @Override
     public boolean remove(Object o) {
         boolean removed = set.remove(o);
         if (removed) {
             list.remove(o);
         }
         return removed;
-    }
-
-    @Override
-    public boolean containsAll(Collection<?> c) {
-        return set.containsAll(c);
     }
 
     @Override
@@ -97,18 +103,18 @@ public class IndexedSet<T> extends AbstractCollection<T> implements Set<T> {
         return removed;
     }
 
-    public void clear() {
-        set.clear();
-        list.clear();
+    @Override
+	public int size() {
+        return list.size();
     }
 
-    public T get(int index) {
-        return list.get(index);
+    @Override
+    public Object[] toArray() {
+        return list.toArray();
     }
 
-    public T remove(int index) {
-        T t = list.get(index);
-        remove(t);
-        return t;
+    @Override
+    public <T> T[] toArray(T[] a) {
+        return list.toArray(a);
     }
 }

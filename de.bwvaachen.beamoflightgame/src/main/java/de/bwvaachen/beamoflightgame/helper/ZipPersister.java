@@ -1,33 +1,20 @@
 package de.bwvaachen.beamoflightgame.helper;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.StringBufferInputStream;
-import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
-import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import de.bwvaachen.beamoflightgame.controller.Turn;
-import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
-import de.bwvaachen.beamoflightgame.ui.PrototypModelFuerGUI;
 
 public class ZipPersister implements IPersistenceHelper {
 
@@ -35,38 +22,6 @@ public class ZipPersister implements IPersistenceHelper {
 
 	public ZipPersister(ICodec saveCodec) {
 		this.codec = saveCodec;
-	}
-
-	@Override
-	public void save(File path, IBeamsOfLightPuzzleBoard board, List<Turn> turns)
-			throws IOException {
-
-		FileOutputStream fileOutputStream = new FileOutputStream(path);
-		ZipOutputStream zipOut = new ZipOutputStream(fileOutputStream);
-		try {
-
-			zipOut.putNextEntry(new ZipEntry("codec"));
-			zipOut.write(codec.getClass().toString().getBytes());
-			zipOut.closeEntry();
-
-			zipOut.putNextEntry(new ZipEntry("board"));
-			codec.boardToOutputstream(zipOut, board);
-			zipOut.closeEntry();
-
-			zipOut.putNextEntry(new ZipEntry("turns"));
-			codec.turnsToOutputstream(zipOut, turns);
-			zipOut.closeEntry();
-			
-			zipOut.finish();
-			
-			zipOut.flush();
-			fileOutputStream.flush();
-		} catch (Throwable t) {
-			zipOut.close();
-			fileOutputStream.close();
-			throw t;
-		}
-
 	}
 
 	@Override
@@ -102,6 +57,38 @@ public class ZipPersister implements IPersistenceHelper {
 			turns = codec.turnsFromInputstream(new StringBufferInputStream(sections.get("turns")),board);
 			
 			return new Pair<IBeamsOfLightPuzzleBoard, List<Turn>>(board,turns);
+	}
+
+	@Override
+	public void save(File path, IBeamsOfLightPuzzleBoard board, List<Turn> turns)
+			throws IOException {
+
+		FileOutputStream fileOutputStream = new FileOutputStream(path);
+		ZipOutputStream zipOut = new ZipOutputStream(fileOutputStream);
+		try {
+
+			zipOut.putNextEntry(new ZipEntry("codec"));
+			zipOut.write(codec.getClass().toString().getBytes());
+			zipOut.closeEntry();
+
+			zipOut.putNextEntry(new ZipEntry("board"));
+			codec.boardToOutputstream(zipOut, board);
+			zipOut.closeEntry();
+
+			zipOut.putNextEntry(new ZipEntry("turns"));
+			codec.turnsToOutputstream(zipOut, turns);
+			zipOut.closeEntry();
+			
+			zipOut.finish();
+			
+			zipOut.flush();
+			fileOutputStream.flush();
+		} catch (Throwable t) {
+			zipOut.close();
+			fileOutputStream.close();
+			throw t;
+		}
+
 	}
 
 }

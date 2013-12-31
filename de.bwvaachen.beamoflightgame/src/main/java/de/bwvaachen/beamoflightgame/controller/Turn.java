@@ -31,9 +31,6 @@ import javax.swing.undo.UndoableEdit;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.IChangeableTile;
 import de.bwvaachen.beamoflightgame.model.ITileState;
-import de.bwvaachen.beamoflightgame.model.LightTile;
-import de.bwvaachen.beamoflightgame.model.ITile;
-import de.bwvaachen.beamoflightgame.model.LightTileState;
 
 /**
  * @author mspix
@@ -49,14 +46,6 @@ public class Turn implements UndoableEdit
 	private int x, y;
 	private ITileState oldTileState, newTileState;
 	
-	void setFlag(int f) {
-		flags |= f;
-	}
-	
-	void unsetFlag(int f) {
-		flags &= ~f;
-	}
-	
 	public Turn(IBeamsOfLightPuzzleBoard b, int x, int y, ITileState oldTileState, ITileState newTileState) {
 		board        = b;
 		this.x       = x;
@@ -67,66 +56,72 @@ public class Turn implements UndoableEdit
 		flags |= FLAG_HAS_BEEN_DONE;
 		flags |= FLAG_SIGNIFICANT;
 	}
-
-	public int getFlags() {
-		return flags;
-	}
-
+	
+	@Override
 	public boolean addEdit(UndoableEdit anEdit) {
 		return false;
 	}
-
+	
+	@Override
 	public boolean canRedo() {
 		//TODO
 		return (flags & FLAG_ALIVE | ~FLAG_HAS_BEEN_DONE) != 0;
 	}
 
+	@Override
 	public boolean canUndo() {
 		System.out.println(flags & FLAG_ALIVE);
 		return ((flags & ((FLAG_ALIVE | FLAG_HAS_BEEN_DONE))) != 0);
 	}
 
+	@Override
 	public void die() {
 		unsetFlag(FLAG_ALIVE);
 	}
 
+	public int getFlags() {
+		return flags;
+	}
+
+	@Override
 	public String getPresentationName() {
 		// TODO
 		return "Zug";
 	}
 
+	@Override
 	public String getRedoPresentationName() {
-		return getPresentationName() + " wiederholen";
+		return String.format("%s wiederholen", getPresentationName());
 	}
 
+	@Override
 	public String getUndoPresentationName() {
-		return getPresentationName() + " rueckgängig machen.";
+		return String.format("%s rÃ¼ckgÃ¤ngig machen", getPresentationName());
 	}
-	
+
 	@Override
 	public boolean isSignificant() {
 		return (flags & FLAG_SIGNIFICANT) != 0;
 	}
 
+	@Override
 	public void redo() throws CannotRedoException {
 		if(!canRedo()) throw new CannotRedoException();
 		setFlag(FLAG_HAS_BEEN_DONE);
 		IChangeableTile tile = (IChangeableTile) board.getTileAt(x, y);
 		tile.setState(newTileState);
 	}
-
+	
+	@Override
 	public boolean replaceEdit(UndoableEdit anEdit) {
 		return false;
 	}
 
-	public void undo() throws CannotUndoException {
-		if(!canUndo()) throw new CannotUndoException();
-		unsetFlag(FLAG_HAS_BEEN_DONE);
-		IChangeableTile tile = (IChangeableTile) board.getTileAt(x, y);
-		tile.setState(oldTileState);
+	void setFlag(int f) {
+		flags |= f;
 	}
 
-
+	@Override
 	public String toString() {
 		final char delimiter = ' ';
 		StringBuffer buf = new StringBuffer();
@@ -140,6 +135,23 @@ public class Turn implements UndoableEdit
 		buf.append(delimiter);
 		buf.append(flags);
 		return buf.toString();
+	}
+
+	@Override
+	public void undo() throws CannotUndoException {
+		if(!canUndo()) throw new CannotUndoException();
+		unsetFlag(FLAG_HAS_BEEN_DONE);
+		IChangeableTile tile = (IChangeableTile) board.getTileAt(x, y);
+		synchronized(tile) {
+			tile.setUndoMode(true);
+			tile.setState(oldTileState);
+			tile.setUndoMode(false);
+		}
+	}
+
+
+	void unsetFlag(int f) {
+		flags &= ~f;
 	}
 
 

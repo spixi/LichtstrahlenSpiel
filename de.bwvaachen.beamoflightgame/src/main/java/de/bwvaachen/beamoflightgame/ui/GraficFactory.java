@@ -10,7 +10,6 @@ import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
-import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.ui.RotatedIcon.Rotate;
 
@@ -30,6 +29,19 @@ public class GraficFactory {
 	
 	private IBeamsOfLightPuzzleBoard model;
 	private BoardTraverser traverser;
+	
+	public GraficFactory(IBeamsOfLightPuzzleBoard model)
+	{
+		
+		//needed to verify if lightbeam ends
+		//nessessary parameter for Boardtraverser!
+		this.model = model;
+		traverser = new BoardTraverser(model, 0, 0);
+		
+		
+		loadIcons();
+	}
+	
 	
 	/**
 	 * Liefert das passende Picture fuer die Kachel  zurueck
@@ -93,20 +105,6 @@ public class GraficFactory {
 
 	}//public Icon getImage(ITile meineKachel)
 	
-	
-	/**
-	 * Rotiert ein Icon um den angegebenn Wert
-	 * @author pauls_and
-	 * @param ii Das Ursprungicon
-	 * @param r der Wert aus dem Enum um den gedreht werden soll
-	 * @return das gedrehte Icon - als Icon
-	 */
-	private Icon rotateIcon(ImageIcon ii, Rotate r)
-	{
-		RotatedIcon ri = new RotatedIcon(ii, r);
-		return ri;
-	}
-	
 	/**
 	 * Gibt an, ob der Lichtstrahl zu Ende ist
 	 * @param tile  Das LightTile welches geprueft werden soll
@@ -139,15 +137,16 @@ public class GraficFactory {
 	{
 		//TODO implement Fliegengewichtpattern!
 	}
-	public GraficFactory(IBeamsOfLightPuzzleBoard model)
+	/**
+	 * Rotiert ein Icon um den angegebenn Wert
+	 * @author pauls_and
+	 * @param ii Das Ursprungicon
+	 * @param r der Wert aus dem Enum um den gedreht werden soll
+	 * @return das gedrehte Icon - als Icon
+	 */
+	private Icon rotateIcon(ImageIcon ii, Rotate r)
 	{
-		
-		//needed to verify if lightbeam ends
-		//nessessary parameter for Boardtraverser!
-		this.model = model;
-		traverser = new BoardTraverser(model, 0, 0);
-		
-		
-		loadIcons();
+		RotatedIcon ri = new RotatedIcon(ii, r);
+		return ri;
 	}
 }

@@ -1,9 +1,7 @@
 package de.bwvaachen.beamoflightgame.ui;
 
-import java.util.HashMap;
 import java.util.Hashtable;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -14,7 +12,7 @@ import de.bwvaachen.beamoflightgame.model.ITile;
 
 /**
  * Eine Klasse die den JButton um Eigenschaften erweitert, die in der GUI hilfreich
- * sein k�nnen.
+ * sein kï¿½nnen.
  * 
  * @author gbraun
  *
@@ -31,14 +29,6 @@ public class TileButton extends JButton implements ChangeListener {
 	public boolean markiert = false ;
 	
 	/**
-	 * Getter vom Tile
-	 * @return Das Tile aus dem Modell
-	 */
-	public ITile getTile() {
-		return tile;
-	}
-
-	/**
 	 * Constructor
 	 * @param t Das Tile aus dem Modell
 	 */
@@ -51,6 +41,13 @@ public class TileButton extends JButton implements ChangeListener {
 		//TODO: Remove this ugly stuff here:
 		graphicFactory = new GraficFactory(t.getBoard());
 	}
+
+	/**
+	 * @return Die Spalte von dem Tile.
+	 */
+	public int getCol() {
+		return tile.getX();
+	}
 	
 	/**
 	 * @return Die Zeile von dem Tile.
@@ -61,10 +58,11 @@ public class TileButton extends JButton implements ChangeListener {
 
 
 	/**
-	 * @return Die Spalte von dem Tile.
+	 * Getter vom Tile
+	 * @return Das Tile aus dem Modell
 	 */
-	public int getCol() {
-		return tile.getX();
+	public ITile getTile() {
+		return tile;
 	}
 
 	@Override

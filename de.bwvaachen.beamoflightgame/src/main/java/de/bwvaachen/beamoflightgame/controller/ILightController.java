@@ -11,24 +11,24 @@ import de.bwvaachen.beamoflightgame.model.LightTileState;
  
 public interface ILightController {
 	
-	public IBeamsOfLightPuzzleBoard getCurrentModel();
+	// Spielzï¿½ge
+	public Turn 					doTurn ( int x , int y , LightTileState oldTileState, LightTileState newTileState ) throws Exception ; //TODO Bitte Exception spezifizieren
+	
+	public IBeamsOfLightPuzzleBoard getBoard ( ) throws Exception ;
+    public IBeamsOfLightPuzzleBoard getCurrentModel();
 	//public int countEmptyFields();
 	//public int countLightFields();
 	//public int countLightedFields();
+	public boolean 					isRedoable (); 
+	public boolean 					isUndoable ();
+	public void 					loadGame (File f) throws FileNotFoundException, IOException, ClassNotFoundException;
 	
 	// Spiel erzeugen/laden/speichern
 	public IBeamsOfLightPuzzleBoard newGame  ( int x , int y ) throws Exception ;	//TODO Bitte Exception spezifizieren
-    public void 					saveGame (File f) throws IOException;
-	public void 					loadGame (File f) throws FileNotFoundException, IOException, ClassNotFoundException; 
-	public void						setBoard ( IBeamsOfLightPuzzleBoard _board ) throws Exception ;
-	public IBeamsOfLightPuzzleBoard getBoard ( ) throws Exception ;
-	
-	// Spielz�ge
-	public Turn 					doTurn ( int x , int y , LightTileState oldTileState, LightTileState newTileState ) throws Exception ; //TODO Bitte Exception spezifizieren
-	public boolean 					isUndoable ();
-	public boolean 					isRedoable ();
-	public void 			        setUndoMark ();
 	public void returnToNextUndoMark () throws CannotUndoException;
 	public void returnToStableState () throws CannotUndoException;
+	public void 					saveGame (File f) throws IOException;
+	public void						setBoard ( IBeamsOfLightPuzzleBoard _board ) throws Exception ;
+	public void 			        setUndoMark ();
 	
 } // public interface ILightController

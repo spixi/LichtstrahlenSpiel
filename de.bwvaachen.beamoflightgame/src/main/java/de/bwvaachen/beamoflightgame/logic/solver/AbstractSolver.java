@@ -14,14 +14,14 @@ public abstract class AbstractSolver implements ISolver {
 	
 
 	@Override
-	public abstract void solve()
-			throws PuzzleException;
-
-	@Override
 	public double getLevel() {
 		int numofturns = board.getHeight() * board.getWidth(); //TODO - board.countNumberTiles()
 		
 		return Math.log10(complexity/numofturns); //level = complexity / number of turns
 	}
+
+	@Override
+	public abstract void solve()
+			throws PuzzleException;
 
 }

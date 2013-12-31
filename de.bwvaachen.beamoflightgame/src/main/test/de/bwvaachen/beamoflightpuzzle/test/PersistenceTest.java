@@ -24,20 +24,19 @@
 
 package de.bwvaachen.beamoflightpuzzle.test;
 
-import static org.easymock.EasyMock.*;
-
 import java.io.File;
 import java.util.LinkedList;
 
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import de.bwvaachen.beamoflightgame.controller.Turn;
 import de.bwvaachen.beamoflightgame.helper.SimpleASCIICodec;
 import de.bwvaachen.beamoflightgame.helper.ZipPersister;
-//import org.junit.runner.RunWith;
-//import org.powermock.api.easymock.PowerMock.*;
-//import org.powermock.core.classloader.annotations.PrepareForTest;
-//import org.powermock.modules.junit4.PowerMockRunner;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.ui.PrototypModelFuerGUI;
 
@@ -46,13 +45,8 @@ import de.bwvaachen.beamoflightgame.ui.PrototypModelFuerGUI;
 
 
 public class PersistenceTest {
-	@Before
-	public void setUp() {
-
-	}
-	
-	@After
-	public void tearDown() {
+	@AfterClass
+	public static void setUpAfterClass() {
 		
 	}
 	
@@ -61,8 +55,13 @@ public class PersistenceTest {
 		
 	}
 	
-	@AfterClass
-	public static void setUpAfterClass() {
+	@Before
+	public void setUp() {
+
+	}
+	
+	@After
+	public void tearDown() {
 		
 	}
 	

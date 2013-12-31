@@ -1,20 +1,36 @@
 package de.bwvaachen.beamoflightgame.logic.strategies;
 
-import java.util.TreeMap;
-
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
-import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.logic.PuzzleException;
 import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.ITileState;
-import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
 
 public class IntersectionStrategy extends AbstractStrategy {
 	NumberTile tile = (NumberTile) super.tile;
 
+
+	private boolean doesCross(ITileState a, ITileState b) {
+    	return !( (a==LightTileState.EMPTY) || (a.equals(b)) );
+    }
+	
+
+    @Override
+	public double getComplexity() {
+		return (getNumberOfPossibleSolutions() == 1) ? 1.0 : 10.0;
+	}
+	
+	private int getNumberOfPossibleSolutions() {
+		//TODO
+		return 0;
+	}
+
+	@Override
+	public boolean isAppliableForTile(ITile t) {
+		return (t instanceof NumberTile && ((NumberTile) t).getRemainingLightRange() > 0);
+	}
 
 	@Override
 	public boolean tryToSolve()  throws PuzzleException {
@@ -140,26 +156,6 @@ public class IntersectionStrategy extends AbstractStrategy {
 		
 		return false;
 		// TODO Auto-generated method stub
-	}
-	
-
-    private boolean doesCross(ITileState a, ITileState b) {
-    	return !( (a==LightTileState.EMPTY) || (a.equals(b)) );
-    }
-	
-	private int getNumberOfPossibleSolutions() {
-		//TODO
-		return 0;
-	}
-
-	@Override
-	public double getComplexity() {
-		return (getNumberOfPossibleSolutions() == 1) ? 1.0 : 10.0;
-	}
-
-	@Override
-	public boolean isAppliableForTile(ITile t) {
-		return (t instanceof NumberTile && ((NumberTile) t).getRemainingLightRange() > 0);
 	}
 
 }

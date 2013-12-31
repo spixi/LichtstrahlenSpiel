@@ -12,14 +12,15 @@ public class LightTile extends AbstractTile<LightTileState> implements IChangeab
 		setState(state);
 	}
 
-	public void setState(LightTileState state) {
-		if(state == null) state = LightTileState.EMPTY;
-		setTileState(state);	
-	}
-
 	@Override
 	public void accept(ITileVisitor v) {
 		v.visitLightTile(this);
+	}
+
+	@Override
+	public void setState(LightTileState state) {
+		if(state == null) state = LightTileState.EMPTY;
+		setTileState(state);	
 	}
 	
 	

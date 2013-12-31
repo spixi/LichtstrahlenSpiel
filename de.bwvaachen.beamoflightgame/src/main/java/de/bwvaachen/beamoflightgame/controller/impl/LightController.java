@@ -63,20 +63,46 @@ public class LightController implements ILightController {
 	}
 	*/
 	
-	public void saveGame(File f) throws IOException {
-//		TODO You can ZipPersister or write your one persister you dont need an extern jar for zip streams  
-//		FileOutputStream  fos    = new FileOutputStream(f);
-//		LzmaOutputStream  los    = new LzmaOutputStream.Builder(fos).build();
-//		BufferedOutputStream bos = new BufferedOutputStream(los);
-//		ObjectOutputStream oos   = new ObjectOutputStream(bos);
-//		
-//		oos.writeObject(puzzleBoard);
-//		oos.writeObject(turnManager);
-//		oos.flush();
-//		oos.close();
-	} // public void saveGame(File f)
+	@Override
+	@Deprecated
+	public Turn doTurn(int x, int y, LightTileState oldTileState, LightTileState newTileState) throws Exception 
+	{
+		Turn oTurn = new Turn(puzzleBoard, x, y, oldTileState, newTileState);
+		//turnManager.addEdit(oTurn);
+		
+		return oTurn;
+	} // public void doTurn(int x, int y, char orientaion, boolean isEnd)
 	
 	
+	@Override
+	public IBeamsOfLightPuzzleBoard getBoard() throws Exception {
+		
+		return puzzleBoard ;
+		
+	}
+	
+
+	@Override
+	public IBeamsOfLightPuzzleBoard getCurrentModel() 
+	{
+		return puzzleBoard;
+		
+	} // public IBeamsOfLightPuzzleBoard getCurrentModel()
+	
+
+	@Override
+	public boolean isRedoable() {
+		return turnManager.canRedo();
+	} // public boolean isRedoable()
+	
+
+	@Override
+	public boolean isUndoable() {
+		return turnManager.canUndo();
+	} // public boolean isUndoable() 
+	
+
+	@Override
 	public void loadGame(File f) throws FileNotFoundException, IOException, ClassNotFoundException {
 //		FileInputStream   fis   = new FileInputStream(f);
 //		BufferedInputStream bis = new BufferedInputStream(fis);
@@ -91,49 +117,12 @@ public class LightController implements ILightController {
 	
 
 	@Override
-	public IBeamsOfLightPuzzleBoard getCurrentModel() 
-	{
-		return puzzleBoard;
-		
-	} // public IBeamsOfLightPuzzleBoard getCurrentModel()
-	
-
-	@Override
 	public IBeamsOfLightPuzzleBoard newGame(int width, int height) throws Exception 
 	{
 		setBoard(new BeamsOfLightPuzzleBoard());
 		puzzleBoard.init(width, height);
 		return null;
 	} // public IBeamsOfLightPuzzleBoard newGame(int x, int y)
-	
-
-	@Override
-	@Deprecated
-	public Turn doTurn(int x, int y, LightTileState oldTileState, LightTileState newTileState) throws Exception 
-	{
-		Turn oTurn = new Turn(puzzleBoard, x, y, oldTileState, newTileState);
-		//turnManager.addEdit(oTurn);
-		
-		return oTurn;
-	} // public void doTurn(int x, int y, char orientaion, boolean isEnd)
-	
-
-	@Override
-	public boolean isUndoable() {
-		return turnManager.canUndo();
-	} // public boolean isUndoable() 
-	
-
-	@Override
-	public boolean isRedoable() {
-		return turnManager.canRedo();
-	} // public boolean isRedoable()
-	
-
-	@Override
-	public void setUndoMark() {
-		turnManager.addMarker();
-	} // public void setUndoMark()
 	
 
 	@Override
@@ -147,27 +136,40 @@ public class LightController implements ILightController {
 		turnManager.undoToLastStableState();
 		
 	} // public IBeamsOfLightPuzzleBoard returnToStableStaate() s
+	
 
-	public void undo()
-	{
-		turnManager.undo();
-	}
-
+	@Override
+	public void saveGame(File f) throws IOException {
+//		TODO You can ZipPersister or write your one persister you dont need an extern jar for zip streams  
+//		FileOutputStream  fos    = new FileOutputStream(f);
+//		LzmaOutputStream  los    = new LzmaOutputStream.Builder(fos).build();
+//		BufferedOutputStream bos = new BufferedOutputStream(los);
+//		ObjectOutputStream oos   = new ObjectOutputStream(bos);
+//		
+//		oos.writeObject(puzzleBoard);
+//		oos.writeObject(turnManager);
+//		oos.flush();
+//		oos.close();
+	} // public void saveGame(File f)
 
 	@Override
 	public void setBoard(IBeamsOfLightPuzzleBoard _board) throws Exception {
 		
 		puzzleBoard = _board ;
 		turnManager = new TurnUndoManager();
-		puzzleBoard.addChangeListener(turnManager);
+		puzzleBoard.addUndoableEditListener(turnManager);
 		
 	}
 
 
 	@Override
-	public IBeamsOfLightPuzzleBoard getBoard() throws Exception {
-		
-		return puzzleBoard ;
-		
+	public void setUndoMark() {
+		turnManager.addMarker();
+	} // public void setUndoMark()
+
+
+	public void undo()
+	{
+		turnManager.undo();
 	}
 } // public class LightController

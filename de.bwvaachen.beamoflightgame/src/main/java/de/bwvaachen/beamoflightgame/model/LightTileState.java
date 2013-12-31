@@ -1,8 +1,6 @@
 package de.bwvaachen.beamoflightgame.model;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,32 +45,20 @@ public enum LightTileState implements ITileState {
 		allDirections = new LightTileState[] {NORTH, EAST, SOUTH, WEST};
 	}
 	
+	public static List<LightTileState> allDirections() {
+		return Arrays.asList(allDirections);
+	}
+	public static LightTileState signToState(char c){
+		return map.get(c);
+	}
+
 	private char sign;
+	
 	private TraverseDirection traverseDirection;
 
 	private LightTileState(char c, TraverseDirection d) {
 		sign              = c;
 		traverseDirection = d;
-	}
-	
-	public TraverseDirection getTraverseDirection() {
-		return traverseDirection;
-	}
-
-	public char getSign() {
-		return sign;
-	}
-	
-	public LightTileState reverse() {
-		return this;
-	}
-	
-	public String toString() {
-		return ((Character) getSign()).toString();
-	}
-
-	public static LightTileState signToState(char c){
-		return map.get(c);
 	}
 	
 	public boolean equals(ITileState tileState)
@@ -86,7 +72,20 @@ public enum LightTileState implements ITileState {
 		}
 	}
 	
-	public static List<LightTileState> allDirections() {
-		return Arrays.asList(allDirections);
+	public char getSign() {
+		return sign;
+	}
+
+	public TraverseDirection getTraverseDirection() {
+		return traverseDirection;
+	}
+	
+	public LightTileState reverse() {
+		return this;
+	}
+	
+	@Override
+	public String toString() {
+		return ((Character) getSign()).toString();
 	}
 }

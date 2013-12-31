@@ -17,6 +17,12 @@ public class IndexedMap<K,V> extends HashMap<K,V> {
 	}
 
 	@Override
+	public void clear() {
+		entries.clear();
+		super.clear();	
+	}
+	
+	@Override
 	public Set<Map.Entry<K, V>> entrySet() {
 		return entries;
 	}
@@ -28,9 +34,18 @@ public class IndexedMap<K,V> extends HashMap<K,V> {
 	public K getKeyByIndex(int index) {
 		return getEntryByIndex(index).getKey();
 	}
-	
+
 	public V getValueByIndex(int index) {
 		return getEntryByIndex(index).getValue();
+	}
+
+	@Override
+	public IndexedSet<K> keySet() {
+		IndexedSet<K> set = new IndexedSet<K>();
+		for(Map.Entry<K, V> entry: entries) {
+			set.add(entry.getKey());
+		}
+		return set;
 	}
 
 	@Override
@@ -44,6 +59,13 @@ public class IndexedMap<K,V> extends HashMap<K,V> {
 		}
 		);
 		return oldValue;
+	}
+
+	@Override
+	public void putAll(Map<? extends K, ? extends V> m) {
+		for(Map.Entry<? extends K, ? extends V> entry : m.entrySet()) {
+			put(entry.getKey(), entry.getValue());
+		}
 	}
 
 	@Override
@@ -61,28 +83,6 @@ public class IndexedMap<K,V> extends HashMap<K,V> {
 		
 		entries.remove(i);
 		return super.remove(i);
-	}
-
-	@Override
-	public void putAll(Map<? extends K, ? extends V> m) {
-		for(Map.Entry<? extends K, ? extends V> entry : m.entrySet()) {
-			put(entry.getKey(), entry.getValue());
-		}
-	}
-
-	@Override
-	public void clear() {
-		entries.clear();
-		super.clear();	
-	}
-
-	@Override
-	public IndexedSet<K> keySet() {
-		IndexedSet<K> set = new IndexedSet<K>();
-		for(Map.Entry<K, V> entry: entries) {
-			set.add(entry.getKey());
-		}
-		return set;
 	}
 
 	@Override

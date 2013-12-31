@@ -24,25 +24,13 @@
 
 package de.bwvaachen.beamoflightpuzzle.test;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertTrue;
-
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
-
-import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
-import de.bwvaachen.beamoflightgame.controller.Turn;
 import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.IChangeableTile;
-import de.bwvaachen.beamoflightgame.model.ITile;
-import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.ui.PrototypModelFuerGUI;
@@ -63,12 +51,11 @@ public class UndoTest {
 	public void test() {
 		BeamsOfLightPuzzleBoard    b =
 				new PrototypModelFuerGUI();
-		TurnUndoManager um  = new TurnUndoManager();
+		final TurnUndoManager um  = new TurnUndoManager();
 		
-		b.addChangeListener(um);
+		b.addUndoableEditListener(um);
 		
 		((IChangeableTile) b.getTileAt(1, 2)).setState(LightTileState.NORTH);
-
 		
 		System.out.println(um);
 	}

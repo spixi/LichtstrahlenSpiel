@@ -7,17 +7,83 @@ import de.bwvaachen.beamoflightgame.helper.IndexedMap;
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.logic.PuzzleException;
 import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
-import de.bwvaachen.beamoflightgame.model.LightTile;
-import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.ITileState;
+import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
+import de.bwvaachen.beamoflightgame.model.NumberTile;
 
 public class LonelyFieldStrategy extends AbstractStrategy {
 	private BoardTraverser traverser;
 	
+	@Override
 	protected void _init() {
 		traverser = tile.getTraverser();
+	}
+	
+	private boolean doesCross(ITileState a, ITileState b) {
+    	return !( (a==LightTileState.EMPTY) || (a.equals(b)) );
+    }
+	
+	private void fillBoard(NumberTile neighbour, LightTileState direction) {
+		TraverseDirection traverseDirection = direction.getTraverseDirection();
+		
+		traverser.reset();
+		ITile next = traverser.get();
+		for (int i = neighbour.getRemainingLightRange(); i>0; --i) {
+			if(next == neighbour) break; //We already reached the neighbour: then break
+			traverser.shift(traverseDirection);
+			assert next instanceof LightTile;
+			((LightTile) next).setState(direction.reverse());
+			next = traverser.get();
+		}
+	}
+	
+	private NumberTile findNeighbour(LightTileState lts) {
+    	ITile currentTile = null;
+
+    	traverser.reset();
+    	
+    	while (traverser.shift(lts.getTraverseDirection())) {
+    		currentTile = traverser.get();
+    		if(currentTile instanceof LightTile)         //found a LightTile 
+    		{
+    			//Does another LightTile cross the line?
+    			//Then stop looking for the neighbour.
+    			if (doesCross(currentTile.getTileState(), lts.reverse() ))
+    				return null;
+    		}
+    		else if(currentTile instanceof NumberTile) { //found an NumberTile
+    			                                         //This is our neighbour.
+    			return (NumberTile) currentTile;    
+    		}
+    	}
+    	//We have reached the end of the board ...
+    	//So there is no neighbour.
+	    return null;
+    }
+
+    @Override
+	public double getComplexity() {
+		return 2.0;
+	}
+    
+    
+    private int getDistance(ITile tile, ITile neighbour, LightTileState lts) {
+		int distance = 0;
+		traverser.reset();
+		while (traverser.shift(lts.reverse().getTraverseDirection())) {
+			if(traverser.get().getTileState() != lts) { //ignore the same tile state!
+				distance++;
+			}
+		}
+		return distance;
+	}
+
+
+	@Override
+	public boolean isAppliableForTile(ITile t) {
+		return (t instanceof LightTile) & t.getTileState() == LightTileState.EMPTY;
 	}
 	
 	@Override
@@ -52,70 +118,5 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 	    default: return false; //Ambiguous solution => try next step
 	    }
 
-	}
-	
-	private int getDistance(ITile tile, ITile neighbour, LightTileState lts) {
-		int distance = 0;
-		traverser.reset();
-		while (traverser.shift(lts.reverse().getTraverseDirection())) {
-			if(traverser.get().getTileState() != lts) { //ignore the same tile state!
-				distance++;
-			}
-		}
-		return distance;
-	}
-	
-	private void fillBoard(NumberTile neighbour, LightTileState direction) {
-		TraverseDirection traverseDirection = direction.getTraverseDirection();
-		
-		traverser.reset();
-		ITile next = traverser.get();
-		for (int i = neighbour.getRemainingLightRange(); i>0; --i) {
-			if(next == neighbour) break; //We already reached the neighbour: then break
-			traverser.shift(traverseDirection);
-			assert next instanceof LightTile;
-			((LightTile) next).setState(direction.reverse());
-			next = traverser.get();
-		}
-	}
-
-    private boolean doesCross(ITileState a, ITileState b) {
-    	return !( (a==LightTileState.EMPTY) || (a.equals(b)) );
-    }
-    
-    
-    private NumberTile findNeighbour(LightTileState lts) {
-    	ITile currentTile = null;
-
-    	traverser.reset();
-    	
-    	while (traverser.shift(lts.getTraverseDirection())) {
-    		currentTile = traverser.get();
-    		if(currentTile instanceof LightTile)         //found a LightTile 
-    		{
-    			//Does another LightTile cross the line?
-    			//Then stop looking for the neighbour.
-    			if (doesCross(currentTile.getTileState(), lts.reverse() ))
-    				return null;
-    		}
-    		else if(currentTile instanceof NumberTile) { //found an NumberTile
-    			                                         //This is our neighbour.
-    			return (NumberTile) currentTile;    
-    		}
-    	}
-    	//We have reached the end of the board ...
-    	//So there is no neighbour.
-	    return null;
-    }
-
-
-	@Override
-	public double getComplexity() {
-		return 2.0;
-	}
-	
-	@Override
-	public boolean isAppliableForTile(ITile t) {
-		return (t instanceof LightTile) & t.getTileState() == LightTileState.EMPTY;
 	}
 }

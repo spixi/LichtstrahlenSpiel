@@ -6,9 +6,6 @@ public class NumberTileState implements ITileState {
 	public NumberTileState(final int num) {
 		this.number = num;
 	}
-	public int getNumber() {
-		return number;
-	}
 	public boolean equals(ITileState tileState)
 	{
 		try{
@@ -19,6 +16,10 @@ public class NumberTileState implements ITileState {
 			return false;
 		}
 	}
+	public int getNumber() {
+		return number;
+	}
+	@Override
 	public String toString() {
 		return ((Integer) number).toString();
 	}
