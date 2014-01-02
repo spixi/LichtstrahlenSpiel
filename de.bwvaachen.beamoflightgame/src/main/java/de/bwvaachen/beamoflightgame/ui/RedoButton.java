@@ -6,13 +6,15 @@ import javax.swing.JOptionPane;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.UndoManager;
 
+import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
+
 public class RedoButton extends AbstractUndoRedoButton {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 6212990560228610159L;
 
-	public RedoButton(UndoManager um) {
+	public RedoButton(TurnUndoManager um) {
 		super(um);
 	}
 	

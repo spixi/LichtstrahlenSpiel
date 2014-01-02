@@ -18,6 +18,8 @@ public class LightController implements ILightController {
 	private IBeamsOfLightPuzzleBoard puzzleBoard;
 	
 
+	
+
 	/*
 	@Override
 	public IBeamsOfLightPuzzleBoard getCurrentModel() {
@@ -64,46 +66,14 @@ public class LightController implements ILightController {
 	*/
 	
 	@Override
-	@Deprecated
-	public Turn doTurn(int x, int y, LightTileState oldTileState, LightTileState newTileState) throws Exception 
-	{
-		Turn oTurn = new Turn(puzzleBoard, x, y, oldTileState, newTileState);
-		//turnManager.addEdit(oTurn);
-		
-		return oTurn;
-	} // public void doTurn(int x, int y, char orientaion, boolean isEnd)
-	
-	
-	@Override
-	public IBeamsOfLightPuzzleBoard getBoard() throws Exception {
-		
-		return puzzleBoard ;
-		
-	}
-	
-
-	@Override
 	public IBeamsOfLightPuzzleBoard getCurrentModel() 
 	{
 		return puzzleBoard;
 		
 	} // public IBeamsOfLightPuzzleBoard getCurrentModel()
-	
 
 	@Override
-	public boolean isRedoable() {
-		return turnManager.canRedo();
-	} // public boolean isRedoable()
-	
-
-	@Override
-	public boolean isUndoable() {
-		return turnManager.canUndo();
-	} // public boolean isUndoable() 
-	
-
-	@Override
-	public void loadGame(File f) throws FileNotFoundException, IOException, ClassNotFoundException {
+	public void loadGame(File f) throws FileNotFoundException, IOException {
 //		FileInputStream   fis   = new FileInputStream(f);
 //		BufferedInputStream bis = new BufferedInputStream(fis);
 //		LzmaInputStream   lis   = new LzmaInputStream(bis, new Decoder());
@@ -117,25 +87,11 @@ public class LightController implements ILightController {
 	
 
 	@Override
-	public IBeamsOfLightPuzzleBoard newGame(int width, int height) throws Exception 
+	public void newGame(int width, int height) throws Exception 
 	{
 		setBoard(new BeamsOfLightPuzzleBoard());
 		puzzleBoard.init(width, height);
-		return null;
 	} // public IBeamsOfLightPuzzleBoard newGame(int x, int y)
-	
-
-	@Override
-	public void returnToNextUndoMark() throws CannotUndoException {
-	    turnManager.undoToLastMarker();
-	} // public IBeamsOfLightPuzzleBoard returnToNextUndoMark()
-	
-
-	@Override
-	public void returnToStableState() throws CannotUndoException {
-		turnManager.undoToLastStableState();
-		
-	} // public IBeamsOfLightPuzzleBoard returnToStableStaate() s
 	
 
 	@Override
@@ -154,22 +110,13 @@ public class LightController implements ILightController {
 
 	@Override
 	public void setBoard(IBeamsOfLightPuzzleBoard _board) throws Exception {
-		
 		puzzleBoard = _board ;
 		turnManager = new TurnUndoManager();
 		puzzleBoard.addUndoableEditListener(turnManager);
-		
 	}
 
-
 	@Override
-	public void setUndoMark() {
-		turnManager.addMarker();
-	} // public void setUndoMark()
-
-
-	public void undo()
-	{
-		turnManager.undo();
+	public TurnUndoManager getUndoManager() {
+		return turnManager;
 	}
 } // public class LightController

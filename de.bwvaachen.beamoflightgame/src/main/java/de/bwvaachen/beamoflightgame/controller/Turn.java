@@ -30,6 +30,7 @@ import javax.swing.undo.UndoableEdit;
 
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.IChangeableTile;
+import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.ITileState;
 
 /**
@@ -64,14 +65,12 @@ public class Turn implements UndoableEdit
 	
 	@Override
 	public boolean canRedo() {
-		//TODO
-		return (flags & FLAG_ALIVE | ~FLAG_HAS_BEEN_DONE) != 0;
+		return hasFlag(FLAG_ALIVE) && !hasFlag(FLAG_HAS_BEEN_DONE);
 	}
 
 	@Override
 	public boolean canUndo() {
-		System.out.println(flags & FLAG_ALIVE);
-		return ((flags & ((FLAG_ALIVE | FLAG_HAS_BEEN_DONE))) != 0);
+		return hasFlag(FLAG_ALIVE | FLAG_HAS_BEEN_DONE);
 	}
 
 	@Override
@@ -86,7 +85,7 @@ public class Turn implements UndoableEdit
 	@Override
 	public String getPresentationName() {
 		// TODO
-		return "Zug";
+		return String.format("Zug %d", 0);
 	}
 
 	@Override
@@ -98,18 +97,21 @@ public class Turn implements UndoableEdit
 	public String getUndoPresentationName() {
 		return String.format("%s rÃ¼ckgÃ¤ngig machen", getPresentationName());
 	}
+	
+	public boolean hasFlag(int flag) {
+		return (flags&flag) == flag;
+	}
 
 	@Override
 	public boolean isSignificant() {
-		return (flags & FLAG_SIGNIFICANT) != 0;
+		return hasFlag(FLAG_SIGNIFICANT);
 	}
 
 	@Override
 	public void redo() throws CannotRedoException {
 		if(!canRedo()) throw new CannotRedoException();
 		setFlag(FLAG_HAS_BEEN_DONE);
-		IChangeableTile tile = (IChangeableTile) board.getTileAt(x, y);
-		tile.setState(newTileState, false);
+		changeTile(newTileState);
 	}
 	
 	@Override
@@ -141,12 +143,14 @@ public class Turn implements UndoableEdit
 	public void undo() throws CannotUndoException {
 		if(!canUndo()) throw new CannotUndoException();
 		unsetFlag(FLAG_HAS_BEEN_DONE);
-		IChangeableTile tile = (IChangeableTile) board.getTileAt(x, y);
-		synchronized(tile) {
+		changeTile(oldTileState);
+	}
+	
+	private synchronized void changeTile(ITileState state) {
+			IChangeableTile tile = (IChangeableTile) board.getTileAt(x, y);
 			tile.setUndoMode(true);
-			tile.setState(oldTileState,false);
+			tile.setState(state,this.hasFlag(FLAG_SIGNIFICANT));
 			tile.setUndoMode(false);
-		}
 	}
 
 

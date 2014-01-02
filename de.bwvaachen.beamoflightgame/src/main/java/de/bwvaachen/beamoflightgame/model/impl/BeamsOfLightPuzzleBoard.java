@@ -5,7 +5,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 
 import de.bwvaachen.beamoflightgame.helper.ITileVisitor;
@@ -15,7 +17,7 @@ import de.bwvaachen.beamoflightgame.model.ITileState;
 import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
 
-public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
+public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard, ChangeListener, UndoableEditListener {
 
 	private int width, height;
 	private ITile[][] tiles;
@@ -153,27 +155,17 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 
 	private void putTileInternal(ITile tile) {
 		tiles[tile.getX()][tile.getY()] = tile;
-		for(ChangeListener cl: changeListeners) {
-			tile.addChangeListener(cl);
-		}
-		for(UndoableEditListener ul : undoableEditListeners) {
-			tile.addUndoableEditListener(ul);
-		}
+		tile.addChangeListener(this);
+		tile.addUndoableEditListener(this);
 	}
 
 	@Override
 	public void removeChangeListener(ChangeListener cl) {
-		for(ITile t: this) {
-			t.removeChangeListener(cl);
-		}
 		changeListeners.remove(cl);
 	}
 	
 	@Override
 	public void removeUndoableEditListener(UndoableEditListener ul) {
-		for(ITile t: this) {
-			t.removeUndoableEditListener(ul);
-		}
 		undoableEditListeners.remove(ul);
 	}
 	
@@ -189,6 +181,22 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard {
 		}
 
 		return sb.toString();
+	}
+
+	@Override
+	public void undoableEditHappened(UndoableEditEvent e) {
+		// Propagate the event
+		for(UndoableEditListener l: undoableEditListeners) {
+			l.undoableEditHappened(e);
+		}	
+	}
+
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		// Propagate the event
+		for(ChangeListener l: changeListeners) {
+			l.stateChanged(e);
+		}	
 	}
 
 }

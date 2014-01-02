@@ -3,7 +3,9 @@ package de.bwvaachen.beamoflightgame.ui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -24,6 +26,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.undo.UndoManager;
 
 import de.bwvaachen.beamoflightgame.controller.ILightController;
+import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
 import de.bwvaachen.beamoflightgame.controller.SolverBuilder;
 import de.bwvaachen.beamoflightgame.controller.impl.LightController;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
@@ -125,10 +128,10 @@ public class LightgameUI extends JFrame {
 							 
 					} // if ( lightTileY == numberTileY ) 
 					
-					IBeamsOfLightPuzzleBoard currentBoard = controller.getBoard() ;
+					IBeamsOfLightPuzzleBoard currentBoard = controller.getCurrentModel();
 					
 					// Den Traverser initialisieren.
-					BoardTraverser traverser = new BoardTraverser ( currentBoard , btn.getTile() ) ;
+					BoardTraverser traverser = new BoardTraverser ( btn.getTile() ) ;
 					
 					// Den Traverser auf den Button Zielbutton (LightTile) setzen.
 					traverser . moveTo ( lightTileX , lightTileY ) ;
@@ -200,9 +203,9 @@ public class LightgameUI extends JFrame {
 					int strahlStaerke = ((NumberTileState) btn . getTile() . getTileState() ) . getNumber() ;					
 					
 					// Den Traverser initialisieren.
-					BoardTraverser traverser = new BoardTraverser ( controller.getBoard() , btn.getTile() ) ;
+					BoardTraverser traverser = new BoardTraverser ( btn.getTile() ) ;
 					// Das Modell vom Controller holen.
-					IBeamsOfLightPuzzleBoard currentModel = controller . getBoard() ;
+					IBeamsOfLightPuzzleBoard currentModel = controller . getCurrentModel() ;
 					
 					
 					// Schleife ï¿½ber alle "Himmelsrichtungen" (West, Ost, Sï¿½d, Nord). Dafï¿½r nehm ich den Aufzï¿½hlungstyp LightTileState.
@@ -251,7 +254,7 @@ public class LightgameUI extends JFrame {
 					
 				} // if ( btn . getTile() instanceof NumberTile ) {
 				
-				Update ( controller.getBoard() ) ;
+				Update ( controller.getCurrentModel() ) ;
 				
 			} catch (Exception e2) {
 				
@@ -334,13 +337,13 @@ public class LightgameUI extends JFrame {
 			// Controller mit Test Prototyp fï¿½r GUI fï¿½llen.
 			controller . setBoard ( new PrototypModelFuerGUI() ) ;
 			
-			javax.swing.JButton solverButton = new javax.swing.JButton("Puzzel loesen");
+			javax.swing.JButton solverButton = new javax.swing.JButton("Puzzle loesen");
 			solverButton.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					try {
-						ISolver s = SolverBuilder.buildWith(LonelyFieldStrategy.class).forBoard(controller.getBoard());
+						ISolver s = SolverBuilder.buildWith(LonelyFieldStrategy.class).forBoard(controller.getCurrentModel());
 					    s.solve();
 					
 					} catch (Exception e1) {
@@ -352,14 +355,20 @@ public class LightgameUI extends JFrame {
 				
 			});
 						
-			//contentPane.add(solverButton,BorderLayout.NORTH);
+			contentPane.add(solverButton,BorderLayout.NORTH);
 			
-			UndoManager foo = new UndoManager();
-			controller.getBoard().addUndoableEditListener(foo);
-			contentPane.add(new UndoRedoButton(foo), BorderLayout.NORTH);
+			//TODO refactor this stuff
+			JPanel pnUndoRedo = new JPanel();
+			pnUndoRedo.setLayout(new GridLayout(1,2));
+			UndoButton btUndo = new UndoButton(controller.getUndoManager());
+			pnUndoRedo.add(btUndo);
+			RedoButton btRedo = new RedoButton(controller.getUndoManager());
+			pnUndoRedo.add(btRedo);
+			getContentPane().add(pnUndoRedo, BorderLayout.SOUTH);
+			//TODO end
 			
 			// Das Spielfeld vom Controller holen:
-			IBeamsOfLightPuzzleBoard currentModel = controller . getBoard() ;
+			IBeamsOfLightPuzzleBoard currentModel = controller.getCurrentModel() ;
 			
 			// TODO temporï¿½r feste Werte fï¿½r Tests eingetragen.
 			int rows = currentModel.getHeight() ;
@@ -465,8 +474,7 @@ public class LightgameUI extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				controller.returnToStableState();
-				
+				controller.getUndoManager().undoToLastStableState();
 			}
 		});
 		
@@ -480,7 +488,7 @@ public class LightgameUI extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				controller.setUndoMark();
+				controller.getUndoManager().addMarker();
 				
 			}
 		});
@@ -490,6 +498,14 @@ public class LightgameUI extends JFrame {
 		
 		JMenuItem mntmDeleteMarker = new JMenuItem("Delete mark");
 		mnGame.add(mntmDeleteMarker);
+		mntmDeleteMarker . addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.getUndoManager().deleteLastMarker();
+				
+			}
+		});
 		
 		JSeparator separator_5 = new JSeparator();
 		mnGame.add(separator_5);
@@ -499,13 +515,14 @@ public class LightgameUI extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				controller.returnToNextUndoMark();
+				controller.getUndoManager().undoToLastMarker();
 				
 			}
 		});
 		
 		mnGame.add(mntmBackToMark);
 		
+		/*
 		//TODO: J(Toggle)Button instead of JMenuItem
 		JMenuItem mntmUndo = new JMenuItem("Undo");
 		mntmUndo . addActionListener(new ActionListener() {
@@ -520,6 +537,20 @@ public class LightgameUI extends JFrame {
 		});
 		
 		mnGame.add(mntmUndo);
+		
+
+		//TODO: J(Toggle)Button instead of JMenuItem
+		JMenuItem mntmRedo = new JMenuItem("Undo");
+		mntmUndo . addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//TODO: Fix the interfaces
+				((LightController) controller).redo();
+			}
+			
+			//TODO getPresentationName
+		}); */
 		
 		
 		mntmLoad.addActionListener(new ActionListener(){
@@ -542,8 +573,7 @@ public class LightgameUI extends JFrame {
 					//Update(controller.loadGame(new File("")));
 					//TODO obrigen Code einbinden sobald der Controller implementiert ist
 					controller.loadGame(new File(""));
-				} catch (ClassNotFoundException
-						| IOException e1) {
+				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
 			}

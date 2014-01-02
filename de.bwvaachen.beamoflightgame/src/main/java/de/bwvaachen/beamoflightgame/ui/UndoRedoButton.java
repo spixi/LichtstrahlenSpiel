@@ -3,9 +3,13 @@ package de.bwvaachen.beamoflightgame.ui;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JOptionPane;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
+
+import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
 
 public class UndoRedoButton extends AbstractUndoRedoButton {
 	/**
@@ -13,7 +17,7 @@ public class UndoRedoButton extends AbstractUndoRedoButton {
 	 */
 	private static final long serialVersionUID = 3752060571993629986L;
 
-	public UndoRedoButton(UndoManager um) {
+	public UndoRedoButton(TurnUndoManager um) {
 		super(um);
 	}
 	
