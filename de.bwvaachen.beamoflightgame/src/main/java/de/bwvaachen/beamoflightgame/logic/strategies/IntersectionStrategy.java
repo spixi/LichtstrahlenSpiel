@@ -1,10 +1,12 @@
 package de.bwvaachen.beamoflightgame.logic.strategies;
 
+import de.bwvaachen.beamoflightgame.helper.AbstractTileVisitor;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.logic.PuzzleException;
 import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.ITileState;
+import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
 
@@ -39,10 +41,9 @@ public class IntersectionStrategy extends AbstractStrategy {
 		
 		int remainingLightRange = tile.getRemainingLightRange();
 		
-		LightTileState states[] = new LightTileState[] {
-				LightTileState.NORTH,LightTileState.EAST,LightTileState.SOUTH,LightTileState.WEST
-				};
-		int maxRange[] = new int[4];
+		LightTileState states[] = (LightTileState[]) LightTileState.allDirections().toArray();
+		
+		int maxRange[] = new int[states.length];
 		
 		int index = 0;
 		BoardTraverser traverser = tile.getTraverser();
@@ -76,12 +77,30 @@ public class IntersectionStrategy extends AbstractStrategy {
 		//case 1: the remaining range of the NumberTile cannot be covered by the
 		//        all four directions together
 		if(availableRange < remainingLightRange) 
-			throw new UnsolvablePuzzleException();
+			throw new UnsolvablePuzzleException(tile);
 		
 		//case 2: there is only one possibility to cover the remaining range of the
 		//        NumberTile
 		else if(availableRange == remainingLightRange) {
-			//TODO: We have only one possible solution
+			
+			for(int i=states.length-1; i<=0; i--) {
+				final LightTileState currentState = states[i];
+				
+				traverser.reset();
+			
+			
+				while(maxRange[i]-- <= 0) {
+					traverser.get().accept(new AbstractTileVisitor() {
+						@Override
+						public void visitLightTile(LightTile t) {
+							t.setState(currentState, true);	   
+						}
+					} );
+					traverser.shift(currentState.getTraverseDirection());
+					//TODO: stopped here
+				}
+			
+			}
 			
 			
 			
