@@ -2,6 +2,8 @@ package de.bwvaachen.beamoflightgame.logic.strategies;
 
 import de.bwvaachen.beamoflightgame.helper.AbstractTileVisitor;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
+import de.bwvaachen.beamoflightgame.helper.BoardUtils;
+import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.logic.PuzzleException;
 import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
 import de.bwvaachen.beamoflightgame.model.ITile;
@@ -82,10 +84,21 @@ public class IntersectionStrategy extends AbstractStrategy {
 		//case 2: there is only one possibility to cover the remaining range of the
 		//        NumberTile
 		else if(availableRange == remainingLightRange) {
+			final BoardUtils<LightTileState> utils = BoardUtils.getInstance(LightTileState.class);
 			
 			for(int i=states.length-1; i<=0; i--) {
 				final LightTileState currentState = states[i];
+				final int range = maxRange[i];
+				final TraverseDirection currentDirection = currentState.getTraverseDirection();
+				traverser.reset();
+				if(!traverser.shift(currentDirection)) continue;
+				traverser.get().accept(new AbstractTileVisitor() {
+					public void visitLightTile(LightTile lt) {
+						utils.fillBoard(lt, range, currentDirection, currentState);
+					}
+				});
 				
+				/*
 				traverser.reset();
 			
 			
@@ -98,7 +111,7 @@ public class IntersectionStrategy extends AbstractStrategy {
 					} );
 					traverser.shift(currentState.getTraverseDirection());
 					//TODO: stopped here
-				}
+				} */
 			
 			}
 			

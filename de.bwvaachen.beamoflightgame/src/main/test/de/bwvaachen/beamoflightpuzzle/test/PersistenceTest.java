@@ -38,7 +38,7 @@ import de.bwvaachen.beamoflightgame.controller.Turn;
 import de.bwvaachen.beamoflightgame.helper.SimpleASCIICodec;
 import de.bwvaachen.beamoflightgame.helper.ZipPersister;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
-import de.bwvaachen.beamoflightgame.ui.PrototypModelFuerGUI;
+import de.bwvaachen.beamoflightgame.ui.PrototypModelForLonelyFieldStrategy;
 
 //@RunWith(PowerMockRunner.class)
 //@PrepareForTest({Object.class})
@@ -68,7 +68,7 @@ public class PersistenceTest {
 	@Test
 	public void test() {
 		ZipPersister test = new ZipPersister(new SimpleASCIICodec());
-		IBeamsOfLightPuzzleBoard board1 = new PrototypModelFuerGUI();
+		IBeamsOfLightPuzzleBoard board1 = new PrototypModelForLonelyFieldStrategy();
 		System.out.println(board1);
 		
 		IBeamsOfLightPuzzleBoard board2 = null;

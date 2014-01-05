@@ -335,7 +335,7 @@ public class LightgameUI extends JFrame {
 			contentPane.add(rasterPanel, BorderLayout.CENTER);
 	
 			// Controller mit Test Prototyp fï¿½r GUI fï¿½llen.
-			controller . setBoard ( new PrototypModelFuerGUI() ) ;
+			controller . setBoard ( new PrototypModelForLonelyFieldStrategy() ) ;
 			
 			javax.swing.JButton solverButton = new javax.swing.JButton("Puzzle loesen");
 			solverButton.addActionListener(new ActionListener() {

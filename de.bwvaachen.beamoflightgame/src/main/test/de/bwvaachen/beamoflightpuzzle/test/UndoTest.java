@@ -33,7 +33,7 @@ import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.IChangeableTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
-import de.bwvaachen.beamoflightgame.ui.PrototypModelFuerGUI;
+import de.bwvaachen.beamoflightgame.ui.PrototypModelForLonelyFieldStrategy;
 
 //@RunWith(PowerMockRunner.class)
 @PrepareForTest({IBeamsOfLightPuzzleBoard.class})
@@ -50,7 +50,7 @@ public class UndoTest {
 	@Test
 	public void test() {
 		BeamsOfLightPuzzleBoard    b =
-				new PrototypModelFuerGUI();
+				new PrototypModelForLonelyFieldStrategy();
 		final TurnUndoManager um  = new TurnUndoManager();
 		
 		b.addUndoableEditListener(um);
