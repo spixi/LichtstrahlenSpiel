@@ -1,8 +1,11 @@
 package de.bwvaachen.beamoflightgame.logic.strategies;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -218,11 +221,60 @@ public class IntersectionStrategy extends AbstractStrategy {
 	
 	//TODO
 	private static <T extends Number> T sum(Iterable<? extends T> it) {
-		T result;
-		for(T next : it) {
-			//result += next;
+		Iterator<? extends T> iterator = it.iterator();
+		Number first = iterator.next();
+		
+		if(first instanceof Integer) {
+			Integer _result = (Integer) first;
+			for(T next : it)
+				_result+=(Integer)next;
+			return (T) _result;
 		}
-		return null; //result;
+		else if(first instanceof Double) {
+			Double _result = (Double) first;
+			for(T next : it)
+				_result+=(Double)next;
+			return (T) _result;
+		}
+		else if(first instanceof Long) {
+			Long _result = (Long) first;
+			for(T next : it)
+				_result+=(Long)next;
+			return (T) _result;
+		}
+		else if(first instanceof Float) {
+			Float _result = (Float) first;
+			for(T next : it)
+				_result+=(Float)next;
+			return (T) _result;
+		}
+		else if(first instanceof Byte) {
+			Byte _result = (Byte) first;
+			for(T next : it)
+				_result= (byte)(_result + (Byte)next);
+			return (T) _result;
+		}
+		else if(first instanceof Short) {
+			Short _result = (Short) first;
+			for(T next : it)
+				_result= (short)(_result + (Short)next);
+			return (T) _result;
+		}
+		else if(first instanceof java.math.BigInteger) {
+			java.math.BigInteger _result = (java.math.BigInteger) first;
+			for(T next : it)
+				_result=((java.math.BigInteger)next).add((BigInteger) next);
+			return (T) _result;
+		}
+		else if(first instanceof java.math.BigDecimal) {
+			java.math.BigDecimal _result = (java.math.BigDecimal) first;
+			for(T next : it)
+				_result=((java.math.BigDecimal)next).add((BigDecimal) next);
+			return (T) _result;
+		}
+		else {
+			throw new IllegalArgumentException(String.format("Type %s not supported.", first.getClass()));
+		}
 	}
 
 }
