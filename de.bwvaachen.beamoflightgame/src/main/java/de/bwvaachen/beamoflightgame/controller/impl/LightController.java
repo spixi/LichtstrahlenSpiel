@@ -10,7 +10,10 @@ import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.Turn;
 import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.model.ITile;
+import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
+import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 
 public class LightController implements ILightController {
@@ -101,12 +104,54 @@ public class LightController implements ILightController {
 //		LzmaOutputStream  los    = new LzmaOutputStream.Builder(fos).build();
 //		BufferedOutputStream bos = new BufferedOutputStream(los);
 //		ObjectOutputStream oos   = new ObjectOutputStream(bos);
-//		
-//		oos.writeObject(puzzleBoard);
-//		oos.writeObject(turnManager);
-//		oos.flush();
-//		oos.close();
+		
+		//generate the file
+		//flag if g ame, e mpty or d raft
+		char flag = ' ';
+		int hight,width;
+		
+		if(this.getUndoManager().canRedo()) flag = 'g'; //if there are Turns to undo - its a game!
+
+		//TODO check if it is a draft or an empty game!
+		
+		hight = puzzleBoard.getHeight();
+		width = puzzleBoard.getWidth();
+		
+		
+		
 	} // public void saveGame(File f)
+	
+	/**
+	 * Turn a tile into its String representation
+	 * @param t is the ITile that need to be transformed
+	 * @return is the String that represents the Tile
+	 * @author Andi 
+	 */
+	private String getStringRepresentation(ITile t)
+	{
+		try{
+			NumberTile ti = (NumberTile) t;
+			return String.format("{%s|%d|%d|%d}","N",ti.getNumber(),ti.getX(),ti.getY());
+		}
+		catch (Exception e)
+		{
+			LightTile ti = (LightTile) t;
+			return String.format("{%s|%d|%d|%d}","L",ti.getTileState().getSign(),ti.getX(),ti.getY());		
+		}
+	}
+	
+	/**
+	 * 
+	 * @param s 
+	 * @return
+	 * @author Andi
+	 */
+	private ITile getTileRepresentation(String s)
+	{
+		String[] ar = s.split("");
+		return null;
+	}
+	
 
 	@Override
 	public void setBoard(IBeamsOfLightPuzzleBoard _board) throws Exception {
