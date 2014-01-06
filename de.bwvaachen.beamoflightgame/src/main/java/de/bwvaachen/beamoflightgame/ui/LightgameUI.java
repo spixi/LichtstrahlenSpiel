@@ -33,6 +33,7 @@ import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.ITileVisitor;
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.logic.ISolver;
+import de.bwvaachen.beamoflightgame.logic.strategies.IntersectionStrategy;
 import de.bwvaachen.beamoflightgame.logic.strategies.LonelyFieldStrategy;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
@@ -335,7 +336,7 @@ public class LightgameUI extends JFrame {
 			contentPane.add(rasterPanel, BorderLayout.CENTER);
 	
 			// Controller mit Test Prototyp fï¿½r GUI fï¿½llen.
-			controller . setBoard ( new PrototypModelForLonelyFieldStrategy() ) ;
+			controller . setBoard ( new PrototypModelForIntersectionStrategy() ) ;
 			
 			javax.swing.JButton solverButton = new javax.swing.JButton("Puzzle loesen");
 			solverButton.addActionListener(new ActionListener() {
@@ -343,7 +344,7 @@ public class LightgameUI extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					try {
-						ISolver s = SolverBuilder.buildWith(LonelyFieldStrategy.class).forBoard(controller.getCurrentModel());
+						ISolver s = SolverBuilder.buildWith(IntersectionStrategy.class).forBoard(controller.getCurrentModel());
 					    s.solve();
 					
 					} catch (Exception e1) {

@@ -1,5 +1,11 @@
 package de.bwvaachen.beamoflightgame.logic.strategies;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import de.bwvaachen.beamoflightgame.helper.AbstractTileVisitor;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.BoardUtils;
@@ -97,32 +103,18 @@ public class IntersectionStrategy extends AbstractStrategy {
 						utils.fillBoard(lt, range, currentDirection, currentState);
 					}
 				});
-				
-				/*
-				traverser.reset();
-			
-			
-				while(maxRange[i]-- <= 0) {
-					traverser.get().accept(new AbstractTileVisitor() {
-						@Override
-						public void visitLightTile(LightTile t) {
-							t.setState(currentState, true);	   
-						}
-					} );
-					traverser.shift(currentState.getTraverseDirection());
-					//TODO: stopped here
-				} */
-			
 			}
-			
-			
-			
 		}
 		
 		//case 2: there is more than one possibility to cover the whole remaining range of
 		//        the number tile
 
 		else {
+			
+			for(Iterable<Integer> searchPath: searchPaths) {
+				
+			}
+			
 			//TODO: We have more than one possible solutions
 			//Now we have to check if some LightTiles are filled by every possible solution
 			//first: determine how many LightTiles can be filled by each combination of
@@ -157,7 +149,10 @@ public class IntersectionStrategy extends AbstractStrategy {
 			//
 			//
 			//We can hard code the following terms because they are relatively comprehensible
-			//
+			
+			
+			
+				
 			//three directions
 			//maxRange[1]+maxRange[2]+maxRange[3]
 			//maxRange[0]+maxRange[2]+maxRange[3]
@@ -188,6 +183,46 @@ public class IntersectionStrategy extends AbstractStrategy {
 		
 		return false;
 		// TODO Auto-generated method stub
+	}
+	
+	private static List<List<Integer>> searchPaths;
+	
+	static {
+		searchPaths = new LinkedList<List<Integer>>();
+		
+		final Integer N=Integer.valueOf(0),
+				      E=Integer.valueOf(1),
+				      S=Integer.valueOf(2),
+				      W=Integer.valueOf(3);
+		
+		//three directions
+		searchPaths.add(Arrays.asList(E,S,W));
+		searchPaths.add(Arrays.asList(N,S,W));
+		searchPaths.add(Arrays.asList(N,E,W));
+		searchPaths.add(Arrays.asList(N,E,S));
+		
+		//two directions
+		searchPaths.add(Arrays.asList(N,E));
+		searchPaths.add(Arrays.asList(N,S));
+		searchPaths.add(Arrays.asList(N,W));
+		searchPaths.add(Arrays.asList(E,S));
+		searchPaths.add(Arrays.asList(E,W));
+		searchPaths.add(Arrays.asList(S,W));
+		
+		//one direction
+		searchPaths.add(Collections.singletonList(N));
+		searchPaths.add(Collections.singletonList(E));
+		searchPaths.add(Collections.singletonList(S));
+		searchPaths.add(Collections.singletonList(W));
+	}
+	
+	//TODO
+	private static <T extends Number> T sum(Iterable<? extends T> it) {
+		T result;
+		for(T next : it) {
+			//result += next;
+		}
+		return null; //result;
 	}
 
 }
