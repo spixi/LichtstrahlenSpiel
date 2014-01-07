@@ -1,17 +1,11 @@
 package de.bwvaachen.beamoflightgame.logic.strategies;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
-
 import de.bwvaachen.beamoflightgame.helper.AbstractTileVisitor;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.BoardUtils;
+import static de.bwvaachen.beamoflightgame.helper.MathHelper.*;
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.logic.PuzzleException;
 import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
@@ -51,8 +45,6 @@ public class IntersectionStrategy extends AbstractStrategy {
 		NumberTile tile = (NumberTile) super.tile;
 		
 		int remainingLightRange = tile.getRemainingLightRange();
-		
-		LightTileState states[] = (LightTileState[]) LightTileState.allDirections().toArray();
 		
 		int maxRange[] = new int[states.length];
 		
@@ -113,70 +105,26 @@ public class IntersectionStrategy extends AbstractStrategy {
 		//        the number tile
 
 		else {
-			
-			for(Iterable<Integer> searchPath: searchPaths) {
+			for(int[] searchPath: searchPaths) {
+				
+				int sum = multiplicateVector(searchPath, maxRange);
+				
+				if(sum < remainingLightRange) {
+					//Only sum light tiles can be distributed to the given searchPath
+					//Therefore some tiles are forced to the other directions
+					int[] otherDirections =
+							subtractVector(V(1,1,1,1),searchPath);
+					
+					for(int i=0; i<otherDirections.length; i++) {
+						if(otherDirections[i] == 0) continue;
+						LightTileState currentDirection = states[i];
+						//TODO
+						System.out.printf("currentDirection: %s, maxRange: %d \n", currentDirection, maxRange[i]);	
+					}
+					System.out.print("------------\n");	
+				}
 				
 			}
-			
-			//TODO: We have more than one possible solutions
-			//Now we have to check if some LightTiles are filled by every possible solution
-			//first: determine how many LightTiles can be filled by each combination of
-			//three, two or one direction
-			//
-			//The difference of the availableRange and the remainingRange determines
-			//how many LightTiles are forced to be covered by the other directions
-			//
-			// E. g.:
-			//
-			//          [X]
-			//          [ ]
-			// [X][ ][ ][6][ ][ ][ ][ ][X]
-			//          [ ]
-			//          [X]
-			//
-			// The NumberTile 6 has a remainingRange of 6
-			// Because NORTH+SOUTH can only cover up to (1 + 1 = 2) tiles
-			// the remaining 4 tiles must be covered by WEST+SOUTH
-			//
-			// We are required to distribute those 4 tiles to the WEST and SOUTH
-			// direction. We must always point the beam to the direction with the most
-			// remaining range.
-			//
-			// So we will produce this figure:
-			//
-			//          [X]
-			//          [ ]
-			// [X][ ][ ][6][-][-][ ][ ][X]
-			//          [ ]
-			//          [X]
-			//
-			//
-			//We can hard code the following terms because they are relatively comprehensible
-			
-			
-			
-				
-			//three directions
-			//maxRange[1]+maxRange[2]+maxRange[3]
-			//maxRange[0]+maxRange[2]+maxRange[3]
-			//maxRange[0]+maxRange[1]+maxRange[3]
-			//maxRange[0]+maxRange[1]+maxRange[2]
-			//
-			//two directions
-			//maxRange[0]+maxRange[1]
-			//maxRange[0]+maxRange[2]
-			//maxRange[0]+maxRange[3]
-			//maxRange[1]+maxRange[2]
-			//maxRange[1]+maxRange[3]
-			//maxRange[2]+maxRange[3]
-			//
-			//one direction
-			//maxRange[0]
-			//maxRange[1]
-			//maxRange[2]
-			//maxRange[3]
-			
-			
 			
 		}
 
@@ -188,93 +136,52 @@ public class IntersectionStrategy extends AbstractStrategy {
 		// TODO Auto-generated method stub
 	}
 	
-	private static List<List<Integer>> searchPaths;
+	private static LightTileState states[];
+	private static int[][] searchPaths;
+	private static HashMap<LightTileState,Integer> directions;
 	
 	static {
-		searchPaths = new LinkedList<List<Integer>>();
+		states = (LightTileState[]) LightTileState.allDirections().toArray();
 		
-		final Integer N=Integer.valueOf(0),
-				      E=Integer.valueOf(1),
-				      S=Integer.valueOf(2),
-				      W=Integer.valueOf(3);
+		directions = new HashMap<LightTileState,Integer>(states.length);
+		for(int i=0; i<states.length; i++) {
+			directions.put(states[i],i);
+		}
+		
+		int[] N = new int[4],
+			  E = new int[4],
+			  S = new int[4],
+			  W = new int[4];
+		
+		N[directions.get(LightTileState.NORTH)] = 1;
+		E[directions.get(LightTileState.EAST)]  = 1;
+		S[directions.get(LightTileState.SOUTH)] = 1;
+		W[directions.get(LightTileState.WEST)]  = 1;
+		
+		searchPaths = new int[14][4];
+		
+		int i = 0;
 		
 		//three directions
-		searchPaths.add(Arrays.asList(E,S,W));
-		searchPaths.add(Arrays.asList(N,S,W));
-		searchPaths.add(Arrays.asList(N,E,W));
-		searchPaths.add(Arrays.asList(N,E,S));
+		searchPaths[i++]=vectorSum(E,S,W);
+		searchPaths[i++]=vectorSum(N,S,W);
+		searchPaths[i++]=vectorSum(N,E,W);
+		searchPaths[i++]=vectorSum(N,E,S);
 		
 		//two directions
-		searchPaths.add(Arrays.asList(N,E));
-		searchPaths.add(Arrays.asList(N,S));
-		searchPaths.add(Arrays.asList(N,W));
-		searchPaths.add(Arrays.asList(E,S));
-		searchPaths.add(Arrays.asList(E,W));
-		searchPaths.add(Arrays.asList(S,W));
+		searchPaths[i++]=vectorSum(N,E);
+		searchPaths[i++]=vectorSum(N,S);
+		searchPaths[i++]=vectorSum(N,W);
+		searchPaths[i++]=vectorSum(E,S);
+		searchPaths[i++]=vectorSum(E,W);
+		searchPaths[i++]=vectorSum(S,W);
 		
 		//one direction
-		searchPaths.add(Collections.singletonList(N));
-		searchPaths.add(Collections.singletonList(E));
-		searchPaths.add(Collections.singletonList(S));
-		searchPaths.add(Collections.singletonList(W));
+		searchPaths[i++]=N;
+		searchPaths[i++]=E;
+		searchPaths[i++]=S;
+		searchPaths[i++]=W;
 	}
-	
-	//TODO
-	private static <T extends Number> T sum(Iterable<? extends T> it) {
-		Iterator<? extends T> iterator = it.iterator();
-		Number first = iterator.next();
-		
-		if(first instanceof Integer) {
-			Integer _result = (Integer) first;
-			for(T next : it)
-				_result+=(Integer)next;
-			return (T) _result;
-		}
-		else if(first instanceof Double) {
-			Double _result = (Double) first;
-			for(T next : it)
-				_result+=(Double)next;
-			return (T) _result;
-		}
-		else if(first instanceof Long) {
-			Long _result = (Long) first;
-			for(T next : it)
-				_result+=(Long)next;
-			return (T) _result;
-		}
-		else if(first instanceof Float) {
-			Float _result = (Float) first;
-			for(T next : it)
-				_result+=(Float)next;
-			return (T) _result;
-		}
-		else if(first instanceof Byte) {
-			Byte _result = (Byte) first;
-			for(T next : it)
-				_result= (byte)(_result + (Byte)next);
-			return (T) _result;
-		}
-		else if(first instanceof Short) {
-			Short _result = (Short) first;
-			for(T next : it)
-				_result= (short)(_result + (Short)next);
-			return (T) _result;
-		}
-		else if(first instanceof java.math.BigInteger) {
-			java.math.BigInteger _result = (java.math.BigInteger) first;
-			for(T next : it)
-				_result=((java.math.BigInteger)next).add((BigInteger) next);
-			return (T) _result;
-		}
-		else if(first instanceof java.math.BigDecimal) {
-			java.math.BigDecimal _result = (java.math.BigDecimal) first;
-			for(T next : it)
-				_result=((java.math.BigDecimal)next).add((BigDecimal) next);
-			return (T) _result;
-		}
-		else {
-			throw new IllegalArgumentException(String.format("Type %s not supported.", first.getClass()));
-		}
-	}
+
 
 }
