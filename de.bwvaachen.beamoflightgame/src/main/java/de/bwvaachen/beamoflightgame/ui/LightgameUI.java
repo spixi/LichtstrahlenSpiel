@@ -344,7 +344,7 @@ public class LightgameUI extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					try {
-						ISolver s = SolverBuilder.buildWith(IntersectionStrategy.class).forBoard(controller.getCurrentModel());
+						ISolver s = SolverBuilder.buildWith(LonelyFieldStrategy.class).and(IntersectionStrategy.class).forBoard(controller.getCurrentModel());
 					    s.solve();
 					
 					} catch (Exception e1) {

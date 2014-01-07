@@ -1,5 +1,7 @@
 package de.bwvaachen.beamoflightgame.logic.strategies;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import de.bwvaachen.beamoflightgame.helper.AbstractTileVisitor;
@@ -160,27 +162,34 @@ public class IntersectionStrategy extends AbstractStrategy {
 		
 		searchPaths = new int[14][4];
 		
-		int i = 0;
+		int i = -1;
 		
 		//three directions
-		searchPaths[i++]=vectorSum(E,S,W);
-		searchPaths[i++]=vectorSum(N,S,W);
-		searchPaths[i++]=vectorSum(N,E,W);
-		searchPaths[i++]=vectorSum(N,E,S);
+		searchPaths[++i]=vectorSum(E,S,W);
+		searchPaths[++i]=vectorSum(N,S,W);
+		searchPaths[++i]=vectorSum(N,E,W);
+		searchPaths[++i]=vectorSum(N,E,S);
 		
 		//two directions
-		searchPaths[i++]=vectorSum(N,E);
-		searchPaths[i++]=vectorSum(N,S);
-		searchPaths[i++]=vectorSum(N,W);
-		searchPaths[i++]=vectorSum(E,S);
-		searchPaths[i++]=vectorSum(E,W);
-		searchPaths[i++]=vectorSum(S,W);
+		searchPaths[++i]=vectorSum(N,E);
+		searchPaths[++i]=vectorSum(N,S);
+		searchPaths[++i]=vectorSum(N,W);
+		searchPaths[++i]=vectorSum(E,S);
+		searchPaths[++i]=vectorSum(E,W);
+		searchPaths[++i]=vectorSum(S,W);
 		
 		//one direction
-		searchPaths[i++]=N;
-		searchPaths[i++]=E;
-		searchPaths[i++]=S;
-		searchPaths[i++]=W;
+		searchPaths[++i]=N;
+		searchPaths[++i]=E;
+		searchPaths[++i]=S;
+		searchPaths[++i]=W;
+		
+		for(int[] searchPath: searchPaths) {
+			ArrayList<Integer> list = new ArrayList<Integer>();
+			for(int j: searchPath)
+				list.add(j);
+			System.out.println(list.toString());
+		}
 	}
 
 

@@ -30,7 +30,7 @@ public final class MathHelper {
 		//size = 1, also haben wir bereits das Ergebnis
 		if(size == 1) return v[0];
 		//ansonsten müssen wir weiter addieren
-		return addVector(v[size-1], vectorSum(size-1,v));
+		return addVector(vectorSum(size-1,v),v[size-1]);
 	}
 	
 	//addiere zwei Vektoren
