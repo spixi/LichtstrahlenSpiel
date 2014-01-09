@@ -12,7 +12,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -598,21 +600,26 @@ public class LightgameUI extends JFrame {
 	
 	/**
 	 * Paints the GUI (Buttons) based on a Model Object
-	 * @author pauls 
+	 * @author pauls , gbraun
 	 * @param model
 	 */
 	private void Update(IBeamsOfLightPuzzleBoard model)
 	{
+		// Erzeugen der Factory
 		GraficFactory gf = new GraficFactory(model);
+		// Über alle Buttons iterieren
 		for(TileButton btn : buttons)
 		{
-			addIcon( btn , gf . getImage ( btn . getTile() ) ) ;	
+			// Icon hinzufügen
+			addIcon( btn , gf . getImage ( btn . getTile() ) ) ;
+			
+			// Wenn ein Numbertile ausgewählt ist, werden mögliche Züge durch einen anderen Rand angezeigt (der Buttonst ist also markiert)
 			if ( btn . markiert ) {
-				btn . setBackground ( new Color(255,0,0) ) ;
+				btn . setBorder( BorderFactory.createLineBorder ( Color.red ) ) ; 
 			}
 			else {
-				btn . setBackground ( new Color(238,238,238) ) ;
-			}
+				btn . setBorder( BorderFactory.createLineBorder ( Color.black ) ) ; 
+			} // if ( btn . markiert ) 
 				
 		} // for(TileButton btn : buttons)
 	} // private void Update(IBeamsOfLightPuzzleBoard model)
