@@ -45,9 +45,12 @@ public class ZipPersister implements IPersistenceHelper {
 				sections.put(entry.getName(),sw.toString());
 			}
 
-			if(!sections.containsKey("codec")) throw new WrongCodecException();
-			if(!sections.containsKey("board")) throw new WrongCodecException();
-			if(!sections.containsKey("turns")) throw new WrongCodecException();
+			//depricated
+//			if(!sections.containsKey("codec")) throw new WrongCodecException();
+			if(!sections.containsKey("board")) throw new IllegalStateException();
+//			if(!sections.containsKey("turns")) throw new WrongCodecException();
+			
+			
 			
 			codec = //(ICodec)Class.forName(sections.get("codec")).newInstance();
 					new de.bwvaachen.beamoflightgame.helper.SimpleASCIICodec();
