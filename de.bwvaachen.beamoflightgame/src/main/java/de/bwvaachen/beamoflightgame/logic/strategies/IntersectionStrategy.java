@@ -55,17 +55,22 @@ public class IntersectionStrategy extends AbstractStrategy {
 		for(LightTileState state : states) {
 			int counter = 0;
 			
+			traverser.reset();
 			while(traverser.shift(state.getTraverseDirection())) {
 				ITileState nextState = traverser.get().getTileState();
 				
+				if(traverser.get().getY() == 3) {
+					int a = 1 + 2;
+				}
+				
 				//stop if tile is crossed
 				if (doesCross(nextState, state)) break;
-				
 				//ignore tiles of the same state
 				if (nextState.equals(state)) continue;
 				
 				counter ++;
 			}
+			
 			
 			//maxRange[state.ordinal()] = counter
 			//This is not save because a bad guy could change the order of the LightTileState enum
@@ -76,6 +81,7 @@ public class IntersectionStrategy extends AbstractStrategy {
 		System.out.printf("tile = {%s, %s}; remaining range = %d; range { n e s w } =  { ", tile.getX(), tile.getY(), remainingLightRange);
 		for(int m : maxRange) System.out.printf("%d ", m);
 		System.out.println("}");
+		System.out.println("======================");
 		
 		int availableRange = (maxRange[0]+maxRange[1]+maxRange[2]+maxRange[3]);
 		
@@ -103,7 +109,7 @@ public class IntersectionStrategy extends AbstractStrategy {
 			}
 		}
 		
-		//case 2: there is more than one possibility to cover the whole remaining range of
+		//case 3: there is more than one possibility to cover the whole remaining range of
 		//        the number tile
 
 		else {
@@ -117,6 +123,9 @@ public class IntersectionStrategy extends AbstractStrategy {
 					int[] otherDirections =
 							subtractVector(V(1,1,1,1),searchPath);
 					
+					int tilesToDistribute = remainingLightRange - sum;
+					System.out.printf("tilesToDistribute = %s\n",tilesToDistribute);
+				
 					for(int i=0; i<otherDirections.length; i++) {
 						if(otherDirections[i] == 0) continue;
 						LightTileState currentDirection = states[i];
@@ -183,13 +192,6 @@ public class IntersectionStrategy extends AbstractStrategy {
 		searchPaths[++i]=E;
 		searchPaths[++i]=S;
 		searchPaths[++i]=W;
-		
-		for(int[] searchPath: searchPaths) {
-			ArrayList<Integer> list = new ArrayList<Integer>();
-			for(int j: searchPath)
-				list.add(j);
-			System.out.println(list.toString());
-		}
 	}
 
 
