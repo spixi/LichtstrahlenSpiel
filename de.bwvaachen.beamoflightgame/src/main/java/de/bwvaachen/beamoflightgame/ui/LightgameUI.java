@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -92,24 +93,40 @@ public class LightgameUI extends JFrame {
 		    }
 		  }
 		}
+	
+	/**
+	 * Actionklasse für den Klick auf ein LightTIle
+	 * 
+	 * @author gbraun
+	 *
+	 */
 	class LightTileListener implements ActionListener {
 
+		/**
+		 * Strahlen setzen und entfernen.
+		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
 			try {
 				// Den auslï¿½senden Button holen
 				TileButton btn = (TileButton) e.getSource();
+				// Den Traverser initialisieren.
+				BoardTraverser traverser = new BoardTraverser ( btn.getTile() ) ;
 							
+				// Lichtstrahl ziehen
 				if ( ( activeNumberTile != null ) && ( btn . markiert ) )  {
+					
+					// *** Setzten von Lichtstrahlen ***
 					
 					int lightTileX = btn . getCol() ;
 					int lightTileY = btn . getRow () ;
 					int numberTileX = activeNumberTile . getX() ;
 					int numberTileY = activeNumberTile . getY() ;
 					
+					// Ermitteln in welche Richtung gezogen wurde
 					LightTileState lichtRichtung ;
-					
+										
 					if ( lightTileY == numberTileY ) {
 						if ( lightTileX < numberTileX ) {
 							lichtRichtung = LightTileState.WEST ;
@@ -130,12 +147,7 @@ public class LightgameUI extends JFrame {
 						}
 							 
 					} // if ( lightTileY == numberTileY ) 
-					
-					IBeamsOfLightPuzzleBoard currentBoard = controller.getCurrentModel();
-					
-					// Den Traverser initialisieren.
-					BoardTraverser traverser = new BoardTraverser ( btn.getTile() ) ;
-					
+										
 					// Den Traverser auf den Button Zielbutton (LightTile) setzen.
 					traverser . moveTo ( lightTileX , lightTileY ) ;
 					TraverseDirection traverseDirection = lichtRichtung . reverse() . getTraverseDirection() ;
@@ -152,17 +164,48 @@ public class LightgameUI extends JFrame {
 						traverser . shift ( traverseDirection ) ;
 					} while(true);
 					
-					activeNumberTile = null ;
+					activeNumberTile = null ;					
 					
-					
-					
+					// Entfernen aller Markierungen, da der Zug gemacht wurde.
 					for ( TileButton aktButton : buttons ) {
 						aktButton . markiert = false ;						
 					} // for ( TileButton aktButton : buttons ) 					
 					
-					
-					Update( currentBoard ) ;
 				} // if ( ( activeNumberTile != null ) && ( btn . markiert ) )
+				else {
+					
+					// *** Entfernen von Lichstrahlen ***				
+					
+					// Das ausgewählte Tile holen
+					LightTile ausgangsTile 	     = (LightTile) btn . getTile() ;
+					// Ermitteln der Richtung
+					LightTileState lichtRichtung = (LightTileState) ausgangsTile . getTileState() ;
+					
+					if ( lichtRichtung != LightTileState . EMPTY ) {
+						
+						// Traverser setzen
+						traverser . moveTo ( ausgangsTile . getX() , ausgangsTile . getY() ) ;
+						// Ermitteln der Traverse-Richtung
+						TraverseDirection traverseDirection = lichtRichtung . getTraverseDirection() ; 
+						
+						boolean significant = true ;
+						// Vom Ausgangs-Tile bis zum "Strahlende" die TileStates auf EMPTY setzen.
+						LightTile currentTile = ausgangsTile ;						
+						while ( currentTile . getTileState() . getTraverseDirection() == traverseDirection ) {
+							currentTile . setState ( LightTileState . EMPTY , significant ) ;
+							significant = false ;
+							traverser . shift ( traverseDirection ) ;
+							currentTile = (LightTile) traverser . get() ;
+						} // while ( currentTile . getTileState() . getTraverseDirection() == traverseDirection ) 
+						
+					} // if ( lichtRichtung != LightTileState . EMPTY ) 
+					
+				} // // if ( ( activeNumberTile != null ) && ( btn . markiert ) ) .. else				
+							
+				
+				// Das Board neu zeichnen.
+				IBeamsOfLightPuzzleBoard currentBoard = controller.getCurrentModel() ;
+				Update( currentBoard ) ;
 				
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
@@ -172,8 +215,11 @@ public class LightgameUI extends JFrame {
 		} // public void actionPerformed(ActionEvent e) 
 		
 	} // class LightTileListener implements ActionListener
+	
+	
+	
 	/**
-	 * Action fï¿½r den Klick auf ein Tile
+	 * Action fï¿½r den Klick auf ein NumberTile
 	 * 
 	 * @author gbraun, pauls_and
 	 */
@@ -202,8 +248,9 @@ public class LightgameUI extends JFrame {
 					// Variable deklarieren, die bei der Anzeige der mï¿½glichen Felder hilft.
 					boolean CurrentTileIsLightTile ;
 	
-					// Strahlstï¿½rke holen
-					int strahlStaerke = ((NumberTileState) btn . getTile() . getTileState() ) . getNumber() ;					
+					// Die verbleibende Strahlstärke holen										
+					NumberTile currentTile = (NumberTile) btn . getTile () ;
+					int strahlStaerke = currentTile . getRemainingLightRange() ;
 					
 					// Den Traverser initialisieren.
 					BoardTraverser traverser = new BoardTraverser ( btn.getTile() ) ;
@@ -242,11 +289,16 @@ public class LightgameUI extends JFrame {
 									int buttonArrayPos = ( ( traverser . getY() * currentModel . getWidth() ) + traverser . getX() )  ;
 									TileButton aktButton = buttons . get ( buttonArrayPos ) ;
 
-									// Einfï¿½rben des Buttons
-									aktButton . markiert = true ;
-									// Die "verbrauchte Stï¿½rke" erhï¿½hen.
-									verbrauchteStaerke += 1 ;
-									activeNumberTile = btn . getTile() ;
+									LightTile aktTile = (LightTile) traverser . get() ;
+									if ( aktTile . getTileState() == LightTileState.EMPTY ) {
+										// Einfï¿½rben des Buttons
+										aktButton . markiert = true ;
+										// Die "verbrauchte Stï¿½rke" erhï¿½hen.
+										verbrauchteStaerke += 1 ;
+										// Es wurde mindestens ein mögliches Feld markiert. Deshalb wird dieses NumberTile gespeichert, damit man später beim Klick auf ein markiertes LightTile weiß
+										// von wo der Strahl kommt.
+										activeNumberTile = btn . getTile() ;
+									}
 								} // if ( CurrentTileIsLightTile ) 
 												
 							} // while ( .. ) 
@@ -266,6 +318,8 @@ public class LightgameUI extends JFrame {
 		} // public void actionPerformed(ActionEvent e)
 		
 	} // class TileButtonListener 
+	
+	
 	class Selection
 	{
 		
@@ -432,8 +486,9 @@ public class LightgameUI extends JFrame {
 	 */
 	private TileButton addIcon(TileButton btn, Icon ico)
 	{
-		btn.setIcon(ico);
+		btn.setIcon(ico) ;
 		return btn;
+		
 	} // private TileButton addIcon(TileButton btn, Icon ico)
 	
 	
