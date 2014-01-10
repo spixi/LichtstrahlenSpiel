@@ -91,6 +91,10 @@ public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 		undoableEditListeners.remove(ul);
 	}
 	
+	public boolean isStateAllowed(Class<? extends LightTileState> stateClass) {
+		return allowedStateClass.isAssignableFrom(stateClass);
+	}
+	
 	public final void restoreState(Hashtable<?, ?> state) {
 		if (! isStateChangeable()) throw new UnsupportedOperationException();
 		ITileState received      = (ITileState) state.get("state");
@@ -101,7 +105,7 @@ public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 		
 		Class<?>   receivedClass = received.getClass();
 		
-		if (! allowedStateClass.isAssignableFrom(receivedClass))
+		if (! isStateAllowed((Class<? extends LightTileState>) receivedClass))
 			throw new IllegalStateException("Die Zustandsklasse " + receivedClass + " ist nicht kompatibel mit " + allowedStateClass);
 		tileState = received;
 	}

@@ -8,9 +8,14 @@ import de.bwvaachen.beamoflightgame.model.ITileState;
 
 public final class  BoardUtils<T extends ITileState>{
 	private static HashMap multitons;
+	private Class<T> clazz;
 	
 	static {
 		multitons = new HashMap();
+	}
+	
+	private BoardUtils(Class<T> clazz) {
+		this.clazz = clazz;
 	}
 	
 	public static <U extends ITileState> BoardUtils<U> getInstance(Class<U> clazz) {
@@ -20,8 +25,8 @@ public final class  BoardUtils<T extends ITileState>{
 				synchronized(multitons) {
 					instance = (BoardUtils<U>) multitons.get(clazz);
 					if(instance == null) {
-						instance = new BoardUtils<U>();
-						multitons.put(clazz, new BoardUtils<U>());
+						instance = new BoardUtils<U>(clazz);
+						multitons.put(clazz, new BoardUtils<U>(clazz));
 					}
 				}
 			}
@@ -32,7 +37,7 @@ public final class  BoardUtils<T extends ITileState>{
 		BoardTraverser traverser = start.getTraverser();
 		while(numOfFields-- >= 0) {
 			ITile tile = traverser.get();
-			if(tile.isStateChangeable()) {
+			if(tile.isStateAllowed(clazz) && tile.isStateChangeable()) {
 				//Change the state
 				//Only the last change should be significant, therefore numOfFields==0
 				((IChangeableTile) tile).setState(state, numOfFields==0);
