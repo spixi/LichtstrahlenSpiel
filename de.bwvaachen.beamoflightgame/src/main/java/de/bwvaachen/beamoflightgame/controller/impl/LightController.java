@@ -3,18 +3,22 @@ package de.bwvaachen.beamoflightgame.controller.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.undo.CannotUndoException;
 
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.Turn;
 import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
+import de.bwvaachen.beamoflightgame.helper.SimpleASCIICodec;
+import de.bwvaachen.beamoflightgame.helper.ZipPersister;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.ui.PrototypModelForIntersectionStrategy;
 
 public class LightController implements ILightController {
 	private TurnUndoManager          turnManager;
@@ -104,22 +108,29 @@ public class LightController implements ILightController {
 //		LzmaOutputStream  los    = new LzmaOutputStream.Builder(fos).build();
 //		BufferedOutputStream bos = new BufferedOutputStream(los);
 //		ObjectOutputStream oos   = new ObjectOutputStream(bos);
-		
-		//generate the file
-		//flag if g ame, e mpty or d raft
-		char flag = ' ';
-		int hight,width;
-		
-		if(this.getUndoManager().canRedo()) flag = 'g'; //if there are Turns to undo - its a game!
-
-		//TODO check if it is a draft or an empty game!
-		
-		hight = puzzleBoard.getHeight();
-		width = puzzleBoard.getWidth();
+				
+		ZipPersister persister = new ZipPersister(new SimpleASCIICodec());
+		persister.save(f, puzzleBoard, turnManager.getTurns()); //turns fehlen noch
 		
 		
 		
 	} // public void saveGame(File f)
+	
+	//Nur fuer Debugging !
+	public static void main(String[] args)
+	{
+		
+		ILightController c = new LightController();
+		IBeamsOfLightPuzzleBoard m = new PrototypModelForIntersectionStrategy();
+		try {
+			c.setBoard(m);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
 	
 	/**
 	 * Turn a tile into its String representation

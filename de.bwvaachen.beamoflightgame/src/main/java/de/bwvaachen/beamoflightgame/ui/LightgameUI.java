@@ -318,15 +318,7 @@ public class LightgameUI extends JFrame {
 		} // public void actionPerformed(ActionEvent e)
 		
 	} // class TileButtonListener 
-	
-	
-	class Selection
-	{
-		
-	}
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -3961364231837270604L;
 	
 	
@@ -610,7 +602,9 @@ public class LightgameUI extends JFrame {
 			//TODO getPresentationName
 		}); */
 		
-		
+		/**
+		 * @autor Bastian/Andreas
+		 */
 		mntmLoad.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -634,6 +628,30 @@ public class LightgameUI extends JFrame {
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
+			}
+		});
+		
+		mntmSaveAs.addActionListener(new ActionListener() {
+				@Override
+			public void actionPerformed(ActionEvent e) {
+				//Dialog zum Speicherns
+				JFrame parentFrame = new JFrame();
+				 
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setDialogTitle("Save As");   
+				 
+				int userSelection = fileChooser.showSaveDialog(parentFrame);
+				 
+				if (userSelection == JFileChooser.APPROVE_OPTION) {
+				    File fileToSave = fileChooser.getSelectedFile();
+				    try {
+						controller.saveGame(fileToSave);
+					} catch (IOException e1) {
+						
+						e1.printStackTrace();
+					}
+				}
+			
 			}
 		});
 		

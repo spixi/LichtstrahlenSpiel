@@ -12,4 +12,5 @@ public interface ITile<T extends ITileState> extends Visitable, TileComposite {
 	public boolean isStateChangeable();
 	public void put();
 	public void setUndoMode(boolean onOff);
+	public boolean isStateAllowed(Class<? extends LightTileState> stateClass);
 }

@@ -1,6 +1,9 @@
 package de.bwvaachen.beamoflightgame.controller;
 
+import java.io.Writer;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -15,6 +18,8 @@ public class TurnUndoManager extends UndoManager
 	/**
 	 * 
 	 */
+	
+	
 	private static final long serialVersionUID = 4610323453539735962L;
 	private boolean stable       = true;
 	private HashSet<ChangeListener> changeListeners = new HashSet<ChangeListener>();
@@ -128,6 +133,48 @@ public class TurnUndoManager extends UndoManager
 	
 	public void removeChangeListener(ChangeListener l) {
 		changeListeners.remove(l);
+	}
+	
+	//TODO ZipPersister anpassen so dass die Turns sofort in den Writer geschrieben werden können 
+	
+	//APauls
+	//Leider nicht mit dem ZipPersister von Basti kompatiebel 
+//	public void writeIn(Writer w)
+//	{
+//		for(UndoableEdit e : edits)
+//		{
+//			if(e instanceof Turn);
+//				
+//		}
+//	}
+	
+	
+	/**Get all turns for ZipPersister
+	 * @author pauls_and
+	 * @return All Turns 
+	 */
+	public List<Turn> getTurns()
+	{
+		LinkedList<Turn> turns = new LinkedList<Turn>();
+		for(UndoableEdit e : edits)
+		{
+			if (e instanceof Turn)
+				turns.add((Turn)e);
+		}
+		return turns;
+	}
+	
+	//TODO Testing! :D
+	/** Stellt alle Turns wieder her
+	 * @author pauls_and
+	 * @param turns
+	 */
+	public void restoreTurns(List<Turn> turns)
+	{
+		for(Turn t : turns)
+		{
+			addEdit(t);
+		}
 	}
 
 	

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import de.bwvaachen.beamoflightgame.helper.AbstractTileVisitor;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.BoardUtils;
@@ -42,30 +44,36 @@ public class IntersectionStrategy extends AbstractStrategy {
 	}
 
 	@Override
+
 	public boolean tryToSolve()  throws PuzzleException {
 		//Overshadow the tile
 		NumberTile tile = (NumberTile) super.tile;
 		
 		int remainingLightRange = tile.getRemainingLightRange();
 		
-		int maxRange[] = new int[states.length];
+		final int maxRange[] = new int[states.length];
 		
 		int index = 0;
 		BoardTraverser traverser = tile.getTraverser();
 		for(LightTileState state : states) {
 			int counter = 0;
 			
+			traverser.reset();
 			while(traverser.shift(state.getTraverseDirection())) {
 				ITileState nextState = traverser.get().getTileState();
 				
+				if(traverser.get().getY() == 3) {
+					int a = 1 + 2;
+				}
+				
 				//stop if tile is crossed
 				if (doesCross(nextState, state)) break;
-				
 				//ignore tiles of the same state
 				if (nextState.equals(state)) continue;
 				
 				counter ++;
 			}
+			
 			
 			//maxRange[state.ordinal()] = counter
 			//This is not save because a bad guy could change the order of the LightTileState enum
@@ -76,6 +84,7 @@ public class IntersectionStrategy extends AbstractStrategy {
 		System.out.printf("tile = {%s, %s}; remaining range = %d; range { n e s w } =  { ", tile.getX(), tile.getY(), remainingLightRange);
 		for(int m : maxRange) System.out.printf("%d ", m);
 		System.out.println("}");
+		System.out.println("======================");
 		
 		int availableRange = (maxRange[0]+maxRange[1]+maxRange[2]+maxRange[3]);
 		
@@ -87,7 +96,7 @@ public class IntersectionStrategy extends AbstractStrategy {
 		//case 2: there is only one possibility to cover the remaining range of the
 		//        NumberTile
 		else if(availableRange == remainingLightRange) {
-			final BoardUtils<LightTileState> utils = BoardUtils.getInstance(LightTileState.class);
+			
 			
 			for(int i=states.length-1; i<=0; i--) {
 				final LightTileState currentState = states[i];
@@ -103,31 +112,50 @@ public class IntersectionStrategy extends AbstractStrategy {
 			}
 		}
 		
-		//case 2: there is more than one possibility to cover the whole remaining range of
+		//case 3: there is more than one possibility to cover the whole remaining range of
 		//        the number tile
-
-		else {
+		
+		else case3: {
+			final AtomicInteger distributedTiles = new AtomicInteger(0);
+			loopOverSearchPaths:
 			for(int[] searchPath: searchPaths) {
 				
 				int sum = multiplicateVector(searchPath, maxRange);
-				
+
 				if(sum < remainingLightRange) {
 					//Only sum light tiles can be distributed to the given searchPath
 					//Therefore some tiles are forced to the other directions
 					int[] otherDirections =
 							subtractVector(V(1,1,1,1),searchPath);
-					
+				
 					for(int i=0; i<otherDirections.length; i++) {
-						if(otherDirections[i] == 0) continue;
-						LightTileState currentDirection = states[i];
-						//TODO
+						final int _i = i;
+						
+						final int tilesToDistribute = remainingLightRange - sum - distributedTiles.get();
+						if(tilesToDistribute <= 0)
+							break loopOverSearchPaths;
+						
+						if(otherDirections[i] <= 0) continue;
+						System.out.printf("tilesToDistribute = %s\n",tilesToDistribute);
+						final TraverseDirection currentDirection = states[i].getTraverseDirection();
+						traverser.reset();
+						if(!traverser.shift(currentDirection)) continue;
+						traverser.get().accept(new AbstractTileVisitor() {
+							public void visitLightTile(LightTile lt) {
+								int range = Math.min(tilesToDistribute, maxRange[_i]);
+								System.out.printf("Range: %d\n", range);
+								if(range <= 0) return;
+								utils.fillBoard(lt, range, currentDirection, states[_i]);
+								distributedTiles.addAndGet(range);
+							}
+						});
 						System.out.printf("currentDirection: %s, maxRange: %d \n", currentDirection, maxRange[i]);	
+						//break case3; //Fall verlassen
 					}
 					System.out.print("------------\n");	
 				}
 				
 			}
-			
 		}
 
 		
@@ -141,9 +169,11 @@ public class IntersectionStrategy extends AbstractStrategy {
 	private static LightTileState states[];
 	private static int[][] searchPaths;
 	private static HashMap<LightTileState,Integer> directions;
+	private final static BoardUtils<LightTileState> utils;
 	
 	static {
 		states = (LightTileState[]) LightTileState.allDirections().toArray();
+		utils = BoardUtils.getInstance(LightTileState.class);
 		
 		directions = new HashMap<LightTileState,Integer>(states.length);
 		for(int i=0; i<states.length; i++) {
@@ -159,6 +189,7 @@ public class IntersectionStrategy extends AbstractStrategy {
 		E[directions.get(LightTileState.EAST)]  = 1;
 		S[directions.get(LightTileState.SOUTH)] = 1;
 		W[directions.get(LightTileState.WEST)]  = 1;
+		
 		
 		searchPaths = new int[14][4];
 		
@@ -183,13 +214,6 @@ public class IntersectionStrategy extends AbstractStrategy {
 		searchPaths[++i]=E;
 		searchPaths[++i]=S;
 		searchPaths[++i]=W;
-		
-		for(int[] searchPath: searchPaths) {
-			ArrayList<Integer> list = new ArrayList<Integer>();
-			for(int j: searchPath)
-				list.add(j);
-			System.out.println(list.toString());
-		}
 	}
 
 
