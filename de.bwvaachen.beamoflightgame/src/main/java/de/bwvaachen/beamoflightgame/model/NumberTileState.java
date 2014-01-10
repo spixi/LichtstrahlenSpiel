@@ -6,17 +6,21 @@ public class NumberTileState implements ITileState {
 	public NumberTileState(final int num) {
 		this.number = num;
 	}
-	public int getNumber() {
-		return number;
-	}
 	public boolean equals(ITileState tileState)
 	{
 		try{
-			NumberTileState lts = (NumberTileState) tileState;
-			return lts == this;
+			NumberTileState nts = (NumberTileState) tileState;
+			return nts.getNumber() == this.getNumber();
 		}
 		catch (Exception e){
-		return false;
+			return false;
 		}
+	}
+	public int getNumber() {
+		return number;
+	}
+	@Override
+	public String toString() {
+		return ((Integer) number).toString();
 	}
 }

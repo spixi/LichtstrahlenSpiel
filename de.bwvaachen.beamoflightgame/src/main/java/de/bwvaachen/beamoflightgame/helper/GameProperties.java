@@ -35,14 +35,6 @@ public class GameProperties extends Properties {
 		}
 	}
 	
-	public void reset() {
-		clear();
-		
-		//Initial values here.
-		put("randomFactor", 20);
-		put("lightTileDensity", 1.5D);
-	}
-	
 	@Override
 	public Object put(Object key, Object value) {
 		Object oldValue = super.put(key, value);
@@ -66,6 +58,14 @@ public class GameProperties extends Properties {
 		}
 		
 		return oldValue;
+	}
+	
+	public void reset() {
+		clear();
+		
+		//Initial values here.
+		put("randomFactor", 20);
+		put("lightTileDensity", 1.5D);
 	}
 	
 	

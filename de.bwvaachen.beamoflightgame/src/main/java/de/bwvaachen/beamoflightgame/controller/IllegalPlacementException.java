@@ -25,11 +25,11 @@
 package de.bwvaachen.beamoflightgame.controller;
 
 public class IllegalPlacementException extends RuntimeException {
-	IllegalPlacementException(String message) {
-		super(message);
-	}
-	
 	IllegalPlacementException() {
 		super("Dieser Zug ist nicht moeglich.");
+	}
+	
+	IllegalPlacementException(String message) {
+		super(message);
 	}
 }

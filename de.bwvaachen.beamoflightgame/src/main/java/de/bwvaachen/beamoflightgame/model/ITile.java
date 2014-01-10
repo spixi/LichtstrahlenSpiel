@@ -1,14 +1,15 @@
 package de.bwvaachen.beamoflightgame.model;
 
-import javax.swing.event.ChangeListener;
+import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
+import de.bwvaachen.beamoflightgame.helper.Visitable;
 
-public interface ITile<T extends ITileState> {
+public interface ITile<T extends ITileState> extends Visitable, TileComposite {
+	public IBeamsOfLightPuzzleBoard getBoard();
+	public T getTileState();
+	public BoardTraverser getTraverser();
 	public int getX();
 	public int getY();
-	public IBeamsOfLightPuzzleBoard getBoard();
-	public void addChangeListener(ChangeListener cl);
-	public void removeChangeListener(ChangeListener cl);
-	public T getTileState();
 	public boolean isStateChangeable();
-	public boolean equals(ITile t);
+	public void put();
+	public void setUndoMode(boolean onOff);
 }

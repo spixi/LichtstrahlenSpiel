@@ -1,10 +1,11 @@
 package de.bwvaachen.beamoflightgame.ui;
 
 import java.awt.Component;
-import java.awt.Graphics2D;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
+
 import javax.swing.Icon;
 
 /**
@@ -47,18 +48,6 @@ public class RotatedIcon implements Icon
 	}
 
 	/**
-	 *  Create a RotatedIcon
-	 *
-	 *  @param icon    the Icon to rotate
-	 *  @param rotate  the direction of rotation
-	 */
-	public RotatedIcon(Icon icon, Rotate rotate)
-	{
-		this.icon = icon;
-		this.rotate = rotate;
-	}
-
-	/**
 	 *  Create a RotatedIcon. The icon will rotate about its center. This
 	 *  constructor will automatically set the Rotate enum to ABOUT_CENTER.
 	 *  For rectangular icons the icon will be clipped before the rotation
@@ -74,23 +63,15 @@ public class RotatedIcon implements Icon
 	}
 
 	/**
-	 *  Gets the Icon to be rotated
+	 *  Create a RotatedIcon
 	 *
-	 *  @return the Icon to be rotated
+	 *  @param icon    the Icon to rotate
+	 *  @param rotate  the direction of rotation
 	 */
-	public Icon getIcon()
+	public RotatedIcon(Icon icon, Rotate rotate)
 	{
-		return icon;
-	}
-
-	/**
-	 *  Gets the Rotate enum which indicates the direction of rotation
-	 *
-	 *  @return the Rotate enum
-	 */
-	public Rotate getRotate()
-	{
-		return rotate;
+		this.icon = icon;
+		this.rotate = rotate;
 	}
 
 	/**
@@ -101,6 +82,38 @@ public class RotatedIcon implements Icon
 	public double getAngle()
 	{
 		return angle;
+	}
+
+	/**
+	 *  Gets the Icon to be rotated
+	 *
+	 *  @return the Icon to be rotated
+	 */
+	public Icon getIcon()
+	{
+		return icon;
+	}
+
+	/**
+	 *  Gets the height of this icon.
+	 *
+	 *  @return the height of the icon in pixels.
+	 */
+	@Override
+	public int getIconHeight()
+	{
+		if (rotate == Rotate.ABOUT_CENTER)
+		{
+			double radians = Math.toRadians( angle );
+        	double sin = Math.abs( Math.sin( radians ) );
+        	double cos = Math.abs( Math.cos( radians ) );
+			int height = (int)Math.floor(icon.getIconHeight() * cos + icon.getIconWidth() * sin);
+			return height;
+		}
+		else if (rotate == Rotate.UPSIDE_DOWN)
+			return icon.getIconHeight();
+		else
+			return icon.getIconWidth();
 	}
 
 //
@@ -130,25 +143,13 @@ public class RotatedIcon implements Icon
 	}
 
 	/**
-	 *  Gets the height of this icon.
+	 *  Gets the Rotate enum which indicates the direction of rotation
 	 *
-	 *  @return the height of the icon in pixels.
+	 *  @return the Rotate enum
 	 */
-	@Override
-	public int getIconHeight()
+	public Rotate getRotate()
 	{
-		if (rotate == Rotate.ABOUT_CENTER)
-		{
-			double radians = Math.toRadians( angle );
-        	double sin = Math.abs( Math.sin( radians ) );
-        	double cos = Math.abs( Math.cos( radians ) );
-			int height = (int)Math.floor(icon.getIconHeight() * cos + icon.getIconWidth() * sin);
-			return height;
-		}
-		else if (rotate == Rotate.UPSIDE_DOWN)
-			return icon.getIconHeight();
-		else
-			return icon.getIconWidth();
+		return rotate;
 	}
 
    /**

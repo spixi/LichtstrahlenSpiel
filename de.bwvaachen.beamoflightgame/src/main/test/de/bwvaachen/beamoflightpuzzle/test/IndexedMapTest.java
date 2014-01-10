@@ -24,13 +24,28 @@
 
 package de.bwvaachen.beamoflightpuzzle.test;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import de.bwvaachen.beamoflightgame.helper.IndexedMap;
 
 
 public class IndexedMapTest {
+	@AfterClass
+	public static void setUpAfterClass() {
+		
+	}
+	
+	@BeforeClass
+	public static void setUpBeforeClass() {
+		
+	}
+	
 	@Before
 	public void setUp() {
 
@@ -41,27 +56,17 @@ public class IndexedMapTest {
 		
 	}
 	
-	@BeforeClass
-	public static void setUpBeforeClass() {
-		
-	}
-	
-	@AfterClass
-	public static void setUpAfterClass() {
-		
-	}
-	
 	@Test
 	public void test() {
 		IndexedMap<String,Integer> map = new IndexedMap<String,Integer>();
 		map.put("Antwort", 42);
-		assertEquals("Prüfe IndexedMap.put()", new Integer(42), map.get("Antwort"));
+		assertEquals("Prï¿½fe IndexedMap.put()", new Integer(42), map.get("Antwort"));
 		
 		map.put("Hallo", 10);
-		assertEquals("Prüfe IndexedMap.getValueByIndex()", new Integer(10), map.getValueByIndex(1));
+		assertEquals("Prï¿½fe IndexedMap.getValueByIndex()", new Integer(10), map.getValueByIndex(1));
 		
 		map.remove("Antwort");
-		assertEquals("Prüfe IndexedMap.remove()", new Integer(10), map.getValueByIndex(0));
+		assertEquals("Prï¿½fe IndexedMap.remove()", new Integer(10), map.getValueByIndex(0));
 		
 	}
 

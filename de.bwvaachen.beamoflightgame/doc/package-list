@@ -5,7 +5,6 @@ de.bwvaachen.beamoflightgame.logic
 de.bwvaachen.beamoflightgame.logic.solver
 de.bwvaachen.beamoflightgame.logic.strategies
 de.bwvaachen.beamoflightgame.model
-de.bwvaachen.beamoflightgame.model.builder
 de.bwvaachen.beamoflightgame.model.impl
 de.bwvaachen.beamoflightgame.ui
-de.bwvaachen.braun.beamoflightpuzzle.test
+de.bwvaachen.beamoflightpuzzle.test

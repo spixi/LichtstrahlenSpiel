@@ -10,7 +10,6 @@ import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
-import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.ui.RotatedIcon.Rotate;
 
@@ -31,6 +30,19 @@ public class GraficFactory {
 	private IBeamsOfLightPuzzleBoard model;
 	private BoardTraverser traverser;
 	
+	public GraficFactory(IBeamsOfLightPuzzleBoard model)
+	{
+		
+		//needed to verify if lightbeam ends
+		//nessessary parameter for Boardtraverser!
+		this.model = model;
+		traverser = new BoardTraverser(model, 0, 0);
+		
+		
+		loadIcons();
+	}
+	
+	
 	/**
 	 * Liefert das passende Picture fuer die Kachel  zurueck
 	 * @param meineKachel Das ITile welches gesetzt werdem soll
@@ -42,7 +54,7 @@ public class GraficFactory {
 		try{
 			NumberTile num = (NumberTile) meineKachel;
 
-			String url = "themes/happiness/"+ num.getNumber() + ".png";
+			String url = "themes/moon/"+ num.getNumber() + ".png";
 			URL u = this.getClass().getClassLoader().getResource(url);
 			
 			ii = new ImageIcon(u);
@@ -57,34 +69,34 @@ public class GraficFactory {
 		{
 		case NORTH:
 			if(isEnd(lig))
-				url = "themes/happiness/light2.png";
-			else url = "themes/happiness/light1.png";
+				url = "themes/moon/light2.png";
+			else url = "themes/moon/light1.png";
 			return new ImageIcon(this.getClass().getClassLoader().getResource(url));
 			
 			
 		case EAST:
 			if(isEnd(lig))
-				url = "themes/happiness/light2.png";
-			else url = "themes/happiness/light1.png";
+				url = "themes/moon/light2.png";
+			else url = "themes/moon/light1.png";
 			ii = new ImageIcon(this.getClass().getClassLoader().getResource(url));
 			return rotateIcon(ii, Rotate.DOWN);
 			
 		case SOUTH:
 			if(isEnd(lig))
-				url = "themes/happiness/light2.png";
-			else url = "themes/happiness/light1.png";
+				url = "themes/moon/light2.png";
+			else url = "themes/moon/light1.png";
 			ii = new ImageIcon(this.getClass().getClassLoader().getResource(url));
 			return rotateIcon(ii, Rotate.UPSIDE_DOWN);
 			
 		case WEST:
 			if(isEnd(lig))
-				url = "themes/happiness/light2.png";
-			else url = "themes/happiness/light1.png";
+				url = "themes/moon/light2.png";
+			else url = "themes/moon/light1.png";
 			ii = new ImageIcon(this.getClass().getClassLoader().getResource(url));
 			return rotateIcon(ii, Rotate.UP);
 			
 		case EMPTY:
-			 url = "themes/happiness/darkness.png";
+			 url = "themes/moon/darkness.png";
 			 return new ImageIcon(this.getClass().getClassLoader().getResource(url));
 			
 			default:
@@ -93,25 +105,11 @@ public class GraficFactory {
 
 	}//public Icon getImage(ITile meineKachel)
 	
-	
-	/**
-	 * Rotiert ein Icon um den angegebenn Wert
-	 * @author pauls_and
-	 * @param ii Das Ursprungicon
-	 * @param r der Wert aus dem Enum um den gedreht werden soll
-	 * @return das gedrehte Icon - als Icon
-	 */
-	private Icon rotateIcon(ImageIcon ii, Rotate r)
-	{
-		RotatedIcon ri = new RotatedIcon(ii, r);
-		return ri;
-	}
-	
 	/**
 	 * Gibt an, ob der Lichtstrahl zu Ende ist
 	 * @param tile  Das LightTile welches geprueft werden soll
 	 * @return true, wenn das Licht an diesem Punkt zu Ende ist
-	 * @author Marius
+	 * @author Marius / pauls_and
 	 */
 	private boolean isEnd(LightTile tile)
 	{
@@ -139,15 +137,16 @@ public class GraficFactory {
 	{
 		//TODO implement Fliegengewichtpattern!
 	}
-	public GraficFactory(IBeamsOfLightPuzzleBoard model)
+	/**
+	 * Rotiert ein Icon um den angegebenn Wert
+	 * @author pauls_and
+	 * @param ii Das Ursprungicon
+	 * @param r der Wert aus dem Enum um den gedreht werden soll
+	 * @return das gedrehte Icon - als Icon
+	 */
+	private Icon rotateIcon(ImageIcon ii, Rotate r)
 	{
-		
-		//needed to verify if lightbeam ends
-		//nessessary parameter for Boardtraverser!
-		this.model = model;
-		traverser = new BoardTraverser(model, 0, 0);
-		
-		
-		loadIcons();
+		RotatedIcon ri = new RotatedIcon(ii, r);
+		return ri;
 	}
 }

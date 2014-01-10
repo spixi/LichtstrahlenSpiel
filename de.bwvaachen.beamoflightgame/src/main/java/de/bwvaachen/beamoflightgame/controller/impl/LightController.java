@@ -10,12 +10,18 @@ import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.Turn;
 import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.model.ITile;
+import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
+import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 
 public class LightController implements ILightController {
 	private TurnUndoManager          turnManager;
 	private IBeamsOfLightPuzzleBoard puzzleBoard;
+	
+
+	
 
 	/*
 	@Override
@@ -62,21 +68,15 @@ public class LightController implements ILightController {
 	}
 	*/
 	
-	public void saveGame(File f) throws IOException {
-//		TODO You can ZipPersister or write your one persister you dont need an extern jar for zip streams  
-//		FileOutputStream  fos    = new FileOutputStream(f);
-//		LzmaOutputStream  los    = new LzmaOutputStream.Builder(fos).build();
-//		BufferedOutputStream bos = new BufferedOutputStream(los);
-//		ObjectOutputStream oos   = new ObjectOutputStream(bos);
-//		
-//		oos.writeObject(puzzleBoard);
-//		oos.writeObject(turnManager);
-//		oos.flush();
-//		oos.close();
-	} // public void saveGame(File f)
-	
-	
-	public void loadGame(File f) throws FileNotFoundException, IOException, ClassNotFoundException {
+	@Override
+	public IBeamsOfLightPuzzleBoard getCurrentModel() 
+	{
+		return puzzleBoard;
+		
+	} // public IBeamsOfLightPuzzleBoard getCurrentModel()
+
+	@Override
+	public void loadGame(File f) throws FileNotFoundException, IOException {
 //		FileInputStream   fis   = new FileInputStream(f);
 //		BufferedInputStream bis = new BufferedInputStream(fis);
 //		LzmaInputStream   lis   = new LzmaInputStream(bis, new Decoder());
@@ -90,80 +90,78 @@ public class LightController implements ILightController {
 	
 
 	@Override
-	public IBeamsOfLightPuzzleBoard getCurrentModel() 
+	public void newGame(int width, int height) throws Exception 
 	{
-		return puzzleBoard;
-		
-	} // public IBeamsOfLightPuzzleBoard getCurrentModel()
-	
-
-	@Override
-	public IBeamsOfLightPuzzleBoard newGame(int width, int height) throws Exception 
-	{
-		puzzleBoard = new BeamsOfLightPuzzleBoard();
+		setBoard(new BeamsOfLightPuzzleBoard());
 		puzzleBoard.init(width, height);
-		return null;
 	} // public IBeamsOfLightPuzzleBoard newGame(int x, int y)
 	
 
 	@Override
-	public Turn doTurn(int x, int y, LightTileState oldTileState, LightTileState newTileState) throws Exception 
-	{
-		Turn oTurn = new Turn(puzzleBoard, x, y, oldTileState, newTileState);
-		turnManager.addEdit(oTurn);
+	public void saveGame(File f) throws IOException {
+//		TODO You can ZipPersister or write your one persister you dont need an extern jar for zip streams  
+//		FileOutputStream  fos    = new FileOutputStream(f);
+//		LzmaOutputStream  los    = new LzmaOutputStream.Builder(fos).build();
+//		BufferedOutputStream bos = new BufferedOutputStream(los);
+//		ObjectOutputStream oos   = new ObjectOutputStream(bos);
 		
-		return oTurn;
-	} // public void doTurn(int x, int y, char orientaion, boolean isEnd)
-	
-
-	@Override
-	public boolean isUndoable() {
-		return turnManager.canUndo();
-	} // public boolean isUndoable() 
-	
-
-	@Override
-	public boolean isRedoable() {
-		return turnManager.canRedo();
-	} // public boolean isRedoable()
-	
-
-	@Override
-	public void setUndoMark() {
-		turnManager.addMarker();
-	} // public void setUndoMark()
-	
-
-	@Override
-	public void returnToNextUndoMark() throws CannotUndoException {
-	    turnManager.undoToMarker();
-	} // public IBeamsOfLightPuzzleBoard returnToNextUndoMark()
-	
-
-	@Override
-	public void returnToStableState() throws CannotUndoException {
-		turnManager.undoToLastStableState();
+		//generate the file
+		//flag if g ame, e mpty or d raft
+		char flag = ' ';
+		int hight,width;
 		
-	} // public IBeamsOfLightPuzzleBoard returnToStableStaate() s
+		if(this.getUndoManager().canRedo()) flag = 'g'; //if there are Turns to undo - its a game!
 
-	public void undo()
+		//TODO check if it is a draft or an empty game!
+		
+		hight = puzzleBoard.getHeight();
+		width = puzzleBoard.getWidth();
+		
+		
+		
+	} // public void saveGame(File f)
+	
+	/**
+	 * Turn a tile into its String representation
+	 * @param t is the ITile that need to be transformed
+	 * @return is the String that represents the Tile
+	 * @author Andi 
+	 */
+	private String getStringRepresentation(ITile t)
 	{
-		turnManager.undo();
+		try{
+			NumberTile ti = (NumberTile) t;
+			return String.format("{%s|%d|%d|%d}","N",ti.getNumber(),ti.getX(),ti.getY());
+		}
+		catch (Exception e)
+		{
+			LightTile ti = (LightTile) t;
+			return String.format("{%s|%d|%d|%d}","L",ti.getTileState().getSign(),ti.getX(),ti.getY());		
+		}
 	}
-
+	
+	/**
+	 * 
+	 * @param s 
+	 * @return
+	 * @author Andi
+	 */
+	private ITile getTileRepresentation(String s)
+	{
+		String[] ar = s.split("");
+		return null;
+	}
+	
 
 	@Override
 	public void setBoard(IBeamsOfLightPuzzleBoard _board) throws Exception {
-		
 		puzzleBoard = _board ;
-		
+		turnManager = new TurnUndoManager();
+		puzzleBoard.addUndoableEditListener(turnManager);
 	}
 
-
 	@Override
-	public IBeamsOfLightPuzzleBoard getBoard() throws Exception {
-		
-		return puzzleBoard ;
-		
+	public TurnUndoManager getUndoManager() {
+		return turnManager;
 	}
 } // public class LightController

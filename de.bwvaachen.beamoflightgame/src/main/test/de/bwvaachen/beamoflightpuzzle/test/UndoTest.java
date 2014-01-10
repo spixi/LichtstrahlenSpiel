@@ -24,21 +24,16 @@
 
 package de.bwvaachen.beamoflightpuzzle.test;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertTrue;
-
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
-
-import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 
+import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
-import de.bwvaachen.beamoflightgame.model.LightTile;
+import de.bwvaachen.beamoflightgame.model.IChangeableTile;
+import de.bwvaachen.beamoflightgame.model.LightTileState;
+import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.ui.PrototypModelForLonelyFieldStrategy;
 
 //@RunWith(PowerMockRunner.class)
 @PrepareForTest({IBeamsOfLightPuzzleBoard.class})
@@ -51,52 +46,19 @@ public class UndoTest {
 	
 	//TODO: Implement the controller first
 	
-	/*
+	
 	@Test
 	public void test() {
-		IBeamsOfLightPuzzleBoard    b = EasyMock.createStrictMock(IBeamsOfLightPuzzleBoard.class);
+		BeamsOfLightPuzzleBoard    b =
+				new PrototypModelForLonelyFieldStrategy();
+		final TurnUndoManager um  = new TurnUndoManager();
 		
-		ILightTile before;
-		ILightTile after;
+		b.addUndoableEditListener(um);
 		
-		Turn  t             = new Turn(b, 1, 2, before, after);
+		((IChangeableTile) b.getTileAt(1, 2)).setState(LightTileState.NORTH,false);
 		
-		b.setTileAt(1,2,after);
-		expect(b.isPlacementOfTilePossible(before, 1, 2)).andReturn(true);
-		b.setTileAt(1,2,before);
-		expect(b.isPlacementOfTilePossible(after, 1, 2)).andReturn(true);
-		b.setTileAt(1,2,after);
-		
-		replay(b);
-		
-		
-		b.setTileAt(1,2,after);
-		
-		//First undo must work
-		t.undo();
-
-		//Second undo must fail
-		try {
-
-			t.undo();
-		}
-		catch(Exception e) {
-			assertTrue(e instanceof CannotUndoException);
-		}
-		
-		//First redo must work
-		t.redo();
-		try {
-			t.redo();
-		}
-		
-		//Second redo must fail
-		catch(Exception e) {
-			assertTrue(e instanceof CannotRedoException);
-		}
-		
-		verify(b);
+		System.out.println(um);
 	}
-	*/
+	
 
 }

@@ -1,5 +1,10 @@
 package de.bwvaachen.beamoflightgame.model;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 
 public enum LightTileState implements ITileState {
@@ -28,7 +33,27 @@ public enum LightTileState implements ITileState {
 		}
 	},
 	EMPTY('-', null);
+	
+	private final static Map<Character,LightTileState> map;
+	private final static LightTileState allDirections[];
+	static {
+		map = new HashMap<Character,LightTileState>();
+		for(LightTileState value: values()) {
+			map.put(value.getSign(),value);
+		}
+		
+		allDirections = new LightTileState[] {NORTH, EAST, SOUTH, WEST};
+	}
+	
+	public static List<LightTileState> allDirections() {
+		return Arrays.asList(allDirections);
+	}
+	public static LightTileState signToState(char c){
+		return map.get(c);
+	}
+
 	private char sign;
+	
 	private TraverseDirection traverseDirection;
 
 	private LightTileState(char c, TraverseDirection d) {
@@ -36,40 +61,31 @@ public enum LightTileState implements ITileState {
 		traverseDirection = d;
 	}
 	
-	public TraverseDirection getTraverseDirection() {
-		return traverseDirection;
+	public boolean equals(ITileState tileState)
+	{
+		try{
+			LightTileState lts = (LightTileState) tileState;
+			return lts.equals(this);
+		}
+		catch (Exception e){
+			return false;
+		}
 	}
-
+	
 	public char getSign() {
 		return sign;
+	}
+
+	public TraverseDirection getTraverseDirection() {
+		return traverseDirection;
 	}
 	
 	public LightTileState reverse() {
 		return this;
 	}
-
-	public static LightTileState signToState(char c){
-		switch (c) {
-		case 's':
-			return LightTileState.SOUTH;
-		case 'w':
-			return LightTileState.WEST;
-		case 'n':
-			return LightTileState.NORTH;
-		case 'e':
-			return LightTileState.EAST;
-		default:
-			return LightTileState.EMPTY;
-		}
-	}
-	public boolean equals(ITileState tileState)
-	{
-		try{
-			LightTileState lts = (LightTileState) tileState;
-			return lts == this;
-		}
-		catch (Exception e){
-		return false;
-		}
+	
+	@Override
+	public String toString() {
+		return ((Character) getSign()).toString();
 	}
 }

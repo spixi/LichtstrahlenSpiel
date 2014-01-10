@@ -1,25 +1,29 @@
-package de.bwvaachen.beamoflightgame.logic.solver;
+package de.bwvaachen.beamoflightgame.controller;
 
-import java.util.List;
 import java.util.LinkedList;
-import java.util.PriorityQueue;
+import java.util.List;
 
 import de.bwvaachen.beamoflightgame.logic.ISolver;
 import de.bwvaachen.beamoflightgame.logic.IStrategy;
 import de.bwvaachen.beamoflightgame.logic.PuzzleException;
-import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
+import de.bwvaachen.beamoflightgame.logic.solver.AbstractSolver;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 
 public class SolverBuilder {
-	
-	private static SolverBuilder instance = new SolverBuilder();
 	
 	private class SolverBuilderContext implements ISolverBuilderContext  {
 		private List<IStrategy> strategies;
 		
 		private SolverBuilderContext() {
 			strategies = new LinkedList<IStrategy>();
+		}
+
+		@Override
+		public ISolverBuilderContext and(Class<? extends IStrategy> s)
+				throws InstantiationException, IllegalAccessException {
+		    strategies.add(s.newInstance());
+			return this;
 		}
 
 		@Override
@@ -44,7 +48,7 @@ public class SolverBuilder {
 						step(tile, stackPointer+1);
 					}
 					else {
-						currentStrategy.init(board, tile);
+						currentStrategy.init(tile);
 						boolean canSolve = currentStrategy.tryToSolve();
 						//if(!canSolve) step(tile, stackPointer+1);
 					}
@@ -52,15 +56,10 @@ public class SolverBuilder {
 				
 			};
 		}
-
-		@Override
-		public ISolverBuilderContext and(Class<? extends IStrategy> s)
-				throws InstantiationException, IllegalAccessException {
-		    strategies.add(s.newInstance());
-			return this;
-		}
 		
 	}
+	
+	private static SolverBuilder instance = new SolverBuilder();
 
 	public static ISolverBuilderContext buildWith(Class<? extends IStrategy> s)
 			   throws InstantiationException, IllegalAccessException{

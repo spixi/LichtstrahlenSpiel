@@ -1,39 +1,149 @@
 package de.bwvaachen.beamoflightgame.controller;
 
+import java.util.HashSet;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 import javax.swing.undo.UndoableEdit;
+import static de.bwvaachen.beamoflightgame.controller.Turn.*;
 
 public class TurnUndoManager extends UndoManager
 {
-	boolean hasMarker = false;
-	
-	public boolean undoToMarker() throws CannotUndoException
-	{
-		if(!hasMarker)
-			return false;
-		
-		this.undoTo(Marker.instance);
-			return true;
-	}
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4610323453539735962L;
+	private boolean stable       = true;
+	private HashSet<ChangeListener> changeListeners = new HashSet<ChangeListener>();
 	
 	public void addMarker()
 	{
-		this.addEdit(Marker.instance);
-		hasMarker = true;
+		UndoableEdit editToBeUndone = editToBeUndone();
+		
+		if (editToBeUndone instanceof Turn) {
+			//Does the last turn already have the flag?
+			if(((Turn) editToBeUndone).hasFlag(FLAG_MARKER)) return;
+			((Turn) editToBeUndone).setFlag(FLAG_MARKER);
+		}
+		//TODO: Wir können keinen Marker vor dem ersten Zug setzen ...
+	}
+	
+	public void setError()
+	{
+		UndoableEdit editToBeUndone = editToBeUndone(); 
+		if (editToBeUndone instanceof Turn) {
+			((Turn) editToBeUndone).setFlag(FLAG_ERROR);
+			stable = false;
+		}
+	}
+	
+	public final void undoToLastMarker() throws CannotUndoException
+	{
+		Turn lastMarker = findLastMarker();
+		if(lastMarker == null) return;
+		while (editToBeUndone() != lastMarker) {
+			System.out.println(editToBeUndone() );
+			undo();
+		}
+	}
+	
+	private Turn findLastMarker() {
+		UndoableEdit editToBeUndone;
+		int maxIndex;
+		
+		editToBeUndone = this.editToBeUndone();
+		if(editToBeUndone != null) {
+			maxIndex = this.edits.indexOf(editToBeUndone);
+		}
+		else {
+			maxIndex = this.edits.indexOf(this.lastEdit());
+		}
+		
+		//the current index could be a marker itself
+		// 
+		if(maxIndex >= 1) maxIndex--;
+		
+		for(int i=maxIndex; i>=0; i--) {
+			UndoableEdit edit = edits.get(i);
+			if(edit instanceof Turn) {
+				Turn turn = (Turn) edit;
+				if (turn.hasFlag(FLAG_MARKER)) {
+					return turn;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	public final void deleteLastMarker() throws CannotUndoException {
+		Turn lastMarker = findLastMarker();
+		if(lastMarker != null) lastMarker.unsetFlag(FLAG_MARKER);
 	}
 	
 	public void undoToLastStableState() {
-		UndoableEdit lastEdit = lastEdit();
-		
-		while(lastEdit != null) {
-			if(lastEdit instanceof Turn) {
-				if ((((Turn) lastEdit).getFlags() & Turn.FLAG_ERROR) == 0){
+		if(stable) return;
+		UndoableEdit editToBeUndone;
+		while((editToBeUndone = editToBeUndone()) != null) {
+			if(editToBeUndone instanceof Turn) {
+				if ( ! ((Turn) editToBeUndone).hasFlag(FLAG_ERROR) ){
+					stable = true;
 					break;
 				}
 			}
 			undo();
 		}
 	}
+	
+	public boolean addEdit(UndoableEdit anEdit) {
+		boolean success = (super.addEdit(anEdit));
+			if(success) notifyChangeListeners();
+		return success;
+	}
+	
+	@Override
+	public void undo() throws CannotUndoException {
+		super.undo();
+		notifyChangeListeners();
+	}
+	
+	@Override
+	public void redo() throws CannotRedoException {
+		super.redo();
+		notifyChangeListeners();
+	}
+	
+	private void notifyChangeListeners() {
+		for(ChangeListener cl: changeListeners) {
+			cl.stateChanged(new ChangeEvent(this));
+		}
+	}
+
+	public void addChangeListener(ChangeListener l) {
+		changeListeners.add(l);
+	}
+	
+	public void removeChangeListener(ChangeListener l) {
+		changeListeners.remove(l);
+	}
+
+	
+	/*
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		Pair<ITileState, ITile> change = (Pair<ITileState, ITile>) e.getSource();
+		ITileState oldState = change.left;
+		ITile      tile     = change.right;
+		Turn turn = new Turn(tile.getBoard(), tile.getX(), tile.getY(), tile.getTileState(), oldState);
+		if(tile.getBoard().isPlacementOfTileStatePossible(tile.getTileState(), tile.getX(), tile.getY())) {
+			stable = false;
+		}
+		if(!stable) turn.setFlag(Turn.FLAG_ERROR);
+		this.addEdit(turn);
+	}
+	*/
 	
 }

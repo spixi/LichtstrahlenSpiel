@@ -2,11 +2,10 @@ package de.bwvaachen.beamoflightgame.ui;
 
 import de.bwvaachen.beamoflightgame.model.IChangeableTile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
-import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 
-public class PrototypModelFuerGUI extends BeamsOfLightPuzzleBoard {
+public class PrototypModelForLonelyFieldStrategy extends BeamsOfLightPuzzleBoard {
 	
 	//	 _______________________
 	//	|	  	|	  	|	  	|
@@ -30,7 +29,7 @@ public class PrototypModelFuerGUI extends BeamsOfLightPuzzleBoard {
 	//	|	  	|	  	|	  	|
 	//	|_______|_______|_______|
 
-	public PrototypModelFuerGUI() {
+	public PrototypModelForLonelyFieldStrategy() {
 		init(3,4);
 	}
 	

@@ -24,25 +24,19 @@
 
 package de.bwvaachen.beamoflightpuzzle.test;
 
-import static org.easymock.EasyMock.*;
-import org.junit.*;
-//import org.junit.runner.RunWith;
-//import org.powermock.api.easymock.PowerMock.*;
-//import org.powermock.core.classloader.annotations.PrepareForTest;
-//import org.powermock.modules.junit4.PowerMockRunner;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 //@RunWith(PowerMockRunner.class)
 //@PrepareForTest({Object.class})
 
 
 public class TestTemplate {
-	@Before
-	public void setUp() {
-
-	}
-	
-	@After
-	public void tearDown() {
+	@AfterClass
+	public static void setUpAfterClass() {
 		
 	}
 	
@@ -51,8 +45,13 @@ public class TestTemplate {
 		
 	}
 	
-	@AfterClass
-	public static void setUpAfterClass() {
+	@Before
+	public void setUp() {
+
+	}
+	
+	@After
+	public void tearDown() {
 		
 	}
 	
