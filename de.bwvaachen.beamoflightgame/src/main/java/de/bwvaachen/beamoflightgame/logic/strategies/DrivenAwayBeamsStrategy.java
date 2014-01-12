@@ -19,6 +19,8 @@ public class DrivenAwayBeamsStrategy extends AbstractStrategy<NumberTileState> {
 	
 	@Override
 	public boolean tryToSolve() {
+		
+		//Wird aus Zeitmangel nicht implementiert
 		return false;
 		// TODO Auto-generated method stub
 	}

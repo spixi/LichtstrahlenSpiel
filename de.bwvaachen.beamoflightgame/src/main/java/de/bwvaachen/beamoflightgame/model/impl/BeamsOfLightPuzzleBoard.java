@@ -1,5 +1,6 @@
 package de.bwvaachen.beamoflightgame.model.impl;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -39,7 +40,7 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard, Change
 		for(ITile t: this) {
 			t.addUndoableEditListener(ul);
 		}
-		undoableEditListeners.add(ul);
+		undoableEditListeners.add(ul);		
 	}
 
 	/**
@@ -188,7 +189,7 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard, Change
 		// Propagate the event
 		for(UndoableEditListener l: undoableEditListeners) {
 			l.undoableEditHappened(e);
-		}	
+		}
 	}
 
 	@Override

@@ -38,6 +38,7 @@ import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.logic.ISolver;
 import de.bwvaachen.beamoflightgame.logic.strategies.IntersectionStrategy;
 import de.bwvaachen.beamoflightgame.logic.strategies.LonelyFieldStrategy;
+import de.bwvaachen.beamoflightgame.logic.strategies.TryAndErrorStrategy;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
@@ -392,7 +393,11 @@ public class LightgameUI extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					try {
-						ISolver s = SolverBuilder.buildWith(LonelyFieldStrategy.class).and(IntersectionStrategy.class).forBoard(controller.getCurrentModel());
+						ISolver s =
+						SolverBuilder.buildWith(LonelyFieldStrategy.class).
+							          and(IntersectionStrategy.class).
+							          and(TryAndErrorStrategy.class).
+							          forBoard(controller.getCurrentModel());
 					    s.solve();
 					
 					} catch (Exception e1) {
