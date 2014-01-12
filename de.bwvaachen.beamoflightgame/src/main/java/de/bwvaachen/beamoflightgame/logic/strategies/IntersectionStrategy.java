@@ -1,6 +1,5 @@
 package de.bwvaachen.beamoflightgame.logic.strategies;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -18,16 +17,13 @@ import de.bwvaachen.beamoflightgame.model.ITileState;
 import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
+import de.bwvaachen.beamoflightgame.model.NumberTileState;
 
-public class IntersectionStrategy extends AbstractStrategy {
-	NumberTile tile = (NumberTile) super.tile;
-
-
+public class IntersectionStrategy extends AbstractStrategy<NumberTileState> {
 	private boolean doesCross(ITileState a, ITileState b) {
     	return !( (a==LightTileState.EMPTY) || (a.equals(b)) );
     }
 	
-
     @Override
 	public double getComplexity() {
 		return (getNumberOfPossibleSolutions() == 1) ? 1.0 : 10.0;
@@ -45,7 +41,7 @@ public class IntersectionStrategy extends AbstractStrategy {
 
 	@Override
 
-	public boolean tryToSolve()  throws PuzzleException {
+	public boolean tryToSolve() throws UnsolvablePuzzleException {
 		//Overshadow the tile
 		NumberTile tile = (NumberTile) super.tile;
 		
@@ -115,7 +111,7 @@ public class IntersectionStrategy extends AbstractStrategy {
 		//case 3: there is more than one possibility to cover the whole remaining range of
 		//        the number tile
 		
-		else case3: {
+		else {
 			final AtomicInteger distributedTiles = new AtomicInteger(0);
 			loopOverSearchPaths:
 			for(int[] searchPath: searchPaths) {
@@ -145,12 +141,11 @@ public class IntersectionStrategy extends AbstractStrategy {
 								int range = Math.min(tilesToDistribute, maxRange[_i]);
 								System.out.printf("Range: %d\n", range);
 								if(range <= 0) return;
-								utils.fillBoard(lt, range, currentDirection, states[_i]);
+								utils.fillBoard(lt, range-1, currentDirection, states[_i]);
 								distributedTiles.addAndGet(range);
 							}
 						});
-						System.out.printf("currentDirection: %s, maxRange: %d \n", currentDirection, maxRange[i]);	
-						//break case3; //Fall verlassen
+						System.out.printf("currentDirection: %s, maxRange: %d \n", states[i], maxRange[i]);	
 					}
 					System.out.print("------------\n");	
 				}

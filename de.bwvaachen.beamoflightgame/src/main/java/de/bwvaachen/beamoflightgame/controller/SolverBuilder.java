@@ -3,12 +3,16 @@ package de.bwvaachen.beamoflightgame.controller;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.bwvaachen.beamoflightgame.logic.AmbiguousPuzzleException;
 import de.bwvaachen.beamoflightgame.logic.ISolver;
 import de.bwvaachen.beamoflightgame.logic.IStrategy;
+import de.bwvaachen.beamoflightgame.logic.MaximumIterationsExceededException;
 import de.bwvaachen.beamoflightgame.logic.PuzzleException;
+import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
 import de.bwvaachen.beamoflightgame.logic.solver.AbstractSolver;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
+import de.bwvaachen.beamoflightgame.model.LightTileState;
 
 public class SolverBuilder {
 	
@@ -29,16 +33,37 @@ public class SolverBuilder {
 		@Override
 		public ISolver forBoard(final IBeamsOfLightPuzzleBoard board) {
 			return new AbstractSolver(board) {
+				
+				//Because of the halting problem (see Wikipedia)
+				//we are unable to find out, whether a puzzle is
+				//solvable or not, so we stop after a fix number of
+				//iterations
+				final int MAX_ITERATIONS = 100;
 
 				@Override
-				public void solve() throws PuzzleException {
-					for(ITile tile: board) {
-						step(tile, 0);
+				public void solve() throws UnsolvablePuzzleException, MaximumIterationsExceededException, AmbiguousPuzzleException {
+					boolean solved = false;
+					for(int i = 0; i< MAX_ITERATIONS; i++) {
+						for(ITile tile: board) {
+							step(tile, 0);
+						}
+						//This is a assignment, not a comparation!
+						if((solved = isSolved())) break;
 					}
+					if(!solved) throw new MaximumIterationsExceededException(board);
+				}
+				
+				public boolean isSolved() {
+					for(ITile tile: board) {
+						//The puzzle is not solved if there are any empty fields remaining.
+						if(tile.getTileState().equals(LightTileState.EMPTY))
+							return false;
+					}
+					return true;
 				}
 
 				
-				private void step(ITile tile, int stackPointer) throws PuzzleException {
+				private void step(ITile tile, int stackPointer) throws UnsolvablePuzzleException, AmbiguousPuzzleException {
 					//if (stackPointer == strategies.size()) throw new UnsolvablePuzzleException();
 					if (stackPointer == strategies.size()) return;
 					

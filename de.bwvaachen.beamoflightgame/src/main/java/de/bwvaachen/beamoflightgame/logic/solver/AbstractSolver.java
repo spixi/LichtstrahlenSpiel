@@ -20,8 +20,4 @@ public abstract class AbstractSolver implements ISolver {
 		return Math.log10(complexity/numofturns); //level = complexity / number of turns
 	}
 
-	@Override
-	public abstract void solve()
-			throws PuzzleException;
-
 }

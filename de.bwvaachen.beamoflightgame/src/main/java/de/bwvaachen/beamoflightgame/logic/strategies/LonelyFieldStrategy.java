@@ -13,7 +13,7 @@ import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
 
-public class LonelyFieldStrategy extends AbstractStrategy {
+public class LonelyFieldStrategy extends AbstractStrategy<LightTileState> {
 	private BoardTraverser traverser;
 	
 	@Override
@@ -87,7 +87,7 @@ public class LonelyFieldStrategy extends AbstractStrategy {
 	}
 	
 	@Override
-	public boolean tryToSolve() throws PuzzleException {
+	public boolean tryToSolve() throws UnsolvablePuzzleException {
 	    NumberTile neighbour = null;
 	    IndexedMap<LightTileState,NumberTile> neighbours
 	    	= new IndexedMap<LightTileState,NumberTile>();

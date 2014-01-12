@@ -3,8 +3,9 @@ package de.bwvaachen.beamoflightgame.logic.strategies;
 import de.bwvaachen.beamoflightgame.logic.PuzzleException;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
+import de.bwvaachen.beamoflightgame.model.NumberTileState;
 
-public class DrivenAwayBeamsStrategy extends AbstractStrategy {
+public class DrivenAwayBeamsStrategy extends AbstractStrategy<NumberTileState> {
 
 	@Override
 	public double getComplexity() {
@@ -17,7 +18,7 @@ public class DrivenAwayBeamsStrategy extends AbstractStrategy {
 	}
 	
 	@Override
-	public boolean tryToSolve()  throws PuzzleException {
+	public boolean tryToSolve() {
 		return false;
 		// TODO Auto-generated method stub
 	}

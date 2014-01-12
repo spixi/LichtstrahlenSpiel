@@ -2,8 +2,9 @@ package de.bwvaachen.beamoflightgame.logic.strategies;
 
 import de.bwvaachen.beamoflightgame.logic.PuzzleException;
 import de.bwvaachen.beamoflightgame.model.ITile;
+import de.bwvaachen.beamoflightgame.model.ITileState;
 
-public class TryAndErrorStrategy extends AbstractStrategy {
+public class TryAndErrorStrategy extends AbstractStrategy<ITileState> {
 
 	@Override
 	public double getComplexity() {
@@ -18,7 +19,7 @@ public class TryAndErrorStrategy extends AbstractStrategy {
 	}
 	
 	@Override
-	public boolean tryToSolve()  throws PuzzleException {
+	public boolean tryToSolve() {
 		return false;
 		// TODO Auto-generated method stub
 	}

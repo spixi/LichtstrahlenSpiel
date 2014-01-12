@@ -7,6 +7,6 @@ public interface ISolver {
 	public double getLevel();
 
 
-	void solve() throws PuzzleException;
+	void solve() throws UnsolvablePuzzleException, AmbiguousPuzzleException, MaximumIterationsExceededException;
 
 }
