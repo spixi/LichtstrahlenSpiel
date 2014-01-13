@@ -40,8 +40,9 @@ public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 		undoableEditListeners.add(ul);
 	}
 	
-	public boolean equals(ITile t)
+	public final boolean equals(ITile<?> t)
 	{
+		//Never redefine this method in a derivated class!
 		return t.getTileState().equals(this.getTileState());
 	}
 	

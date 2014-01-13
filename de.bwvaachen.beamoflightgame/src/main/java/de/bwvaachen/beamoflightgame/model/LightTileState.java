@@ -61,11 +61,12 @@ public enum LightTileState implements ITileState {
 		traverseDirection = d;
 	}
 	
+	
 	public boolean equals(ITileState tileState)
 	{
 		try{
 			LightTileState lts = (LightTileState) tileState;
-			return lts.equals(this);
+			return lts.getSign() == this.getSign();
 		}
 		catch (Exception e){
 			return false;

@@ -1,21 +1,42 @@
 package de.bwvaachen.beamoflightgame.logic.strategies;
 
+import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
+import java.util.EnumSet;
 
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 
 import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
+import de.bwvaachen.beamoflightgame.helper.AbstractTileVisitor;
+import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
+import de.bwvaachen.beamoflightgame.helper.Holder;
+import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.ITileState;
+import de.bwvaachen.beamoflightgame.model.LightTile;
+import de.bwvaachen.beamoflightgame.model.LightTileState;
 
 public class TryAndErrorStrategy extends AbstractStrategy<ITileState> implements UndoableEditListener  {
 	private TurnUndoManager um;
 	private SaveListener    listener;
+	private final EnumSet<LightTileState> remainingDirections;
 	
 	//Avoid memory leaks - a big problem in the Observer Pattern
 	//If the TryAndErrorStrategy is disposed we must also unregister it from the board.
+	//
+	//We need to unregister from the IBeamsOfLightPuzzleBoard as soon the TryAndErrorStrategy
+	//is disposed. This can be done in the finalize() method, which is called by the
+	//garbage collector.
+	//
+	//Because the IBeamsOfLightPuzzleBoard is holding a reference to the listener
+	//itself, the garbage collector would never call the finalize() method. Therefore
+	//we must use a weak reference. Unlike a normal references a weak reference does
+	//not increase the reference counter. If an object is only referenced by weak
+	//references, the GC will free it.
+	//
+	//This class is static, so its instances can live without a TryAndErrorStrategy instance
 	private static class SaveListener implements UndoableEditListener {
 		private WeakReference<TryAndErrorStrategy> ownerRef;
 		private IBeamsOfLightPuzzleBoard board;
@@ -49,6 +70,10 @@ public class TryAndErrorStrategy extends AbstractStrategy<ITileState> implements
 	 */
 	{
 		um = new TurnUndoManager();
+		remainingDirections = EnumSet.of(LightTileState.NORTH,
+				                         LightTileState.EAST,
+				                         LightTileState.SOUTH,
+				                         LightTileState.WEST);
 	}
 	
 	protected void _init() {
@@ -82,9 +107,64 @@ public class TryAndErrorStrategy extends AbstractStrategy<ITileState> implements
 	}
 	
 	@Override
-	public boolean tryToSolve() {
+	public boolean tryToSolve() throws UnsolvablePuzzleException {
+		final BoardTraverser  t           = new BoardTraverser(tile);
+		final Holder<Boolean> error = new Holder<Boolean>(false);
+		
+		//No heuristic for now. It would be better, to start this
+		//strategy with tiles which have only two remaining 
+		//But this would be much more complicated. So we have to stay
+		//with this for now.
+		
+		//Check whether the neighbour is an empty field
+		for(LightTileState direction: remainingDirections) {
+			if(!t.shift(direction.getTraverseDirection())) {
+				//We reached the border of the board
+				error.value = true;
+			}
+			else {
+				final ITile<?> neighbour = t.get();
+				neighbour.accept(new AbstractTileVisitor(){
+					public void visitLightTile(LightTile lt) {
+						LightTileState lts = lt.getTileState();
+						//Check whether the tile is not empty
+						if (!(lts.equals(LightTileState.EMPTY)))
+							error.value = true;
+					}
+					public void visitOtherTile() {
+						//We reached a non-lightTile
+						error.value = true;
+					}
+				});
+			}
+			
+			if(error.value) {
+				remainingDirections.remove(direction);
+			}
+			
+			error.value = false;
+			
+			t.reset();
+		}
+		
+		//no remainingDirections ...
+		if(remainingDirections.isEmpty())
+			throw new UnsolvablePuzzleException(tile);
+		else {
+			//TODO: Select one remaining direction
+			//Undo everything, if an UnsolvablePuzzleException is detected
+			//and try the next direction until there is no
+			//remaining direction left
+			//However, how can we implement recursion here, when we don't
+			//know the current solver???
+		}
+		
+		
+		//TODO
 		return false;
 		// TODO Auto-generated method stub
+		
+		
 	}
 
 
