@@ -10,11 +10,15 @@ import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 
 public class CreateRandomBoard 
 {
+	final static ArrayList<NumberTile> oNumTiles = new ArrayList<NumberTile>();
+
 	public static void main(String[] args)
 	{
 		BeamsOfLightPuzzleBoard b = new BeamsOfLightPuzzleBoard();
 		b.init(5, 6);
 		System.out.println(createRandom(b));
+
+		setNumbers(b, oNumTiles);
 
 	}
 	public static BeamsOfLightPuzzleBoard createRandom(BeamsOfLightPuzzleBoard oBoard)
@@ -23,7 +27,7 @@ public class CreateRandomBoard
 		//TODO Tiles Holen, Anzahl NumberTiles berechnen, NumberTiles Random setzen, LightTiles auffüllen, Zahlen vergeben
 		double dblNumberTileCount;
 		dblNumberTileCount = (1.5 * Math.sqrt(oBoard.getHeight()*oBoard.getWidth()));//100*(Math.random()*20);
-		final ArrayList<NumberTile> oNumTiles = new ArrayList<NumberTile>();
+		//final ArrayList<NumberTile> oNumTiles = new ArrayList<NumberTile>();
 
 
 		for(int i = 0; i < (int)dblNumberTileCount; i++)
@@ -52,22 +56,56 @@ public class CreateRandomBoard
 				oBoard.putTile(oNumTiles.get(i));
 			}
 		}
+
 		return oBoard;
 	}
 
-	public void setNumbers(BeamsOfLightPuzzleBoard oBoard, ArrayList<NumberTile> oNumTiles)
+	public static void setNumbers(BeamsOfLightPuzzleBoard oBoard, ArrayList<NumberTile> oNumTiles)
 	{
+		int iCountOfLightTiles = (oBoard.getHeight()*oBoard.getWidth())-oBoard.getNumOfNumberTiles();
 		int iNumber = 0;
+
 		for (int i = 0; i < oNumTiles.size(); i++)
 		{
-			BoardTraverser oTraverser = new BoardTraverser(oBoard, oNumTiles.get(i).getX(), oNumTiles.get(0).getY());	
-			for(int j = 0; j < 4; j++)
+			BoardTraverser oTraverser = new BoardTraverser(oNumTiles.get(i));	
+			while (oTraverser.shift(LightTileState.NORTH.getTraverseDirection()))
 			{
-				oTraverser.shift(LightTileState.NORTH.getTraverseDirection());
+				if(oTraverser.get() == null)
+				{
+					iNumber++;
+					iCountOfLightTiles--;
+				}
 			}
-			
+			oTraverser.reset();
+			while (oTraverser.shift(LightTileState.EAST.getTraverseDirection()))
+			{
+				if(oTraverser.get() == null)
+				{
+					iNumber++;
+					iCountOfLightTiles--;
+				}
+			}
+			oTraverser.reset();
+			while (oTraverser.shift(LightTileState.SOUTH.getTraverseDirection()))
+			{
+				if(oTraverser.get() == null)
+				{
+					iNumber++;
+					iCountOfLightTiles--;
+				}
+			}
+			oTraverser.reset();
+			while (oTraverser.shift(LightTileState.WEST.getTraverseDirection()))
+			{
+				if(oTraverser.get() == null)
+				{
+					iNumber++;
+					iCountOfLightTiles--;
+				}
+			}
+			oTraverser.reset();
+
 			//TODO Von jedem NumberTile in alle Himmelsrichtungen traversieren so weit möglich und daraus Zahl errechnen.
 		}
-		
 	}
 }
