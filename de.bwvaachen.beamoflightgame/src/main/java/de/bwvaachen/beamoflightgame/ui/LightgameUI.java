@@ -399,7 +399,7 @@ public class LightgameUI extends JFrame {
 						ISolver s =
 						SolverBuilder.buildWith(LonelyFieldStrategy.class).
 							          and(IntersectionStrategy.class).
-							          and(TryAndErrorStrategy.class).
+							          /*and(TryAndErrorStrategy.class).*/
 							          forBoard(controller.getCurrentModel());
 					    s.solve();
 					
