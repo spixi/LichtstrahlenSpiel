@@ -2,6 +2,7 @@ package de.bwvaachen.beamoflightgame.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -47,7 +48,7 @@ import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.NumberTileState;
 
 public class LightgameUI extends JFrame {
-
+	
 	class ExtensionFileFilter extends FileFilter {
 		  String description;
 
@@ -366,7 +367,9 @@ public class LightgameUI extends JFrame {
 			// Setzen der initialen Fensterposition und Grï¿½ï¿½e.
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			setBounds(100, 100, 450, 300);
-			
+			// Verändern der Fenstergröße verhindern
+			setResizable( false ) ;
+					
 			// Erzeugen des Menus
 			buildMenu();
 			
@@ -431,12 +434,18 @@ public class LightgameUI extends JFrame {
 			//IBeamsOfLightPuzzleBoard currentModel = controller . getCurrentModel();
 			rasterPanel . setLayout ( new GridLayout ( rows , cols , 0 , 0 ) ) ;
 			
+			// Fenstergröße anpassen.
+			setBounds( 100 , 100 , ( cols * 127 ) + 30 , ( rows * 127 ) + 124 ) ;
+			// Fenster in der Bildmitte anzeigen
+			setLocationRelativeTo( null ) ;
+			
 			// Schleife ï¿½ber das "Spielfeld"
 			for ( int row=0 ; row<rows ; row++ ) {
 				for ( int col=0 ;col<cols ; col++ ) {
 	
 					// Neuen Button erzeugen
 					final TileButton newTileButton = new TileButton ( currentModel . getTileAt ( col , row ) ) ;
+					newTileButton . setPreferredSize( new Dimension (127 , 127 ) ) ;
 					// Action hinzufï¿½gen
 					
 					currentModel . getTileAt ( col , row ) . accept( new ITileVisitor() {
