@@ -557,6 +557,7 @@ public class LightgameUI extends JFrame {
 			}
 		});
 		
+		// Delete a mark
 		JSeparator separator_4 = new JSeparator();
 		mnGame.add(separator_4);
 		
@@ -571,6 +572,22 @@ public class LightgameUI extends JFrame {
 			}
 		});
 		
+		// Delete all marks
+		mnGame . add ( new JSeparator() ) ;
+		JMenuItem mntmDeleteAllMarker = new JMenuItem( "Delete all marks" ) ;
+		mnGame . add ( mntmDeleteAllMarker )  ;
+		mntmDeleteAllMarker . addActionListener( new ActionListener () {
+			
+			@Override
+			public void actionPerformed ( ActionEvent e ) {
+				
+				controller . getUndoManager() . deleteAllMarker() ;
+				
+			} // public void actionPerformed ( ActionEvent e ) 
+		}) ; // mntmDeleteAllMarker
+		
+		
+		// Go back to a mark
 		JSeparator separator_5 = new JSeparator();
 		mnGame.add(separator_5);
 		
@@ -583,6 +600,7 @@ public class LightgameUI extends JFrame {
 				
 			}
 		});
+				
 		
 		mnGame.add(mntmBackToMark);
 		

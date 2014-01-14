@@ -89,6 +89,16 @@ public class TurnUndoManager extends UndoManager
 		if(lastMarker != null) lastMarker.unsetFlag(FLAG_MARKER);
 	}
 	
+	public void deleteAllMarker () throws CannotUndoException {
+		LinkedList<Turn> turns = (LinkedList<Turn>) getTurns() ;
+		for ( Turn currentTurn : turns ) {
+			currentTurn . unsetFlag ( FLAG_MARKER ) ;
+		} // for ( Turn currentTurn : turns )
+		
+	} // public void deleteAllMarker ()
+	
+	
+	
 	public void undoToLastStableState() {
 		if(stable) return;
 		UndoableEdit editToBeUndone;
