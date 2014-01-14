@@ -1,0 +1,14 @@
+#TeXlipse project settings
+#Tue Jan 14 21:41:32 CET 2014
+markTmpDer=true
+builderNum=2
+outputDir=
+makeIndSty=
+bibrefDir=
+outputFormat=pdf
+tempDir=tmp
+mainTexFile=struktogramme.tex
+outputFile=struktogramme.pdf
+langSpell=de
+markDer=true
+srcDir=
