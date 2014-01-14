@@ -1,8 +1,12 @@
 package de.bwvaachen.beamoflightgame.model;
 
+import java.io.Serializable;
+
 import javax.swing.event.ChangeListener;
 
-public interface IBeamsOfLightPuzzleBoard extends Iterable<ITile>, TileComposite {
+import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
+
+public interface IBeamsOfLightPuzzleBoard extends Iterable<ITile>, TileComposite , Serializable {
 	public void enqueueTile(ITile tile);
 	
 	public void flush();
@@ -19,4 +23,5 @@ public interface IBeamsOfLightPuzzleBoard extends Iterable<ITile>, TileComposite
 	public boolean isPlacementOfTileStatePossible(ITileState state, int x, int y);
 	
 	public void putTile(ITile tile);
+	
 }

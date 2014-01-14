@@ -20,4 +20,7 @@ public interface ILightController {
 	TurnUndoManager getUndoManager();
 	void setBoard(IBeamsOfLightPuzzleBoard _board) throws Exception;
 	
+	public void solve();
+	public boolean GameIsCorrect () ;
+	
 } // public interface ILightController

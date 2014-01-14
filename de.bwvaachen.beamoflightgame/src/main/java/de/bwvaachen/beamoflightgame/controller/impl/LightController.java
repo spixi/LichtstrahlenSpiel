@@ -1,17 +1,26 @@
 package de.bwvaachen.beamoflightgame.controller.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 
+import javax.swing.text.html.HTMLDocument.Iterator;
 import javax.swing.undo.CannotUndoException;
 
 import de.bwvaachen.beamoflightgame.controller.ILightController;
+import de.bwvaachen.beamoflightgame.controller.SolverBuilder;
 import de.bwvaachen.beamoflightgame.controller.Turn;
 import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
 import de.bwvaachen.beamoflightgame.helper.SimpleASCIICodec;
 import de.bwvaachen.beamoflightgame.helper.ZipPersister;
+import de.bwvaachen.beamoflightgame.logic.ISolver;
+import de.bwvaachen.beamoflightgame.logic.strategies.IntersectionStrategy;
+import de.bwvaachen.beamoflightgame.logic.strategies.LonelyFieldStrategy;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
@@ -23,6 +32,7 @@ import de.bwvaachen.beamoflightgame.ui.PrototypModelForIntersectionStrategy;
 public class LightController implements ILightController {
 	private TurnUndoManager          turnManager;
 	private IBeamsOfLightPuzzleBoard puzzleBoard;
+	public IBeamsOfLightPuzzleBoard solutionBoard ;
 	
 
 	
@@ -175,4 +185,71 @@ public class LightController implements ILightController {
 	public TurnUndoManager getUndoManager() {
 		return turnManager;
 	}
+	
+	/*
+	 * @author Georg Braun
+	 * Die Lösung erzeugen
+	 */
+	@Override 
+	public void solve () {
+		
+		try {
+			
+			solutionBoard = new PrototypModelForIntersectionStrategy() ;
+			
+		
+			ISolver s =
+					SolverBuilder.buildWith(LonelyFieldStrategy.class).
+					and(IntersectionStrategy.class).
+					/*and(TryAndErrorStrategy.class).*/
+					forBoard(solutionBoard);
+			s.solve();
+			
+		}
+		catch ( Exception e ) {
+			System . out . println ( e.getMessage() ) ;
+		} // try .. catch
+		
+	} // public void solve () 
+
+	/*
+	 * @author Georg Braun
+	 * Prüfen ob das Spielfeld mit der Lösung übereinstimmt
+	 */
+	public boolean GameIsCorrect () {
+				
+		int puzzleBoardWidth    = puzzleBoard . getWidth() ;
+		int puzzleBoardHeight   = puzzleBoard . getHeight() ;
+		boolean gameIsCorrect = true ;
+		
+		for ( int currentRow = 0 ; currentRow < puzzleBoardHeight ; currentRow++ ) {
+			for ( int currentCol = 0 ; currentCol < puzzleBoardWidth ; currentCol++ ) {
+				ITile currentBoardTile = puzzleBoard . getTileAt( currentCol , currentRow) ;
+				
+				if ( currentBoardTile instanceof LightTile ) {
+					LightTile currentBoardLightTile = (LightTile) currentBoardTile ;
+					LightTileState currentBoardLightTileState = currentBoardLightTile . getTileState() ;
+					LightTile currentSolutionLightTile = (LightTile) solutionBoard . getTileAt( currentCol , currentRow ) ;					
+										
+					if ( currentBoardLightTileState != LightTileState . EMPTY ) {
+						if ( currentBoardLightTile . getTileState() . equals( currentSolutionLightTile . getTileState() ) ) {
+							// Korrekt
+						}
+						else
+						{
+							// Fehler 
+							gameIsCorrect = false ;
+						}
+					} // if ( currentBoardLightTileState != LightTileState . EMPTY ) 					
+	
+						
+				} // if ( currentBoardTile instanceof LightTile )
+				
+			} // for ( int currentCol = 0 ; currentCol < puzzleBoardWidth ; currentCol++ )			
+		} // for ( int currentRow = 0 ; currentRow < puzzleBoardHeight ; currentRow++ )
+		
+		
+		return gameIsCorrect ;
+	}
+	
 } // public class LightController

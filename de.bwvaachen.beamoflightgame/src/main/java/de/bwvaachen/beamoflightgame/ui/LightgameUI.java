@@ -17,11 +17,13 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
@@ -203,8 +205,7 @@ public class LightgameUI extends JFrame {
 					} // if ( lichtRichtung != LightTileState . EMPTY ) 
 					
 				} // // if ( ( activeNumberTile != null ) && ( btn . markiert ) ) .. else				
-							
-				
+						
 				// Das Board neu zeichnen.
 				IBeamsOfLightPuzzleBoard currentBoard = controller.getCurrentModel() ;
 				Update( currentBoard ) ;
@@ -390,6 +391,11 @@ public class LightgameUI extends JFrame {
 			// Controller mit Test Prototyp fï¿½r GUI fï¿½llen.
 			controller . setBoard ( new PrototypModelForIntersectionStrategy() ) ;
 			
+			// Vom Controller die Musterlösung generieren lassen.
+			controller . solve() ;
+			
+			
+			
 			javax.swing.JButton solverButton = new javax.swing.JButton("Puzzle loesen");
 			solverButton.addActionListener(new ActionListener() {
 
@@ -530,6 +536,27 @@ public class LightgameUI extends JFrame {
 		
 		JMenu mnGame = new JMenu("Game");
 		menuBar.add(mnGame);
+		
+		JMenuItem mntmCheckGame = new JMenuItem ( "Check Game" ) ;
+		mnGame . add ( mntmCheckGame ) . addActionListener( new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				String message = new String() ;
+				if ( controller . GameIsCorrect() ) {
+					message = "Nice turn! It's correct." ;					
+				} 
+				else {
+					message = "Wrong track dude ;)" ;
+				}
+				JOptionPane . showMessageDialog( null , message , "" ,  JOptionPane . PLAIN_MESSAGE ) ;
+				
+			} // public void actionPerformed(ActionEvent arg0)
+			
+		}) ; // .. new ActionListener() 
+		
+		
+		mnGame.add ( new JSeparator() );
 		
 		JMenuItem mntmbacktoFailure = new JMenuItem("Back to failure");
 		mnGame.add(mntmbacktoFailure);
