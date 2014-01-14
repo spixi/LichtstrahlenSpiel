@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 import javax.imageio.IIOException;
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 import de.bwvaachen.beamoflightgame.model.LightTile;
@@ -19,10 +18,9 @@ import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 public class NumberEditor extends BeamsOfLightEditor 
 	implements ActionListener{
 
-	private TileButton tile, clickedTile ;
+	private TileButton tile ;
 	private ArrayList<TileButton> tileList ;
 	private int lightPower ;
-	private String input ;
 	
 	public NumberEditor(int width, int height) {
 		super(EditorType.NumberEditor, width, height);
@@ -32,17 +30,14 @@ public class NumberEditor extends BeamsOfLightEditor
 	@Override
 	public void initComponents(){
 		
-		leftButton = new JButton("Solve");
 		leftButton.addActionListener(this);
-		middleButton = new JButton("DO NOTHING");
 		middleButton.addActionListener(this);
-		rightButton = new JButton("Reset");
 		rightButton.addActionListener(this);
 		
 		tileList = new ArrayList<TileButton>();
 		
-		for(int i=1; i<=row; i++){
-			for(int j=1; j<=col; j++){
+		for(int i=0; i<row; i++){
+			for(int j=0; j<col; j++){
 				tile = new TileButton(j,i);
 				tile.setSize(128,128);
 				tile.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -54,24 +49,44 @@ public class NumberEditor extends BeamsOfLightEditor
 	}
 	
 	@Override
+	public String getTileStats() {
+		this.remainingTiles = totalTiles ;
+		
+		for(TileButton tile : tileList){
+			if(tile.getState() == TileState.NUMBER){
+				this.remainingTiles -= (tile.getLightPower() + 1); 
+			}
+		}
+		return "Felder (Gesamt): "+totalTiles+"\nFelder (Verbleibend): "+remainingTiles;
+	}
+
+	@Override
 	public BeamsOfLightPuzzleBoard convertToBoard() {
 		BeamsOfLightPuzzleBoard target = new BeamsOfLightPuzzleBoard();
 		target.init(col,row);
 		
 		for(TileButton tile : tileList){
 			if(tile.getState() == TileState.EMPTY){
-				// TODO error for empty tiles
-				target.putTile(new LightTile(target,tile.getCol()-1,tile.getRow()-1));
+				target.putTile(new LightTile(target,tile.getCol(),tile.getRow()));
 			}
 			if(tile.getState() == TileState.H_LIGHT || tile.getState() == TileState.V_LIGHT){
-				target.putTile(new LightTile(target,tile.getCol()-1,tile.getRow()-1));
+				target.putTile(new LightTile(target,tile.getCol(),tile.getRow()));
 			}
 			if(tile.getState() == TileState.NUMBER){
-				target.putTile(new NumberTile(target,tile.getLightPower(),tile.getCol()-1,tile.getRow()-1));
+				target.putTile(new NumberTile(target,tile.getLightPower(),tile.getCol(),tile.getRow()));
+			}
+		}
+		return target;
+	}
+	
+	public void importPuzzleBoard(BeamsOfLightPuzzleBoard source){
+		
+		for(int i=0;i<row;i++){
+			for(int j=0;j<col;j++){
+				source.getTileAt(i,j).getTileState();
 			}
 		}
 		
-		return target;
 	}
 
 	@Override
@@ -87,20 +102,25 @@ public class NumberEditor extends BeamsOfLightEditor
 				tile.reset();
 			}
 		}else if(ae.getSource().getClass() == TileButton.class){
+			String input ;
+			int maxLightPower = (col-1) + (row-1) ;
+			TileButton clickedTile  = (TileButton) ae.getSource();
 			
-			clickedTile  = (TileButton) ae.getSource();
-		
-			input = (String) JOptionPane.showInputDialog(
-					this,
-					"Lichtstärke:\n",
-					"Lichtstärkeneingabe",
-					JOptionPane.PLAIN_MESSAGE,
-					null,
-					null,
-					"1");;
 			try{
-				lightPower = Integer.valueOf(input);
+				do{
+					input = (String) JOptionPane.showInputDialog(
+								this,
+								"Lichtstaerke(1-" + maxLightPower + "):\n",
+								"Lichtstaerkeneingabe",
+								JOptionPane.PLAIN_MESSAGE,
+								null,
+								null,
+								"1");
+					lightPower = Integer.valueOf(input);
+				}while(lightPower > maxLightPower || lightPower < 1);
+				
 				clickedTile.setLightPower(lightPower);
+				tileStats.setText(getTileStats());
 			}catch(IIOException iioe){
 				//TODO
 			}catch(NumberFormatException nfe){

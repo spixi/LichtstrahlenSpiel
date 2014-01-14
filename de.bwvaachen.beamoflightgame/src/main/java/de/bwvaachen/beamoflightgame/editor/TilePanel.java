@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 
 /**
  * Eine Klasse die das JPanel um Eigenschaften erweitert, die in der GUI hilfreich
- * sein können.
+ * sein kï¿½nnen.
  * 
  * @author cm
  *
@@ -67,7 +67,7 @@ public class TilePanel extends JPanel{
 	public void setLightPower(int lightPower) throws IOException{
 		this.lightPower += lightPower ;
 		this.state = TileState.NUMBER ;
-		this.setImage("themes/moon/"+this.lightPower+".png");
+		this.setImage("resources/themes/moon/"+this.lightPower+".png");
 	}
 	
 	public void setImage(String path) throws IOException{

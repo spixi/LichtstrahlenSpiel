@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -114,7 +113,7 @@ public class EditorMenu extends JMenuBar
 				
 			if(ae.getSource() == menuItemSave){
 				fileChooser = new JFileChooser();
-				fileChooser.setDialogTitle("Save As...");   
+				fileChooser.setDialogTitle("Save");   
 			 
 				userSelection = fileChooser.showSaveDialog(editor);
 				 
@@ -133,9 +132,18 @@ public class EditorMenu extends JMenuBar
 			    	controller.saveGame(file);
 				}
 			}else if(ae.getSource() == menuItemLoad){
-	
-			}else if(ae.getSource() == menuItemIns){
+				fileChooser = new JFileChooser();
+				fileChooser.setDialogTitle("Load");   
 			
+				userSelection = fileChooser.showOpenDialog(editor);
+				 
+				if(userSelection == JFileChooser.APPROVE_OPTION){
+					file = fileChooser.getSelectedFile();
+			    	controller.loadGame(file);
+				}
+			 
+			}else if(ae.getSource() == menuItemIns){
+				
 			}else if(ae.getSource() == menuItemAbout){
 			
 			}

@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 import javax.imageio.IIOException;
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
@@ -40,19 +39,18 @@ public class LineEditor extends BeamsOfLightEditor
 	
 	@Override
 	public void initComponents(){
-		leftButton = new JButton("Solve"); 
+		
 		leftButton.addActionListener(this);
-		middleButton = new JButton("DO NOTHING");
 		middleButton.addActionListener(this);
-		rightButton = new JButton("Reset");
 		rightButton.addActionListener(this);
+		
 		validLine = false ;
 		rotationAngle = 0.0 ;
 		tileCount = 0;
 		tileList = new ArrayList<TilePanel>();
 		
-		for(int i=1; i<=row; i++){
-			for(int j=1; j<=col; j++){
+		for(int i=0; i<row; i++){
+			for(int j=0; j<col; j++){
 				tile = new TilePanel(j,i);
 				tile.setSize(128,128);
 				tile.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -63,6 +61,18 @@ public class LineEditor extends BeamsOfLightEditor
 	}
 	
 	@Override
+	public String getTileStats() {
+		this.remainingTiles = totalTiles ;
+		
+		for(TilePanel tile : tileList){
+			if(tile.getState() == TileState.NUMBER){
+				this.remainingTiles -= (tile.getLightPower() + 1); 
+			}
+		}
+		return "Felder (Gesamt): "+totalTiles+"\nFelder (Verbleibend): "+remainingTiles;
+	}
+
+	@Override
 	public BeamsOfLightPuzzleBoard convertToBoard() {
 		BeamsOfLightPuzzleBoard target = new BeamsOfLightPuzzleBoard();
 		target.init(col,row);
@@ -70,16 +80,15 @@ public class LineEditor extends BeamsOfLightEditor
 		for(TilePanel tile : tileList){
 			if(tile.getState() == TileState.EMPTY){
 				// TODO error for empty tiles
-				target.putTile(new LightTile(target,tile.getCol()-1,tile.getRow()-1));
+				target.putTile(new LightTile(target,tile.getCol(),tile.getRow()));
 			}
 			if(tile.getState() == TileState.H_LIGHT || tile.getState() == TileState.V_LIGHT){
-				target.putTile(new LightTile(target,tile.getCol()-1,tile.getRow()-1));
+				target.putTile(new LightTile(target,tile.getCol(),tile.getRow()));
 			}
 			if(tile.getState() == TileState.NUMBER){
-				target.putTile(new NumberTile(target, tile.getLightPower(),tile.getCol()-1,tile.getRow()-1));
+				target.putTile(new NumberTile(target, tile.getLightPower(),tile.getCol(),tile.getRow()));
 			}
 		}
-		
 		return target;
 	}
 	
@@ -116,7 +125,7 @@ public class LineEditor extends BeamsOfLightEditor
 			if(deltaXabs >= 1 && deltaYabs >= 1 && !errorDisplayed){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
-												"Diagonalen sind nicht möglich!",
+												"Diagonalen sind nicht moeglich!",
 												"Fehler",
 												JOptionPane.ERROR_MESSAGE);
 				errorDisplayed = true ;
@@ -124,7 +133,7 @@ public class LineEditor extends BeamsOfLightEditor
 			if(startTile == endTile && !errorDisplayed){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
-												"Start- und Endfeld dürfen nicht gleich sein!",
+												"Start- und Endfeld duerfen nicht gleich sein!",
 												"Fehler",
 												JOptionPane.ERROR_MESSAGE);
 				errorDisplayed = true ;
@@ -132,7 +141,7 @@ public class LineEditor extends BeamsOfLightEditor
 			if(!(startTile.getState() == TileState.EMPTY || startTile.getState() == TileState.NUMBER) && !errorDisplayed){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
-												"Startfeld muss leer oder bereits Zahlenfeld sein!\nFeldbelegung löschen mit Rechtsklick.",
+												"Startfeld muss leer oder bereits Zahlenfeld sein!\nFeldbelegung loeschen mit Rechtsklick.",
 												"Fehler",
 												JOptionPane.ERROR_MESSAGE);
 				errorDisplayed = true ;
@@ -140,7 +149,7 @@ public class LineEditor extends BeamsOfLightEditor
 			if(crossingNonEmptyTile && !errorDisplayed){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
-												"Linie darf kein gefülltes Feld schneiden!\nFeldbelegung löschen mit Rechtsklick.",
+												"Linie darf kein gefuelltes Feld schneiden!\nFeldbelegung loeschen mit Rechtsklick.",
 												"Fehler",
 												JOptionPane.ERROR_MESSAGE);
 				errorDisplayed = true ;
@@ -208,7 +217,7 @@ public class LineEditor extends BeamsOfLightEditor
 				rotationAngle = checkLine(startTile,endTile);
 				
 				if(validLine){
-					endTile.setImage("themes/moon/light2.png",rotationAngle);
+					endTile.setImage("resources/themes/moon/light2.png",rotationAngle);
 					startTile.setLightPower(tileCount);
 					
 					for(TilePanel tile : tileList){
@@ -216,7 +225,7 @@ public class LineEditor extends BeamsOfLightEditor
 						&&  !(tile.getBounds().contains(lineStart))
 						&&  !(tile.getBounds().contains(lineEnd)))
 						{
-							tile.setImage("themes/moon/light1.png",rotationAngle);
+							tile.setImage("resources/themes/moon/light1.png",rotationAngle);
 						}
 					}
 				}
@@ -229,7 +238,7 @@ public class LineEditor extends BeamsOfLightEditor
 			}finally{
 				//System.out.println("START: "+ startTile.getCol() +","+ startTile.getRow());
 				//System.out.println("END: "+ endTile.getCol() +","+ endTile.getRow());
-				
+				tileStats.setText(getTileStats());
 				tileCount = 0 ;
 				line = new Line2D.Double();
 				validLine = false ;

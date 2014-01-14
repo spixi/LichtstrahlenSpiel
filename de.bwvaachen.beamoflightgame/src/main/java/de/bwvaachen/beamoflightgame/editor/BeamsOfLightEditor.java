@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 
@@ -25,16 +26,21 @@ public abstract class BeamsOfLightEditor extends JFrame
 	protected Dimension frameSize;
 	protected int row;
 	protected int col;
+	protected int totalTiles;
+	protected int remainingTiles;
 	protected TilesPanel tilesPanel;
 	protected JPanel buttonPanel;
+	protected JPanel southPanel;
 	protected JButton leftButton; 
 	protected JButton middleButton;
 	protected JButton rightButton; 
 	protected EditorType editorType ;
+	protected JTextArea tileStats ;
 	
 	public BeamsOfLightEditor(EditorType editorType, int width, int height){
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		this.col = width ; this.row = height ;
+		this.totalTiles = col * row ;
 		this.editorType = editorType ;
 		
 		setSize(width*128, height*128 + 75) ;
@@ -49,17 +55,27 @@ public abstract class BeamsOfLightEditor extends JFrame
 		setJMenuBar(new EditorMenu(this));
 		
 		tilesPanel = new TilesPanel();
-		tilesPanel.setLayout(new GridLayout(height,width));
+		tilesPanel.setLayout(new GridLayout(row,col));
+		
+		leftButton = new JButton("Solve");
+		middleButton = new JButton("DO NOTHING");
+		rightButton = new JButton("Reset");
 		
 		initComponents();
+		tileStats = new JTextArea(getTileStats());
 		
 		buttonPanel = new JPanel();
 		buttonPanel.add(leftButton);
 		buttonPanel.add(middleButton);
 		buttonPanel.add(rightButton);
+				
+		southPanel = new JPanel();
+		southPanel.setLayout(new BorderLayout());
+		southPanel.add(BorderLayout.CENTER,buttonPanel);
+		southPanel.add(BorderLayout.SOUTH,tileStats);
 		
 		add(BorderLayout.CENTER,tilesPanel);
-		add(BorderLayout.SOUTH,buttonPanel);
+		add(BorderLayout.SOUTH,southPanel);
 		setVisible(true);
 	}
 	
@@ -67,6 +83,8 @@ public abstract class BeamsOfLightEditor extends JFrame
 	public abstract void initComponents();
 	
 	public abstract BeamsOfLightPuzzleBoard convertToBoard();
+	
+	public abstract String getTileStats();
 	
 	public static BufferedImage rotate(Image image, double angle) {
 		int width = image.getWidth(null);
@@ -78,6 +96,8 @@ public abstract class BeamsOfLightEditor extends JFrame
 		g2.dispose();
 		return temp;
 	}
+	
+	
 	
 	public int getRows(){
 		return row ;

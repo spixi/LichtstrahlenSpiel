@@ -65,7 +65,7 @@ public class EditorMain extends JFrame
 		inputWidthTF = new JTextField("5", 10);
 		inputHeightTF = new JTextField("5", 10);
 		inputWidthL = new JLabel("Breite:");
-		inputHeightL = new JLabel("Höhe:");
+		inputHeightL = new JLabel("Hoehe:");
 		
 		editorTypeL = new JLabel("<html>Editor-Modus: <br></html>");
 		editorTypeL.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -97,9 +97,9 @@ public class EditorMain extends JFrame
 		int inputWidth = Integer.valueOf(inputWidthTF.getText());
 		int inputHeight = Integer.valueOf(inputHeightTF.getText());
 		
-		if(inputWidth > maxWidth || inputHeight > maxHeight){
+		if(e.getSource() == okButton && (inputWidth > maxWidth || inputHeight > maxHeight)){
 			JOptionPane.showMessageDialog(	this,
-											"<html>Darstellung bei aktueller Auflösung nicht möglich!<br>Maximale Breite: " + maxWidth + "<br>Maximale Höhe: " + maxHeight + "<br></html",
+											"Darstellung bei aktueller Aufloesung nicht moeglich!\nMaximale Breite: " + maxWidth + "\nMaximale Hoehe: " + maxHeight + "\n",
 											"Fehler",
 											JOptionPane.ERROR_MESSAGE
 										 );
