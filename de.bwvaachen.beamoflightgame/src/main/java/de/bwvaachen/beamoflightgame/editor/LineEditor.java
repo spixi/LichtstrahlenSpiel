@@ -32,7 +32,7 @@ public class LineEditor extends BeamsOfLightEditor
 	private int tileCount ;
 		
 	public LineEditor(int width, int height){
-		super("BeamsOfLightEditor - Linieneingabe", width, height);
+		super(EditorType.LineEditor, width, height);
 		
 		tilesPanel.addMouseMotionListener(this);
 		tilesPanel.addMouseListener(this);
@@ -51,8 +51,8 @@ public class LineEditor extends BeamsOfLightEditor
 		tileCount = 0;
 		tileList = new ArrayList<TilePanel>();
 		
-		for(int i=1; i<=col; i++){
-			for(int j=1; j<=row; j++){
+		for(int i=1; i<=row; i++){
+			for(int j=1; j<=col; j++){
 				tile = new TilePanel(j,i);
 				tile.setSize(128,128);
 				tile.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -70,12 +70,13 @@ public class LineEditor extends BeamsOfLightEditor
 		for(TilePanel tile : tileList){
 			if(tile.getState() == TileState.EMPTY){
 				// TODO error for empty tiles
+				target.putTile(new LightTile(target,tile.getCol()-1,tile.getRow()-1));
 			}
 			if(tile.getState() == TileState.H_LIGHT || tile.getState() == TileState.V_LIGHT){
-				target.putTile(new LightTile(target,tile.getCol(),tile.getRow()));
+				target.putTile(new LightTile(target,tile.getCol()-1,tile.getRow()-1));
 			}
 			if(tile.getState() == TileState.NUMBER){
-				target.putTile(new NumberTile(target,tile.getCol(),tile.getRow(), tile.getLightPower()));
+				target.putTile(new NumberTile(target, tile.getLightPower(),tile.getCol()-1,tile.getRow()-1));
 			}
 		}
 		
@@ -108,7 +109,8 @@ public class LineEditor extends BeamsOfLightEditor
 			&&  (deltaXabs == 0 ^ deltaYabs == 0) 
 			&& 	(startTile.getState() == TileState.NUMBER || startTile.getState() == TileState.EMPTY)
 			&& 	endTile.getState() == TileState.EMPTY
-			&&	!crossingNonEmptyTile){
+			&&	!crossingNonEmptyTile
+		  ){
 			validLine = true ;			
 		}else{ 
 			if(deltaXabs >= 1 && deltaYabs >= 1 && !errorDisplayed){
@@ -138,7 +140,7 @@ public class LineEditor extends BeamsOfLightEditor
 			if(crossingNonEmptyTile && !errorDisplayed){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
-												"Linie darf kein gefülltes Feld schneiden!",
+												"Linie darf kein gefülltes Feld schneiden!\nFeldbelegung löschen mit Rechtsklick.",
 												"Fehler",
 												JOptionPane.ERROR_MESSAGE);
 				errorDisplayed = true ;
@@ -187,7 +189,6 @@ public class LineEditor extends BeamsOfLightEditor
 		if(SwingUtilities.isLeftMouseButton(me)){
 
 			lineEnd = me.getPoint();
-			
 			TilePanel startTile = null ;
 			TilePanel endTile = null ;
 			
@@ -226,12 +227,15 @@ public class LineEditor extends BeamsOfLightEditor
 			}catch(Exception e){
 				//TODO
 			}finally{
-					tileCount = 0 ;
-					line = new Line2D.Double();
-					validLine = false ;
-					rotationAngle = 0.0;
-					tilesPanel.setLine(line);
-					tilesPanel.repaint();
+				//System.out.println("START: "+ startTile.getCol() +","+ startTile.getRow());
+				//System.out.println("END: "+ endTile.getCol() +","+ endTile.getRow());
+				
+				tileCount = 0 ;
+				line = new Line2D.Double();
+				validLine = false ;
+				rotationAngle = 0.0;
+				tilesPanel.setLine(line);
+				tilesPanel.repaint();
 			}
 		} //if(SwingUtilities.isLeftMouseButton(me))
 }
@@ -263,6 +267,5 @@ public class LineEditor extends BeamsOfLightEditor
 				tile.reset();
 			}
 		}
-		
 	}
 }

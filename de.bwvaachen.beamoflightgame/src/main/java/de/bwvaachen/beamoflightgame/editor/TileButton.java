@@ -36,6 +36,8 @@ public class TileButton extends JButton {
 		this.col = col ;
 		this.row = row ;
 		this.image = null ;
+		this.state = TileState.EMPTY; 
+		this.lightPower = 0 ;
 	} 
 	
 	public int getRow() {

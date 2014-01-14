@@ -25,7 +25,7 @@ public class NumberEditor extends BeamsOfLightEditor
 	private String input ;
 	
 	public NumberEditor(int width, int height) {
-		super("BeamsOfLightEditor - Zahleneingabe", width, height);
+		super(EditorType.NumberEditor, width, height);
 		
 	}
 
@@ -41,8 +41,8 @@ public class NumberEditor extends BeamsOfLightEditor
 		
 		tileList = new ArrayList<TileButton>();
 		
-		for(int i=1; i<=col; i++){
-			for(int j=1; j<=row; j++){
+		for(int i=1; i<=row; i++){
+			for(int j=1; j<=col; j++){
 				tile = new TileButton(j,i);
 				tile.setSize(128,128);
 				tile.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -61,12 +61,13 @@ public class NumberEditor extends BeamsOfLightEditor
 		for(TileButton tile : tileList){
 			if(tile.getState() == TileState.EMPTY){
 				// TODO error for empty tiles
+				target.putTile(new LightTile(target,tile.getCol()-1,tile.getRow()-1));
 			}
 			if(tile.getState() == TileState.H_LIGHT || tile.getState() == TileState.V_LIGHT){
-				target.putTile(new LightTile(target,tile.getCol(),tile.getRow()));
+				target.putTile(new LightTile(target,tile.getCol()-1,tile.getRow()-1));
 			}
 			if(tile.getState() == TileState.NUMBER){
-				target.putTile(new NumberTile(target,tile.getCol(),tile.getRow(),tile.getLightPower()));
+				target.putTile(new NumberTile(target,tile.getLightPower(),tile.getCol()-1,tile.getRow()-1));
 			}
 		}
 		

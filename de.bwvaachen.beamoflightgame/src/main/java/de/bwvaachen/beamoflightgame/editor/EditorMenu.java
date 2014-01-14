@@ -1,11 +1,20 @@
 package de.bwvaachen.beamoflightgame.editor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
+
+import de.bwvaachen.beamoflightgame.controller.ILightController;
+import de.bwvaachen.beamoflightgame.controller.impl.LightController;
+import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 
 
 @SuppressWarnings("serial")
@@ -21,12 +30,20 @@ public class EditorMenu extends JMenuBar
 	private JMenu		helpMenu ;
 	private JMenuItem	menuItemIns ;
 	private JMenuItem	menuItemAbout ;
+	
+	private BeamsOfLightEditor editor ;
+	private BeamsOfLightPuzzleBoard board ;
+	private ILightController controller ;
+	private JFileChooser fileChooser ;
+	private File file ;
 
-	public EditorMenu(){
+	public EditorMenu(BeamsOfLightEditor editor){
+		this.editor = editor;
+		
 		fileMenu = new JMenu("File");
 		this.add(fileMenu);
 		
-		menuItemNew = new JMenuItem("New");
+		menuItemNew = new JMenuItem("New...");
 		menuItemNew.addActionListener(this);
 		fileMenu.add(menuItemNew);
 		
@@ -37,7 +54,7 @@ public class EditorMenu extends JMenuBar
 		menuItemSave.addActionListener(this);
 		fileMenu.add(menuItemSave);
 		
-		menuItemSaveAs = new JMenuItem("Save As");
+		menuItemSaveAs = new JMenuItem("Save As...");
 		menuItemSaveAs.addActionListener(this);
 		fileMenu.add(menuItemSaveAs);
 		
@@ -72,28 +89,63 @@ public class EditorMenu extends JMenuBar
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent ae) {
+		int userSelection ;
 		
-		if(e.getSource() == menuItemNew){
-			
-		}
-		if(e.getSource() == menuItemSave){
-			
-		}
-		if(e.getSource() == menuItemSaveAs){
-	
-		}
-		if(e.getSource() == menuItemLoad){
-	
-		}
-		if(e.getSource() == menuItemExit){
+		if(ae.getSource() == menuItemNew){
+			userSelection = JOptionPane.showConfirmDialog(
+			    				editor,
+			    				"Soll der Editor wirklich neu gestartet werden?\nBisher gemachte Eingaben werden verworfen.",
+			    				"Neustart",
+			    				JOptionPane.YES_NO_OPTION);
+			if(userSelection == JOptionPane.YES_OPTION){
+				editor.dispose();
+				new EditorMain();
+			}
+		}else if(ae.getSource() == menuItemExit){
 			System.exit(0);
-		}
-		if(e.getSource() == menuItemIns){
+		}else
+		
+		try {
+			controller = new LightController();
+			board = editor.convertToBoard();
+			System.out.println(board.toString());
+			controller.setBoard(board);
+				
+			if(ae.getSource() == menuItemSave){
+				fileChooser = new JFileChooser();
+				fileChooser.setDialogTitle("Save As...");   
+			 
+				userSelection = fileChooser.showSaveDialog(editor);
+				 
+				if(userSelection == JFileChooser.APPROVE_OPTION){
+					file = fileChooser.getSelectedFile();
+			    	controller.saveGame(file);
+				}
+			}else if(ae.getSource() == menuItemSaveAs){
+				fileChooser = new JFileChooser();
+				fileChooser.setDialogTitle("Save As...");   
+			 
+				userSelection = fileChooser.showSaveDialog(editor);
+				 
+				if(userSelection == JFileChooser.APPROVE_OPTION){
+					file = fileChooser.getSelectedFile();
+			    	controller.saveGame(file);
+				}
+			}else if(ae.getSource() == menuItemLoad){
+	
+			}else if(ae.getSource() == menuItemIns){
 			
-		}
-		if(e.getSource() == menuItemAbout){
+			}else if(ae.getSource() == menuItemAbout){
 			
+			}
+		}catch(IOException ioe){
+			// TODO Auto-generated catch block
+			ioe.printStackTrace();
+		}catch(Exception e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
 	}
 }

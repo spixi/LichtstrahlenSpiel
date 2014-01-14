@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JOptionPane;
 
 
 @SuppressWarnings("serial")
@@ -20,17 +21,19 @@ public class EditorMain extends JFrame
 	implements ActionListener{
 
 	private int width, height ;
+	private int maxWidth, maxHeight ;
 	private Dimension screenSize ;
 	private Dimension frameSize ;
 	private JTextField inputWidthTF, inputHeightTF ;
 	private JLabel inputWidthL, inputHeightL, editorTypeL, header ;
 	private JPanel contentPanel, boardSizePanel, editorTypePanel, buttonPanel ;
 	private JButton okButton, cancelButton ;
-	private JComboBox<String> editorTypeBox ;
-	private String[] editorTypes = {"Zahlen","Linien"};
+	private JComboBox<EditorType> editorTypeBox ;
 	
 	public EditorMain(){
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		maxWidth = (screenSize.width-128)/128;
+		maxHeight = (screenSize.height-128)/128;
 		setSize(400,120) ;			
 		frameSize = getSize() ;									
 		setMinimumSize(frameSize) ;								
@@ -55,8 +58,7 @@ public class EditorMain extends JFrame
 		editorTypePanel = new JPanel();
 		buttonPanel = new JPanel();
 		
-		header = new JLabel("<html>Dimensionen des Lichtstrahlen-Spielbretts angeben:<br>");
-				//"(Max. Breite/Höhe bei derzeitiger Auflösung: )</html>");
+		header = new JLabel("<html>Dimensionen des Lichtstrahlen-Spielbretts angeben:<br></html>");
 		header.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
 		
@@ -65,9 +67,9 @@ public class EditorMain extends JFrame
 		inputWidthL = new JLabel("Breite:");
 		inputHeightL = new JLabel("Höhe:");
 		
-		editorTypeL = new JLabel("<html>Editor-Modus: <br>");
+		editorTypeL = new JLabel("<html>Editor-Modus: <br></html>");
 		editorTypeL.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		editorTypeBox = new JComboBox<String>(editorTypes);
+		editorTypeBox = new JComboBox<EditorType>(EditorType.values());
 		
 		boardSizePanel.add(inputWidthL);
 		boardSizePanel.add(inputWidthTF);
@@ -92,20 +94,31 @@ public class EditorMain extends JFrame
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == okButton && editorTypeBox.getSelectedItem() == "Linien"){
-			width = Integer.valueOf(inputWidthTF.getText());
-			height = Integer.valueOf(inputHeightTF.getText());
-			new LineEditor(width,height);
-			this.dispose();
-		}
-		if(e.getSource() == okButton && editorTypeBox.getSelectedItem() == "Zahlen"){
-			width = Integer.valueOf(inputWidthTF.getText());
-			height = Integer.valueOf(inputHeightTF.getText());
-			new NumberEditor(width,height);
-			this.dispose();
-		}
-		if(e.getSource() == cancelButton){
-			this.dispose();
+		int inputWidth = Integer.valueOf(inputWidthTF.getText());
+		int inputHeight = Integer.valueOf(inputHeightTF.getText());
+		
+		if(inputWidth > maxWidth || inputHeight > maxHeight){
+			JOptionPane.showMessageDialog(	this,
+											"<html>Darstellung bei aktueller Auflösung nicht möglich!<br>Maximale Breite: " + maxWidth + "<br>Maximale Höhe: " + maxHeight + "<br></html",
+											"Fehler",
+											JOptionPane.ERROR_MESSAGE
+										 );
+		}else{
+			if(e.getSource() == okButton && editorTypeBox.getSelectedItem() == EditorType.LineEditor){
+				width = Integer.valueOf(inputWidthTF.getText());
+				height = Integer.valueOf(inputHeightTF.getText());
+				new LineEditor(width,height);
+				this.dispose();
+			}
+			if(e.getSource() == okButton && editorTypeBox.getSelectedItem() == EditorType.NumberEditor){
+				width = Integer.valueOf(inputWidthTF.getText());
+				height = Integer.valueOf(inputHeightTF.getText());
+				new NumberEditor(width,height);
+				this.dispose();
+			}
+			if(e.getSource() == cancelButton){
+				this.dispose();
+			}
 		}
 	}
 }
