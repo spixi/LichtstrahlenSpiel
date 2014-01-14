@@ -1,0 +1,21 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\input{meta}
+\input{packages}
+
+\begin{document}
+
+\setiftext{J}{N}            %Text von IF setzen
+
+\maketitle
+
+\pdfbookmark[1]{Abbildungsverzeichnis}{toc}
+\listoffigures
+%\clearpage
+
+\begin{figure}[htbp]
+\input{Struktogramme/beispiel}
+\caption{Beispiel}
+\end{figure}
+
+\end{document}

@@ -1,0 +1,33 @@
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{fouriernc}      %rm-Schriftart: Fourier New Century
+\usepackage{avant}          %sf-Schriftart: Avant Garde
+\usepackage{courier}        %tt-Schriftart: Courier
+\usepackage{nassi}          %Nassi-Shneiderman-Diagramme
+
+\usepackage[
+    bookmarks,
+    bookmarksnumbered,    
+    bookmarksopen=true,
+    bookmarksopenlevel=1,
+    colorlinks=true,
+    linkcolor=JunghansBlau, % einfache interne Verkn"upfungen
+    anchorcolor=JunghansBlau,% Ankertext
+    citecolor=JunghansBlau, % Verweise auf Literaturverzeichniseinträge im Text
+    filecolor=JunghansBlau, % Verkn"upfungen, die lokale Dateien "offnen
+    menucolor=JunghansBlau, % Acrobat-Men"upunkte
+    urlcolor=JunghansBlau, 
+    pdftex,
+    plainpages=false, % zur korrekten Erstellung der Bookmarks
+    pdfpagelabels=true, % zur korrekten Erstellung der Bookmarks
+    hypertexnames=false, % zur korrekten Erstellung der Bookmarks
+    linktocpage % Seitenzahlen anstatt Text im Inhaltsverzeichnis verlinken
+]{hyperref}
+% Befehle, die Umlaute ausgeben, f"uhren zu Fehlern, wenn sie hyperref als Optionen "ubergeben werden
+\hypersetup{
+    pdftitle={\Title},
+    pdfauthor={\Author},
+    pdfcreator={\Author},
+    pdfsubject={\Title},
+    pdfkeywords={\Title},
+}
