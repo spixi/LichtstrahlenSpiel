@@ -120,7 +120,7 @@ public class LightController implements ILightController {
 //		ObjectOutputStream oos   = new ObjectOutputStream(bos);
 				
 		ZipPersister persister = new ZipPersister(new SimpleASCIICodec());
-		persister.save(f, puzzleBoard, turnManager.getTurns()); //turns fehlen noch
+		persister.save(f, puzzleBoard, turnManager.getTurns()); 
 		
 		
 		
@@ -135,6 +135,12 @@ public class LightController implements ILightController {
 		try {
 			c.setBoard(m);
 		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			c.saveGame(new File("test.bol"));
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -161,17 +167,6 @@ public class LightController implements ILightController {
 		}
 	}
 	
-	/**
-	 * 
-	 * @param s 
-	 * @return
-	 * @author Andi
-	 */
-	private ITile getTileRepresentation(String s)
-	{
-		String[] ar = s.split("");
-		return null;
-	}
 	
 
 	@Override

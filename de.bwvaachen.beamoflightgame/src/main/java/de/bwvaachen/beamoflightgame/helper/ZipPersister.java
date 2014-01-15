@@ -16,6 +16,12 @@ import java.util.zip.ZipOutputStream;
 import de.bwvaachen.beamoflightgame.controller.Turn;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 
+
+/**
+ * Speichert unser Spiel als ZipDatei
+ * @author Basti - Andi
+ *
+ */
 public class ZipPersister implements IPersistenceHelper {
 
 	private ICodec codec;
