@@ -1,8 +1,12 @@
 /tmp
-/struktogramme.pdf
+#/struktogramme.pdf
 /struktogramme.synctex.gz
 /struktogramm.synctex.gz
 /struktogramme.aux
 /struktogramme.lof
 /struktogramme.log
 /struktogramme.out
+
+#Workaround to pretend that someone pushes a .gitignore file
+#where strutogramme.pdf is listed
+.gitignore

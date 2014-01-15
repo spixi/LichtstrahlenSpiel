@@ -22,7 +22,7 @@
 \end{declaration}
 }
 \assign{\(i \gets 0\)}
-\while{\(\lnot istGel"ost(board) \vee i \le maxIterationen\)}
+\while{\(\lnot istGel"ost(board) \wedge i \le maxIterationen\)}
 \while{\(\forall tile \in board\)}
 \sub{\(step(tile,0)\)}
 \assign{\(i \gets i+1\)}
