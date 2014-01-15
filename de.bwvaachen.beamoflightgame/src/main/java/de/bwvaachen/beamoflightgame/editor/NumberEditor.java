@@ -38,11 +38,9 @@ public class NumberEditor extends BeamsOfLightEditor
 	public void initComponents(){
 		
 		solveButton.addActionListener(this);
-		//middleButton.addActionListener(this);
 		resetButton.addActionListener(this);
 		
 		tileList = new ArrayList<TileButton>();
-		tilesPanel.removeAll();
 		
 		for(int i=0; i<row; i++){
 			for(int j=0; j<col; j++){
@@ -85,7 +83,7 @@ public class NumberEditor extends BeamsOfLightEditor
 		return target;
 	}
 	
-	public TilesPanel initTilesPanel(IBeamsOfLightPuzzleBoard source, boolean isSolution) 
+	public TilesPanel createTilesPanel(IBeamsOfLightPuzzleBoard source) 
 			throws NumberFormatException, IIOException, IOException{
 		
 		TilesPanel temp = new TilesPanel();
@@ -98,7 +96,7 @@ public class NumberEditor extends BeamsOfLightEditor
 			for(int j=0;j<col;j++){
 				currentTile = source.getTileAt(j,i);
 				tile = createTileButton(i,j);
-				if(currentTile.getClass().getSimpleName().equals("LightTile") && isSolution){
+				if(currentTile.getClass().getSimpleName().equals("LightTile")){
 					LightTileState currentTileState = (LightTileState) currentTile.getTileState();
 					char c = currentTileState.getSign();
 					switch(c){
@@ -148,7 +146,7 @@ public class NumberEditor extends BeamsOfLightEditor
 				for(TileButton tile : tileList){
 					tile.reset();
 				}
-			}else if(ae.getSource().getClass().getSimpleName() == "TileButton"){
+			}else if(ae.getSource().getClass().getSimpleName().equals("TileButton")){
 				String input ;
 				int maxLightPower = (col-1) + (row-1) ;
 				TileButton clickedTile  = (TileButton) ae.getSource();

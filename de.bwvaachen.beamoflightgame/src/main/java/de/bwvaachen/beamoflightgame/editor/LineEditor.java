@@ -49,7 +49,6 @@ public class LineEditor extends BeamsOfLightEditor
 		
 		
 		solveButton.addActionListener(this);
-		//middleButton.addActionListener(this);
 		resetButton.addActionListener(this);
 		
 		validLine = false ;
@@ -101,7 +100,7 @@ public class LineEditor extends BeamsOfLightEditor
 		return target;
 	}
 	
-	public TilesPanel initTilesPanel(IBeamsOfLightPuzzleBoard source, boolean isSolution) 
+	public TilesPanel createTilesPanel(IBeamsOfLightPuzzleBoard source) 
 			throws NumberFormatException, IIOException, IOException{
 		
 		TilesPanel temp = new TilesPanel();
@@ -132,12 +131,11 @@ public class LineEditor extends BeamsOfLightEditor
 						case 'e':	rotationAngle = 90.0;
 									break;
 						default: 	rotationAngle = 0.0 ;
-					}if(isSolution){
-						if(new GraficFactory(source).isEnd((LightTile)currentTile)){
-							tile.setImage("resources/themes/moon/light2.png", rotationAngle);
-						}else{
-							tile.setImage("resources/themes/moon/light1.png", rotationAngle);
-						}
+					}
+					if(new GraficFactory(source).isEnd((LightTile)currentTile)){
+						tile.setImage("resources/themes/moon/light2.png", rotationAngle);
+					}else{
+						tile.setImage("resources/themes/moon/light1.png", rotationAngle);
 					}
 				}else if(currentTile.getClass().getSimpleName().equals("NumberTile")){
 					NumberTileState currentTileState = (NumberTileState) currentTile.getTileState() ;

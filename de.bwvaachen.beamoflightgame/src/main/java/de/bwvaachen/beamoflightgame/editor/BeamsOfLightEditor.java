@@ -1,7 +1,6 @@
 package de.bwvaachen.beamoflightgame.editor;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -14,12 +13,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.IIOException;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 
 import de.bwvaachen.beamoflightgame.controller.ILightController;
@@ -30,9 +27,6 @@ import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
 import de.bwvaachen.beamoflightgame.logic.strategies.IntersectionStrategy;
 import de.bwvaachen.beamoflightgame.logic.strategies.LonelyFieldStrategy;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
-import de.bwvaachen.beamoflightgame.model.ITile;
-import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
-
 
 @SuppressWarnings("serial")
 public abstract class BeamsOfLightEditor extends JFrame 
@@ -97,7 +91,7 @@ public abstract class BeamsOfLightEditor extends JFrame
 
 	public abstract void initComponents();
 	
-	public abstract TilesPanel initTilesPanel(IBeamsOfLightPuzzleBoard source, boolean isSolution) 
+	public abstract TilesPanel createTilesPanel(IBeamsOfLightPuzzleBoard source) 
 			throws NumberFormatException, IIOException, IOException;
 	
 	public abstract IBeamsOfLightPuzzleBoard convertToBoard();
@@ -112,8 +106,8 @@ public abstract class BeamsOfLightEditor extends JFrame
 		
 		remove(tilesPanel);
 		
-		tilesPanel = initTilesPanel(source,false);
-		//tilesPanelSolved = initTilesPanel(source,true);
+		tilesPanel = createTilesPanel(source);
+		//tilesPanelSolved = initTilesPanel(source);
 		
 		add(BorderLayout.CENTER,tilesPanel);
 	}
