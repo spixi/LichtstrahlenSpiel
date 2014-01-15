@@ -28,6 +28,7 @@ import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.ui.PrototypModelForIntersectionStrategy;
+import de.bwvaachen.beamoflightgame.ui.PrototypModelForLonelyFieldStrategy;
 
 public class LightController implements ILightController {
 	private TurnUndoManager          turnManager;
@@ -190,7 +191,7 @@ public class LightController implements ILightController {
 		
 		try {
 			
-			solutionBoard = new PrototypModelForIntersectionStrategy() ;
+			solutionBoard = new PrototypModelForLonelyFieldStrategy() ;
 			
 		
 			ISolver s =

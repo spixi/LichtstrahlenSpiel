@@ -109,7 +109,7 @@ public class GraficFactory {
 	 * Gibt an, ob der Lichtstrahl zu Ende ist
 	 * @param tile  Das LightTile welches geprueft werden soll
 	 * @return true, wenn das Licht an diesem Punkt zu Ende ist
-	 * @author Marius / pauls_and
+	 * @author pauls_and / Marius
 	 */
 	public boolean isEnd(LightTile tile)
 	{

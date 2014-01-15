@@ -33,18 +33,21 @@ public final class  BoardUtils<T extends ITileState>{
 		return instance;
 	}
 	
-	public void fillBoard(ITile<T> start, int numOfFields, TraverseDirection dir, T state) {
+	public int fillBoard(ITile<T> start, int numOfFields, TraverseDirection dir, T state) {
 		BoardTraverser traverser = start.getTraverser();
+		int filledTiles = 0;
 		while(numOfFields-- >= 0) {
 			ITile tile = traverser.get();
 			if(tile.isStateAllowed(clazz) && tile.isStateChangeable()) {
 				//Change the state
 				//Only the last change should be significant, therefore numOfFields==0
 				((IChangeableTile) tile).setState(state, numOfFields==0);
+				filledTiles++;
 			}
 			//shift the traverser to the next tile
-			if(!traverser.shift(dir)) return;
+			if(!traverser.shift(dir)) break;
 		}
+		return filledTiles;
 	}
 
 }

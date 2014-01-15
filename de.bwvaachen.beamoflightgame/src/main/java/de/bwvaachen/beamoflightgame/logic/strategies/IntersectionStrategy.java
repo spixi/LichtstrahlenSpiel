@@ -57,16 +57,10 @@ public class IntersectionStrategy extends AbstractStrategy<NumberTileState> {
 			traverser.reset();
 			while(traverser.shift(state.getTraverseDirection())) {
 				ITileState nextState = traverser.get().getTileState();
-				
-				if(traverser.get().getY() == 3) {
-					int a = 1 + 2;
-				}
-				
 				//stop if tile is crossed
 				if (doesCross(nextState, state)) break;
 				//ignore tiles of the same state
 				if (nextState.equals(state)) continue;
-				
 				counter ++;
 			}
 			
@@ -76,11 +70,6 @@ public class IntersectionStrategy extends AbstractStrategy<NumberTileState> {
 			
 			maxRange[index++] = counter;
 		}
-		
-		System.out.printf("tile = {%s, %s}; remaining range = %d; range { n e s w } =  { ", tile.getX(), tile.getY(), remainingLightRange);
-		for(int m : maxRange) System.out.printf("%d ", m);
-		System.out.println("}");
-		System.out.println("======================");
 		
 		int availableRange = (maxRange[0]+maxRange[1]+maxRange[2]+maxRange[3]);
 		
@@ -92,8 +81,6 @@ public class IntersectionStrategy extends AbstractStrategy<NumberTileState> {
 		//case 2: there is only one possibility to cover the remaining range of the
 		//        NumberTile
 		else if(availableRange == remainingLightRange) {
-			
-			
 			for(int i=states.length-1; i<=0; i--) {
 				final LightTileState currentState = states[i];
 				final int range = maxRange[i];
@@ -125,39 +112,36 @@ public class IntersectionStrategy extends AbstractStrategy<NumberTileState> {
 							subtractVector(V(1,1,1,1),searchPath);
 				
 					for(int i=0; i<otherDirections.length; i++) {
-						final int _i = i;
+						final LightTileState currentState = states[i];
 						
 						final int tilesToDistribute = remainingLightRange - sum - distributedTiles.get();
 						if(tilesToDistribute <= 0)
 							break loopOverSearchPaths;
 						
 						if(otherDirections[i] <= 0) continue;
-						System.out.printf("tilesToDistribute = %s\n",tilesToDistribute);
-						final TraverseDirection currentDirection = states[i].getTraverseDirection();
+						final TraverseDirection currentDirection = currentState.getTraverseDirection();
+						final int range = Math.min(tilesToDistribute, maxRange[i]);
+						
 						traverser.reset();
 						if(!traverser.shift(currentDirection)) continue;
-						traverser.get().accept(new AbstractTileVisitor() {
-							public void visitLightTile(LightTile lt) {
-								int range = Math.min(tilesToDistribute, maxRange[_i]);
-								System.out.printf("Range: %d\n", range);
-								if(range <= 0) return;
-								utils.fillBoard(lt, range-1, currentDirection, states[_i]);
-								distributedTiles.addAndGet(range);
-							}
-						});
-						System.out.printf("currentDirection: %s, maxRange: %d \n", states[i], maxRange[i]);	
+						
+						if(range > 0) {
+							traverser.get().accept(new AbstractTileVisitor() {
+								public void visitLightTile(LightTile lt) {
+									int filledTiles =
+								    utils.fillBoard(lt, range-1, currentDirection, currentState);
+									distributedTiles.addAndGet(filledTiles);
+								}
+							});
+						}
 					}
-					System.out.print("------------\n");	
 				}
 				
 			}
 		}
-
 		
-		
-		//TODO
-		
-		return false;
+		//We assume that this strategy will always solve a puzzle
+		return true;
 		// TODO Auto-generated method stub
 	}
 	

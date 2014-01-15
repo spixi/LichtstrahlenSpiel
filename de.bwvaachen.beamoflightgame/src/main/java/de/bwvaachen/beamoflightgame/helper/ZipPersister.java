@@ -37,7 +37,7 @@ public class ZipPersister implements IPersistenceHelper {
 			FileInputStream fileInputStream = new FileInputStream(path);
 			ZipInputStream zipIn = new ZipInputStream(fileInputStream);
 			ZipEntry entry;
-			IBeamsOfLightPuzzleBoard board = null;
+			IBeamsOfLightPuzzleBoard board = null, solution = null;
 			List<Turn> turns=null;
 			
 			Map<String,String> sections = new HashMap<String,String>();
@@ -62,8 +62,9 @@ public class ZipPersister implements IPersistenceHelper {
 					new de.bwvaachen.beamoflightgame.helper.SimpleASCIICodec();
 			
 			//TODO: Refactor this stuff, we could also try to get rid of the codec trash
-			board = codec.boardFromInputstream(new StringBufferInputStream(sections.get("board")));
-			turns = codec.turnsFromInputstream(new StringBufferInputStream(sections.get("turns")),board);
+			board 		= codec.boardFromInputstream(new StringBufferInputStream(sections.get("board")));
+			solution 	= codec.boardFromInputstream(new StringBufferInputStream(sections.get("solution")));
+			turns 		= codec.turnsFromInputstream(new StringBufferInputStream(sections.get("turns")),board);
 			
 			return new Pair<IBeamsOfLightPuzzleBoard, List<Turn>>(board,turns);
 	}

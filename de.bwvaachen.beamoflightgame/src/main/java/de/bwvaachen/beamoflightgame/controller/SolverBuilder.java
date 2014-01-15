@@ -63,7 +63,7 @@ public class SolverBuilder {
 				}
 
 				
-				private void step(ITile tile, int stackPointer) throws UnsolvablePuzzleException, AmbiguousPuzzleException {
+				private void step(ITile tile, int stackPointer) throws UnsolvablePuzzleException, AmbiguousPuzzleException {	
 					//if (stackPointer == strategies.size()) throw new UnsolvablePuzzleException();
 					if (stackPointer == strategies.size()) return;
 					
@@ -73,9 +73,10 @@ public class SolverBuilder {
 						step(tile, stackPointer+1);
 					}
 					else {
+						System.out.printf("Feld: (%d,%d), Strategie: %s\n", tile.getX(), tile.getY(), currentStrategy.getClass().toString());
 						currentStrategy.init(tile);
 						boolean canSolve = currentStrategy.tryToSolve();
-						//if(!canSolve) step(tile, stackPointer+1);
+						if(!canSolve) step(tile, stackPointer+1);
 					}
 				}
 				
