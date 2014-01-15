@@ -1,12 +1,15 @@
 package de.bwvaachen.beamoflightgame.editor;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.IIOException;
@@ -14,9 +17,14 @@ import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
+import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
+import de.bwvaachen.beamoflightgame.model.NumberTileState;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.ui.GraficFactory;
 
 @SuppressWarnings("serial")
 public class LineEditor extends BeamsOfLightEditor
@@ -25,7 +33,6 @@ public class LineEditor extends BeamsOfLightEditor
 	private Point lineStart, lineEnd;
 	private Line2D line;
 	private boolean validLine ;
-	private double rotationAngle ;
 	private TilePanel tile;
 	private ArrayList<TilePanel> tileList ;
 	private int tileCount ;
@@ -40,9 +47,10 @@ public class LineEditor extends BeamsOfLightEditor
 	@Override
 	public void initComponents(){
 		
-		leftButton.addActionListener(this);
-		middleButton.addActionListener(this);
-		rightButton.addActionListener(this);
+		
+		solveButton.addActionListener(this);
+		//middleButton.addActionListener(this);
+		resetButton.addActionListener(this);
 		
 		validLine = false ;
 		rotationAngle = 0.0 ;
@@ -62,6 +70,7 @@ public class LineEditor extends BeamsOfLightEditor
 	
 	@Override
 	public String getTileStats() {
+		this.totalTiles = col*row ;
 		this.remainingTiles = totalTiles ;
 		
 		for(TilePanel tile : tileList){
@@ -91,6 +100,56 @@ public class LineEditor extends BeamsOfLightEditor
 		}
 		return target;
 	}
+	
+	public TilesPanel initTilesPanel(IBeamsOfLightPuzzleBoard source, boolean isSolution) 
+			throws NumberFormatException, IIOException, IOException{
+		
+		TilesPanel temp = new TilesPanel();
+		ITile currentTile ;
+		
+		tileList.clear();
+		temp.setLayout(new GridLayout(col,row));
+		temp.addMouseListener(this);
+		temp.addMouseMotionListener(this);
+		
+		for(int i=0;i<row;i++){
+			for(int j=0;j<col;j++){
+				currentTile = source.getTileAt(j,i);
+				tile = createTilePanel(i,j);
+				if(currentTile.getClass().getSimpleName().equals("LightTile")){
+					
+					LightTileState currentTileState = (LightTileState) currentTile.getTileState();
+					char c = currentTileState.getSign();
+					double rotationAngle ;
+					
+					switch(c){
+						case 'n':	rotationAngle = 0.0;
+									break;
+						case 's':	rotationAngle = 180.0;
+									break;
+						case 'w':	rotationAngle = 270.0;
+									break;
+						case 'e':	rotationAngle = 90.0;
+									break;
+						default: 	rotationAngle = 0.0 ;
+					}if(isSolution){
+						if(new GraficFactory(source).isEnd((LightTile)currentTile)){
+							tile.setImage("resources/themes/moon/light2.png", rotationAngle);
+						}else{
+							tile.setImage("resources/themes/moon/light1.png", rotationAngle);
+						}
+					}
+				}else if(currentTile.getClass().getSimpleName().equals("NumberTile")){
+					NumberTileState currentTileState = (NumberTileState) currentTile.getTileState() ;
+					int lightPower = currentTileState.getNumber();
+					tile.setLightPower(lightPower);
+				}
+				tileList.add(tile);
+				temp.add(tile);
+			}
+		}
+		return temp;
+	} //initTilesPanel
 	
 	private double checkLine(TilePanel startTile, TilePanel endTile) throws Exception{
 		
@@ -165,6 +224,15 @@ public class LineEditor extends BeamsOfLightEditor
 			angle = 180.0 ;
 		}
 		return angle ;
+	} //checkLine
+	
+	public TilePanel createTilePanel(int row, int col){
+		TilePanel temp = new TilePanel(col,row);
+		temp.setSize(128,128);
+		temp.setMinimumSize(new Dimension(128,128));
+		temp.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		
+		return temp ;
 	}
 	
 	@Override
@@ -176,6 +244,8 @@ public class LineEditor extends BeamsOfLightEditor
 				if(tile.getBounds().contains(clicked)){
 					tile.reset();
 				}
+			tileStats.setText(getTileStats());
+			checkButtons();
 		}
 	}
 
@@ -239,6 +309,7 @@ public class LineEditor extends BeamsOfLightEditor
 				//System.out.println("START: "+ startTile.getCol() +","+ startTile.getRow());
 				//System.out.println("END: "+ endTile.getCol() +","+ endTile.getRow());
 				tileStats.setText(getTileStats());
+				checkButtons();
 				tileCount = 0 ;
 				line = new Line2D.Double();
 				validLine = false ;
@@ -265,16 +336,13 @@ public class LineEditor extends BeamsOfLightEditor
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		if(ae.getSource() == leftButton){
-			
-		}
-		if(ae.getSource() == middleButton){
-			
-		}
-		if(ae.getSource() == rightButton){
+		super.actionPerformed(ae);
+		
+		if(ae.getSource() == resetButton){
 			for(TilePanel tile : tileList){
 				tile.reset();
 			}
 		}
+		tilesPanelSolved = null ;
 	}
 }

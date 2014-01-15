@@ -74,6 +74,16 @@ public class TileButton extends JButton {
 		repaint();
 	}
 	
+	public void setImage(String path, double angle) throws IOException{
+		this.image = BeamsOfLightEditor.rotate(ImageIO.read(new File(path)),angle) ;
+		if(angle == 90.0 || angle == 270.0){
+			this.state = TileState.H_LIGHT ;
+		}else{
+			this.state = TileState.V_LIGHT ;
+		}
+		repaint();
+	}
+	
 	@Override
 	public void paintComponent(Graphics g){
 		Graphics2D g2 = (Graphics2D) g;

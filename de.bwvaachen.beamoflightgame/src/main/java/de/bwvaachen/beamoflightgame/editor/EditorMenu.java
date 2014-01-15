@@ -107,7 +107,7 @@ public class EditorMenu extends JMenuBar
 		
 		try {
 			controller = new LightController();
-			board = editor.convertToBoard();
+			board = (BeamsOfLightPuzzleBoard) editor.convertToBoard();
 			System.out.println(board.toString());
 			controller.setBoard(board);
 				
@@ -141,6 +141,7 @@ public class EditorMenu extends JMenuBar
 					file = fileChooser.getSelectedFile();
 			    	controller.loadGame(file);
 				}
+				editor.importPuzzleBoard(controller.getCurrentModel());
 			 
 			}else if(ae.getSource() == menuItemIns){
 				

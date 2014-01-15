@@ -111,7 +111,7 @@ public class GraficFactory {
 	 * @return true, wenn das Licht an diesem Punkt zu Ende ist
 	 * @author Marius / pauls_and
 	 */
-	private boolean isEnd(LightTile tile)
+	public boolean isEnd(LightTile tile)
 	{
 		//Traverser auf die Position der aktuellen Kachel schieben
 		traverser.moveTo(tile.getX(), tile.getY());
