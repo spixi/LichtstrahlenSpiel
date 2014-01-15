@@ -389,7 +389,7 @@ public class LightgameUI extends JFrame {
 			contentPane.add(rasterPanel, BorderLayout.CENTER);
 	
 			// Controller mit Test Prototyp fï¿½r GUI fï¿½llen.
-			controller . setBoard ( new PrototypModelForIntersectionStrategy() ) ;
+			controller . setBoard ( new PrototypModelForLonelyFieldStrategy() ) ;
 			
 			// Vom Controller die Musterlösung generieren lassen.
 			controller . solve() ;
@@ -401,6 +401,7 @@ public class LightgameUI extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					//Why the f*ck has the current model changed in this place ???
 					try {
 						ISolver s =
 						SolverBuilder.buildWith(LonelyFieldStrategy.class).

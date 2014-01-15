@@ -22,15 +22,10 @@ public class NumberTile extends AbstractTile<NumberTileState> implements IChange
 	public int getRemainingLightRange() {
 		int counter = 0;
 		BoardTraverser traverser = new BoardTraverser(this.board, this.getX(), this.getY());
-		for(LightTileState lts : new LightTileState[] {
-				LightTileState.NORTH,
-				LightTileState.EAST,
-				LightTileState.SOUTH,
-				LightTileState.WEST
-		}) {
+		for(LightTileState lts : LightTileState.allDirections()) {
 			traverser.reset();
 			while(traverser.shift(lts.getTraverseDirection())){
-				if(traverser.get().getTileState() == lts) {
+				if(traverser.get().getTileState().equals(lts)) {
 					counter++;
 				}
 				else break;
