@@ -32,36 +32,38 @@ import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 public class EditorMenu extends JMenuBar 
 	implements ActionListener{
 	
-	private JMenu 					fileMenu ;
-	private JMenuItem 				menuItemNew ;
-	private JMenuItem				menuItemSave ;
-	private JMenuItem				menuItemSaveAs ;
-	private JMenuItem				menuItemLoad ;
-	private JMenuItem				menuItemExit ;
-	private JMenu					editMenu ;
-	private JMenuItem				menuItemResize ;
-	private ButtonGroup				buttonGroupDisplay ;
-	private JRadioButtonMenuItem	jrbMenuItemAllTiles ;
-	private JRadioButtonMenuItem	jrbMenuItemNumberTiles ;
-	private JMenuItem				menuItemSolve ;
-	private JMenuItem				menuItemReset ;
-	private JMenu					helpMenu ;
-	private JMenuItem				menuItemIns ;
-	private JMenuItem				menuItemAbout ;
+	private JMenu 					fileMenu;
+	private JMenuItem 				menuItemNew;
+	private JMenuItem				menuItemSave;
+	private JMenuItem				menuItemSaveAs;
+	private JMenuItem				menuItemLoad;
+	private JMenuItem				menuItemExit;
+	private JMenu					editMenu;
+	private JMenuItem				menuItemResize;
+	private ButtonGroup				buttonGroupDisplay;
+	private JRadioButtonMenuItem	jrbMenuItemAllTiles;
+	private JRadioButtonMenuItem	jrbMenuItemNumberTiles;
+	private JMenuItem				menuItemSolve;
+	private JMenuItem				menuItemReset;
+	private JMenu					helpMenu;
+	private JMenuItem				menuItemInstructions;
+	private JMenuItem				menuItemAbout;
 	
-	private BeamsOfLightEditor editor ;
-	private BeamsOfLightPuzzleBoard board ;
-	private ILightController controller ;
-	private JFileChooser fileChooser ;
-	private File file ;
-
+	private BeamsOfLightEditor 		editor;
+	private BeamsOfLightPuzzleBoard board;
+	private ILightController 		controller;
+	private JFileChooser 			fileChooser;
+	private File 					file;
+	private final String 			className;
+	
 	public EditorMenu(BeamsOfLightEditor editor){
 		this.editor = editor;
-		
+		this.className = editor.getClass().getSimpleName();
+				
 		fileMenu = new JMenu("File");
 		this.add(fileMenu);
 		
-		menuItemNew = new JMenuItem("New...");
+		menuItemNew = new JMenuItem("New");
 		menuItemNew.addActionListener(this);
 		fileMenu.add(menuItemNew);
 		
@@ -72,7 +74,7 @@ public class EditorMenu extends JMenuBar
 		menuItemSave.addActionListener(this);
 		fileMenu.add(menuItemSave);
 		
-		menuItemSaveAs = new JMenuItem("Save As...");
+		menuItemSaveAs = new JMenuItem("Save As");
 		menuItemSaveAs.addActionListener(this);
 		fileMenu.add(menuItemSaveAs);
 		
@@ -93,7 +95,7 @@ public class EditorMenu extends JMenuBar
 		editMenu = new JMenu("Edit");
 		this.add(editMenu);
 		
-		menuItemResize = new JMenuItem("Change Board Size...");
+		menuItemResize = new JMenuItem("Change Board Size");
 		menuItemResize.addActionListener(this);
 		editMenu.add(menuItemResize);
 		
@@ -105,12 +107,14 @@ public class EditorMenu extends JMenuBar
 		jrbMenuItemAllTiles = new JRadioButtonMenuItem("Display All Tiles",editor.getDisplayAllTiles());
 		jrbMenuItemAllTiles.addActionListener(this);
 		jrbMenuItemAllTiles.setEnabled(false);
+		jrbMenuItemAllTiles.setToolTipText("Only available on solved boards");
 		buttonGroupDisplay.add(jrbMenuItemAllTiles);
 		editMenu.add(jrbMenuItemAllTiles);
 		
 		jrbMenuItemNumberTiles = new JRadioButtonMenuItem("Display Number Tiles Only",!editor.getDisplayAllTiles());
 		jrbMenuItemNumberTiles.addActionListener(this);
 		jrbMenuItemNumberTiles.setEnabled(false);
+		jrbMenuItemNumberTiles.setToolTipText("Only available on solved boards");
 		buttonGroupDisplay.add(jrbMenuItemNumberTiles);
 		editMenu.add(jrbMenuItemNumberTiles);
 		
@@ -119,6 +123,8 @@ public class EditorMenu extends JMenuBar
 		
 		menuItemSolve = new JMenuItem("Solve");
 		menuItemSolve.addActionListener(this);
+		menuItemSolve.setEnabled(false);
+		menuItemSolve.setToolTipText("Only available when remaining fields = 0");
 		editMenu.add(menuItemSolve);
 		
 		menuItemReset = new JMenuItem("Reset");
@@ -128,15 +134,33 @@ public class EditorMenu extends JMenuBar
 		helpMenu = new JMenu("Help");
 		this.add(helpMenu);
 		
-		menuItemIns = new JMenuItem("Instructions");
-		menuItemIns.addActionListener(this);
-		helpMenu.add(menuItemIns);
+		menuItemInstructions = new JMenuItem("Instructions");
+		menuItemInstructions.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent ae){
+				try {
+					new HelpFrame("resources/strings/"+className+"Instructions.txt");
+				} catch (IOException ioe) {
+					// TODO 
+					ioe.printStackTrace();
+				}
+			}
+		});
+		helpMenu.add(menuItemInstructions);
 		
 		JSeparator separator6 = new JSeparator();
 		helpMenu.add(separator6);
 		
 		menuItemAbout = new JMenuItem("About");
-		menuItemAbout.addActionListener(this);
+		menuItemAbout.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent ae){
+				try {
+					new HelpFrame("resources/strings/Copyright.txt");
+				} catch (IOException ioe) {
+					// TODO 
+					ioe.printStackTrace();
+				}
+			}
+		});
 		helpMenu.add(menuItemAbout);
 	}
 
@@ -155,7 +179,7 @@ public class EditorMenu extends JMenuBar
 				new EditorMain();
 			}
 		}else if(ae.getSource() == menuItemExit){
-			System.exit(0);
+			editor.dispose();
 		}else if(ae.getSource() == jrbMenuItemAllTiles){
 			editor.setDisplayAllTiles(true);
 		}else if(ae.getSource() == jrbMenuItemNumberTiles){
@@ -164,16 +188,11 @@ public class EditorMenu extends JMenuBar
 			editor.getSolveButton().doClick();
 		}else if(ae.getSource() == menuItemReset){
 			editor.getResetButton().doClick();
-		}else if(ae.getSource() == menuItemIns){
-			
-		}else if(ae.getSource() == menuItemAbout){
-		
 		}else
 			
 		try {
 			controller = new LightController();
 			board = (BeamsOfLightPuzzleBoard) editor.convertToBoard();
-			//System.out.println(board.toString());
 			controller.setBoard(board);
 				
 			if(ae.getSource() == menuItemSave){

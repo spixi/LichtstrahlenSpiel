@@ -74,7 +74,7 @@ public abstract class BeamsOfLightEditor extends JFrame
 		setMinimumSize(getSize());
 		setLocation((screenSize.width - getSize().width)/2,(screenSize.height - getSize().height)/2);
 		setResizable(false);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setTitle("BeamsOfLightGame - " + editorType);
 		setLayout(new BorderLayout());
 		
@@ -120,7 +120,7 @@ public abstract class BeamsOfLightEditor extends JFrame
 			solveButton.setEnabled(false);
 		}
 		if(!solveButton.isEnabled()){
-			solveButton.setToolTipText("Can only solve if remaining fields = 0.");
+			solveButton.setToolTipText("Only available when remaining fields = 0");
 		}else{
 			solveButton.setToolTipText(null);
 		}
@@ -161,6 +161,14 @@ public abstract class BeamsOfLightEditor extends JFrame
 			    onlyNumberTilesPanel = new TilesPanel();
 			    importPuzzleBoard(controller.getCurrentModel());
 			    convertTilesPanel();
+			    if(editorType == EditorType.LineEditor){
+			    	editorMenu.getJRBMenuItemAllTiles().setEnabled(true);
+			    	editorMenu.getJRBMenuItemAllTiles().setToolTipText(null);
+			    	editorMenu.getJRBMenuItemNumberTiles().setEnabled(true);
+			    	editorMenu.getJRBMenuItemNumberTiles().setToolTipText(null);
+			    	editorMenu.getMenuItemSolve().setEnabled(true);
+			    	editorMenu.getMenuItemSolve().setToolTipText(null);
+			    }
 				//tiles.add(tilesPanel,"1");
 			    tiles.add(onlyNumberTilesPanel,"2");
 			}

@@ -58,7 +58,7 @@ public class EditorMain extends JFrame
 		setMinimumSize(frameSize) ;								
 		setLocation((screenSize.width - frameSize.width)/2,(screenSize.height - frameSize.height)/2);
 		setResizable(false);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setTitle("BeamOfLightGame Editor");
 		
 		initComponents();

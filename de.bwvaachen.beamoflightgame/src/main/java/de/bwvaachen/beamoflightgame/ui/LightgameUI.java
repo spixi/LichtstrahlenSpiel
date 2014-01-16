@@ -31,11 +31,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.SolverBuilder;
 import de.bwvaachen.beamoflightgame.controller.impl.LightController;
+import de.bwvaachen.beamoflightgame.editor.EditorMain;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.ITileVisitor;
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
@@ -630,6 +632,22 @@ public class LightgameUI extends JFrame {
 				
 		
 		mnGame.add(mntmBackToMark);
+		
+		JMenu mnEditor = new JMenu("Editor");
+		menuBar.add(mnEditor);
+		
+		JMenuItem mntmStartEditor = new JMenuItem("Start Editor");
+		mntmStartEditor.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent ae){
+				SwingUtilities.invokeLater(new Runnable(){
+					public void run(){
+					new EditorMain();
+					}});
+			}
+		});
+		
+		mnEditor.add(mntmStartEditor);
 		
 		/*
 		//TODO: J(Toggle)Button instead of JMenuItem
