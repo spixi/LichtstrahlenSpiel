@@ -2,20 +2,19 @@
 \usepackage[utf8]{inputenc}
 \input{meta}
 \input{packages}
+\input{makros}
 
 \begin{document}
-
-\setiftext{J}{N}            %Text von IF setzen
 
 \maketitle
 
 \pdfbookmark[1]{Abbildungsverzeichnis}{toc}
 \listoffigures
-%\clearpage
 
-\begin{figure}[htbp]
-\input{Struktogramme/beispiel}
-\caption{Beispiel}
-\end{figure}
+\includestruct{solver}{Solver: Grundalgorithmus}
+\includestruct{step}{Solver: Einzelschritte, Methode step()}
+
+\includestruct{lonely}{Strategie: LonelyFieldStrategy}
+\includestruct{intersection}{Solver: IntersectionStrategy)}
 
 \end{document}
