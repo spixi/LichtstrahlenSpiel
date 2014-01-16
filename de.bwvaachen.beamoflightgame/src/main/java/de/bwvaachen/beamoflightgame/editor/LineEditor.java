@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -30,37 +29,36 @@ import de.bwvaachen.beamoflightgame.ui.GraficFactory;
 public class LineEditor extends BeamsOfLightEditor
 	implements MouseMotionListener, MouseListener{
 	
-	private Point lineStart, lineEnd;
-	private Line2D line;
-	private boolean validLine ;
-	private TilePanel tile;
-	private ArrayList<TilePanel> tileList ;
-	private int tileCount ;
-		
+	private Point 					lineStart;
+	private Point					lineEnd;
+	private Line2D 					line;
+	private boolean 				validLine ;
+	private int 					tileCount ;
+	
+	private ArrayList<TilePanel> 	tileList ;
+
 	public LineEditor(int width, int height){
 		super(EditorType.LineEditor, width, height);
-		
-		tilesPanel.addMouseMotionListener(this);
-		tilesPanel.addMouseListener(this);
 	}
 	
 	@Override
 	public void initComponents(){
-		
+		TilePanel tile ;
 		
 		solveButton.addActionListener(this);
 		resetButton.addActionListener(this);
 		
+		tilesPanel.addMouseMotionListener(this);
+		tilesPanel.addMouseListener(this);
+		
 		validLine = false ;
-		rotationAngle = 0.0 ;
 		tileCount = 0;
+		displayAllTiles = true ;
 		tileList = new ArrayList<TilePanel>();
 		
 		for(int i=0; i<row; i++){
 			for(int j=0; j<col; j++){
-				tile = new TilePanel(j,i);
-				tile.setSize(128,128);
-				tile.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+				tile = createTilePanel(i,j);
 				tilesPanel.add(tile);
 				tileList.add(tile);
 			}
@@ -77,7 +75,7 @@ public class LineEditor extends BeamsOfLightEditor
 				this.remainingTiles -= (tile.getLightPower() + 1); 
 			}
 		}
-		return "Felder (Gesamt): "+totalTiles+"\nFelder (Verbleibend): "+remainingTiles;
+		return "Fields (Total): "+totalTiles+"\nFields (Remaining): "+remainingTiles+"\n";
 	}
 
 	@Override
@@ -100,23 +98,25 @@ public class LineEditor extends BeamsOfLightEditor
 		return target;
 	}
 	
-	public TilesPanel createTilesPanel(IBeamsOfLightPuzzleBoard source) 
+	
+	public void importPuzzleBoard(IBeamsOfLightPuzzleBoard source) 
 			throws NumberFormatException, IIOException, IOException{
-		
-		TilesPanel temp = new TilesPanel();
 		ITile currentTile ;
+		TilePanel tile ;
 		
 		tileList.clear();
-		temp.setLayout(new GridLayout(col,row));
-		temp.addMouseListener(this);
-		temp.addMouseMotionListener(this);
+		
+		col = source.getWidth();
+		row = source.getHeight();
+		gl = new GridLayout(row,col);
+		
+		tilesPanel.setLayout(gl);
 		
 		for(int i=0;i<row;i++){
 			for(int j=0;j<col;j++){
 				currentTile = source.getTileAt(j,i);
 				tile = createTilePanel(i,j);
 				if(currentTile.getClass().getSimpleName().equals("LightTile")){
-					
 					LightTileState currentTileState = (LightTileState) currentTile.getTileState();
 					char c = currentTileState.getSign();
 					double rotationAngle ;
@@ -143,11 +143,26 @@ public class LineEditor extends BeamsOfLightEditor
 					tile.setLightPower(lightPower);
 				}
 				tileList.add(tile);
-				temp.add(tile);
+				tilesPanel.add(tile);
 			}
 		}
-		return temp;
-	} //initTilesPanel
+	} //importPuzzleBoard
+	
+	public void convertTilesPanel(){
+		TilePanel temp ;
+		
+		onlyNumberTilesPanel = new TilesPanel();
+		onlyNumberTilesPanel.setLayout(gl);
+		
+		for(TilePanel tile : tileList){
+			if(tile.getState() != TileState.NUMBER){
+				temp = createTilePanel(tile.getCol(),tile.getRow());
+				onlyNumberTilesPanel.add(temp);
+			}else{
+				onlyNumberTilesPanel.add(tile);
+			}
+		}
+	}
 	
 	private double checkLine(TilePanel startTile, TilePanel endTile) throws Exception{
 		
@@ -182,32 +197,32 @@ public class LineEditor extends BeamsOfLightEditor
 			if(deltaXabs >= 1 && deltaYabs >= 1 && !errorDisplayed){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
-												"Diagonalen sind nicht moeglich!",
-												"Fehler",
+												"Unable to draw diagonal beams!",
+												"Error",
 												JOptionPane.ERROR_MESSAGE);
 				errorDisplayed = true ;
 			}
 			if(startTile == endTile && !errorDisplayed){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
-												"Start- und Endfeld duerfen nicht gleich sein!",
-												"Fehler",
+												"Beams cannot start and end in the same field!",
+												"Error",
 												JOptionPane.ERROR_MESSAGE);
 				errorDisplayed = true ;
 			}
 			if(!(startTile.getState() == TileState.EMPTY || startTile.getState() == TileState.NUMBER) && !errorDisplayed){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
-												"Startfeld muss leer oder bereits Zahlenfeld sein!\nFeldbelegung loeschen mit Rechtsklick.",
-												"Fehler",
+												"Startfield has to be empty or already numberfield!\nRightclick on fields to clear them.",
+												"Error",
 												JOptionPane.ERROR_MESSAGE);
 				errorDisplayed = true ;
 			}
 			if(crossingNonEmptyTile && !errorDisplayed){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
-												"Linie darf kein gefuelltes Feld schneiden!\nFeldbelegung loeschen mit Rechtsklick.",
-												"Fehler",
+												"Beams must not cross!\nRightclick on fields to clear them.",
+												"Error",
 												JOptionPane.ERROR_MESSAGE);
 				errorDisplayed = true ;
 			}
@@ -224,15 +239,6 @@ public class LineEditor extends BeamsOfLightEditor
 		return angle ;
 	} //checkLine
 	
-	public TilePanel createTilePanel(int row, int col){
-		TilePanel temp = new TilePanel(col,row);
-		temp.setSize(128,128);
-		temp.setMinimumSize(new Dimension(128,128));
-		temp.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		
-		return temp ;
-	}
-	
 	@Override
 	public void mouseClicked(MouseEvent me) {
 		Point clicked = me.getPoint();
@@ -245,14 +251,6 @@ public class LineEditor extends BeamsOfLightEditor
 			tileStats.setText(getTileStats());
 			checkButtons();
 		}
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent me) {
-	}
-
-	@Override
-	public void mouseExited(MouseEvent me) {
 	}
 
 	@Override
@@ -313,7 +311,7 @@ public class LineEditor extends BeamsOfLightEditor
 				validLine = false ;
 				rotationAngle = 0.0;
 				tilesPanel.setLine(line);
-				tilesPanel.repaint();
+				repaint();
 			}
 		} //if(SwingUtilities.isLeftMouseButton(me))
 }
@@ -327,11 +325,8 @@ public class LineEditor extends BeamsOfLightEditor
 			tilesPanel.repaint();
 		}
 	}
-
-	@Override
-	public void mouseMoved(MouseEvent me) {
-	}
-
+	
+	/*
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		super.actionPerformed(ae);
@@ -341,6 +336,19 @@ public class LineEditor extends BeamsOfLightEditor
 				tile.reset();
 			}
 		}
-		tilesPanelSolved = null ;
 	}
+	*/
+	
+	public TilePanel createTilePanel(int row, int col){
+		TilePanel temp = new TilePanel(col,row);
+		temp.setSize(128,128);
+		temp.setMinimumSize(new Dimension(128,128));
+		temp.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		
+		return temp ;
+	}
+	
+	public void mouseMoved(MouseEvent me) {}
+	public void mouseEntered(MouseEvent me) {}
+	public void mouseExited(MouseEvent me) {}
 }

@@ -40,5 +40,4 @@ public class TilesPanel extends JPanel {
 			g2.draw(line);
 		}
 	}
-	
 }

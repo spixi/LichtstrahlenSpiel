@@ -1,6 +1,7 @@
 package de.bwvaachen.beamoflightgame.editor;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -32,47 +33,61 @@ import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 public abstract class BeamsOfLightEditor extends JFrame 
 	implements ActionListener{
 	
-	private Dimension screenSize;
-	protected int row;
-	protected int col;
-	protected int totalTiles;
-	protected int remainingTiles;
-	protected double rotationAngle ;
-	protected TilesPanel tilesPanel;
-	protected TilesPanel tilesPanelSolved;
-	protected JPanel buttonPanel;
-	protected JPanel southPanel;
-	protected JButton solveButton; 
-	protected JButton resetButton; 
-	protected EditorType editorType ;
-	protected JTextArea tileStats ;
+	private Dimension 		screenSize;
+	protected EditorType 	editorType ;
+	protected EditorMenu 	editorMenu;
+	protected int 			row;
+	protected int 			col;
+	protected int 			totalTiles;
+	protected int 			remainingTiles;
+	protected double 		rotationAngle ;
+	protected boolean		displayAllTiles ;
+	protected JPanel 		buttonPanel;
+	protected JPanel 		southPanel;
+	protected JButton 		solveButton; 
+	protected JButton 		resetButton; 
+	protected JTextArea 	tileStats ;
+	
+	protected JPanel 		tiles ;
+	protected CardLayout 	cl ;
+	protected GridLayout 	gl ;
+	protected TilesPanel 	tilesPanel;
+	protected TilesPanel 	onlyNumberTilesPanel ;
 	
 	public BeamsOfLightEditor(EditorType editorType, int width, int height){
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		this.col = width ; this.row = height ;
 		this.totalTiles = col * row ;
 		this.editorType = editorType ;
+		this.rotationAngle = 0.0 ;
 		
 		setSize(col*128, row*128 + 75);
-		
+		setMinimumSize(getSize());
 		setLocation((screenSize.width - getSize().width)/2,(screenSize.height - getSize().height)/2);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("BeamsOfLightGame - " + editorType);
 		setLayout(new BorderLayout());
-		setJMenuBar(new EditorMenu(this));
-
-		tilesPanelSolved = new TilesPanel() ;
-		tilesPanelSolved.setLayout(new GridLayout(row,col));
-		tilesPanel = new TilesPanel();
-		tilesPanel.setLayout(new GridLayout(row,col));
 		
-		solveButton = new JButton("Loesen");
+		cl = new CardLayout();
+		gl = new GridLayout(row,col);
+		tiles = new JPanel(cl);
+		tilesPanel = new TilesPanel();
+		tilesPanel.setLayout(gl);
+		
+		onlyNumberTilesPanel = new TilesPanel();
+		onlyNumberTilesPanel.setLayout(gl);
+		
+		solveButton = new JButton("Try to solve");
 		resetButton = new JButton("Reset");
 		
 		initComponents();
 		tileStats = new JTextArea(getTileStats());
+		tiles.add(tilesPanel,"1");
+		tiles.add(onlyNumberTilesPanel,"2");
 		checkButtons();
+		
+		editorMenu = new EditorMenu(this);
 		
 		buttonPanel = new JPanel();
 		buttonPanel.add(solveButton);
@@ -83,33 +98,10 @@ public abstract class BeamsOfLightEditor extends JFrame
 		southPanel.add(BorderLayout.CENTER,buttonPanel);
 		southPanel.add(BorderLayout.SOUTH,tileStats);
 		
-		add(BorderLayout.CENTER,tilesPanel);
+		setJMenuBar(editorMenu);
+		add(BorderLayout.CENTER,tiles);
 		add(BorderLayout.SOUTH,southPanel);
 		setVisible(true);
-	}
-	
-
-	public abstract void initComponents();
-	
-	public abstract TilesPanel createTilesPanel(IBeamsOfLightPuzzleBoard source) 
-			throws NumberFormatException, IIOException, IOException;
-	
-	public abstract IBeamsOfLightPuzzleBoard convertToBoard();
-	
-	public abstract String getTileStats();
-	
-	public void importPuzzleBoard(IBeamsOfLightPuzzleBoard source) 
-			throws NumberFormatException, IIOException, IOException{
-			
-		col = source.getWidth();
-		row = source.getHeight();
-		
-		remove(tilesPanel);
-		
-		tilesPanel = createTilesPanel(source);
-		//tilesPanelSolved = initTilesPanel(source);
-		
-		add(BorderLayout.CENTER,tilesPanel);
 	}
 	
 	public void checkButtons(){
@@ -118,41 +110,35 @@ public abstract class BeamsOfLightEditor extends JFrame
 		}else{
 			solveButton.setEnabled(false);
 		}
-	//	if(tilesPanelSolved != null){
-	//		middleButton.setEnabled(true);
-	//	}else{
-	//		middleButton.setEnabled(false);
-	//	}
-		
 		if(!solveButton.isEnabled()){
-			solveButton.setToolTipText("Loesen nur moeglich wenn verbleibende Felder = 0.");
+			solveButton.setToolTipText("Can only solve if remaining fields = 0.");
 		}else{
 			solveButton.setToolTipText(null);
 		}
-		
-	//	if(!middleButton.isEnabled()){
-	//		middleButton.setToolTipText("Es existiert noch keine Lösung zur aktuellen Eingabe.");
-	//	}else{
-	//		middleButton.setToolTipText(null);
-	//	}
-	}
-	
-	public static BufferedImage rotate(Image image, double angle) {
-		int width = image.getWidth(null);
-		int height = image.getHeight(null);
-		BufferedImage temp = new BufferedImage(height, width, BufferedImage.TYPE_INT_RGB);
-		Graphics2D g2 = temp.createGraphics();
-		g2.rotate(Math.toRadians(angle), height / 2, height / 2);
-		g2.drawImage(image, 0, 0, Color.WHITE, null);
-		g2.dispose();
-		return temp;
+		if(displayAllTiles){
+			cl.show(tiles, "1");
+		}else{
+			cl.show(tiles, "2");
+		}
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		try{
+			if(ae.getSource() == resetButton){
+				switch(editorType){
+					case LineEditor: 	new LineEditor(col,row);
+										this.dispose();
+										break;
+					case NumberEditor: 	new NumberEditor(col,row);
+										this.dispose();
+										break;
+					default: //TODO 
+				}
+			}
+			
 			if(ae.getSource() == solveButton){
-				IBeamsOfLightPuzzleBoard board = convertToBoard();
+				IBeamsOfLightPuzzleBoard board = this.convertToBoard();
 				ILightController controller = new LightController();
 				controller.setBoard(board);
 				
@@ -162,20 +148,21 @@ public abstract class BeamsOfLightEditor extends JFrame
 					          /*and(TryAndErrorStrategy.class).*/
 					          forBoard(board);
 			    s.solve();
+			    tilesPanel = new TilesPanel();
+			    onlyNumberTilesPanel = new TilesPanel();
 			    importPuzzleBoard(controller.getCurrentModel());
-			    
-			    System.out.println(tilesPanel);
-			    System.out.println(tilesPanelSolved);
+			    convertTilesPanel();
+				//tiles.add(tilesPanel,"1");
+			    tiles.add(onlyNumberTilesPanel,"2");
 			}
 		}catch(UnsolvablePuzzleException upe){
 			int userSelection = JOptionPane.showConfirmDialog(	this,
-																"Eingaben fuehren zu keiner eindeutigen Loesung!\nSpielfeld zuruecksetzen?",
-																"Fehler",
+																"Unable to find unique solution for this input.\nReset board?",
+																"Error",
 																JOptionPane.YES_NO_OPTION);
 			if(userSelection == JOptionPane.YES_OPTION){
 				resetButton.doClick();
 			}
-			
 		}catch(Exception e){
 			// TODO 
 			e.printStackTrace();
@@ -189,16 +176,31 @@ public abstract class BeamsOfLightEditor extends JFrame
 		}
 	}
 	
-	public int getRows(){
-		return row ;
+	public static BufferedImage rotate(Image image, double angle) {
+		int width = image.getWidth(null);
+		int height = image.getHeight(null);
+		BufferedImage temp = new BufferedImage(height, width, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g2 = temp.createGraphics();
+		g2.rotate(Math.toRadians(angle), height / 2, height / 2);
+		g2.drawImage(image, 0, 0, Color.WHITE, null);
+		g2.dispose();
+		return temp;
 	}
 	
-	public int getCols(){
-		return col ;
+	public void setDisplayAllTiles(boolean newDisplayAllTiles){
+		this.displayAllTiles = newDisplayAllTiles;
+		checkButtons();
 	}
 	
-	public EditorType getEditorType(){
-		return editorType ;
-	}
+	public int getRows(){return row;}
+	public int getCols(){return col;}
+	public EditorType getEditorType(){return editorType;}
+	public boolean getDisplayAllTiles(){return displayAllTiles;}
+	public JButton getResetButton(){return resetButton;}
 	
+	public abstract void initComponents();
+	public abstract void importPuzzleBoard(IBeamsOfLightPuzzleBoard source)	throws NumberFormatException, IIOException, IOException;
+	public abstract void convertTilesPanel();
+	public abstract IBeamsOfLightPuzzleBoard convertToBoard();
+	public abstract String getTileStats();
 }

@@ -26,31 +26,31 @@ import de.bwvaachen.beamoflightgame.ui.GraficFactory;
 public class NumberEditor extends BeamsOfLightEditor 
 	implements ActionListener{
 
-	private TileButton tile ;
-	private ArrayList<TileButton> tileList ;
-	private int lightPower ;
+	private ArrayList<TileButton> 	tileList ;
 	
 	public NumberEditor(int width, int height) {
 		super(EditorType.NumberEditor, width, height);
 	}
-
+	
 	@Override
 	public void initComponents(){
+		TileButton tile ;
 		
 		solveButton.addActionListener(this);
 		resetButton.addActionListener(this);
-		
+
+		displayAllTiles = false ;
 		tileList = new ArrayList<TileButton>();
-		
+	
 		for(int i=0; i<row; i++){
 			for(int j=0; j<col; j++){
 				tile = createTileButton(i,j);
-				tilesPanel.add(tile);
+				onlyNumberTilesPanel.add(tile);
 				tileList.add(tile);
 			}
 		}
 	}
-	
+
 	@Override
 	public String getTileStats() {
 		this.totalTiles = col*row ;
@@ -83,14 +83,18 @@ public class NumberEditor extends BeamsOfLightEditor
 		return target;
 	}
 	
-	public TilesPanel createTilesPanel(IBeamsOfLightPuzzleBoard source) 
+	public void importPuzzleBoard(IBeamsOfLightPuzzleBoard source) 
 			throws NumberFormatException, IIOException, IOException{
-		
-		TilesPanel temp = new TilesPanel();
 		ITile currentTile ;
+		TileButton tile ;
 		
 		tileList.clear();
-		temp.setLayout(new GridLayout(col,row));
+		
+		col = source.getWidth();
+		row = source.getHeight();
+		gl = new GridLayout(row,col);
+		
+		tilesPanel.setLayout(gl);
 		
 		for(int i=0;i<row;i++){
 			for(int j=0;j<col;j++){
@@ -99,6 +103,8 @@ public class NumberEditor extends BeamsOfLightEditor
 				if(currentTile.getClass().getSimpleName().equals("LightTile")){
 					LightTileState currentTileState = (LightTileState) currentTile.getTileState();
 					char c = currentTileState.getSign();
+					double rotationAngle ;
+					
 					switch(c){
 						case 'n':	rotationAngle = 0.0;
 									break;
@@ -121,10 +127,26 @@ public class NumberEditor extends BeamsOfLightEditor
 					tile.setLightPower(lightPower);
 				}
 				tileList.add(tile);
-				temp.add(tile);
+				tilesPanel.add(tile);
 			}
 		}
-		return temp;
+		editorMenu.getJRBMenuItemAllTiles().doClick();
+	} //importPuzzleBoard
+	
+	public void convertTilesPanel(){
+		TileButton temp ;
+		
+		onlyNumberTilesPanel = new TilesPanel();
+		onlyNumberTilesPanel.setLayout(gl);
+		
+		for(TileButton tile : tileList){
+			if(tile.getState() != TileState.NUMBER){
+				temp = createTileButton(tile.getCol(),tile.getRow());
+				onlyNumberTilesPanel.add(temp);
+			}else{
+				onlyNumberTilesPanel.add(tile);
+			}
+		}
 	}
 	
 	public TileButton createTileButton(int row, int col){
@@ -142,13 +164,10 @@ public class NumberEditor extends BeamsOfLightEditor
 		super.actionPerformed(ae);
 		
 		try{
-			if(ae.getSource() == resetButton){
-				for(TileButton tile : tileList){
-					tile.reset();
-				}
-			}else if(ae.getSource().getClass().getSimpleName().equals("TileButton")){
+			if(ae.getSource().getClass().getSimpleName().equals("TileButton")){
 				String input ;
 				int maxLightPower = (col-1) + (row-1) ;
+				int lightPower ;
 				TileButton clickedTile  = (TileButton) ae.getSource();
 			
 					do{
