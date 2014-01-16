@@ -87,13 +87,34 @@ public class TilePanel extends JPanel{
 	public void setImage(String path, double angle) throws IOException{
 		this.image = BeamsOfLightEditor.rotate(ImageIO.read(new File(path)),angle) ;
 		if(angle == 90.0 || angle == 270.0){
-			this.state = TileState.H_LIGHT ;
+			this.state = TileState.H_LIGHT;
 		}else{
-			this.state = TileState.V_LIGHT ;
+			this.state = TileState.V_LIGHT;
 		}
 		repaint();
 	}
 	
+	public boolean isOrientation(double angle){
+		boolean temp;
+		
+		switch(state){
+			case EMPTY: 	temp = false;
+							break;
+			case NUMBER: 	temp = false;
+							break;
+			case V_LIGHT:   if(angle == LineEditor.NORTH || angle == LineEditor.SOUTH){
+								temp = true;
+								break;
+							}
+			case H_LIGHT:   if(angle == LineEditor.EAST || angle == LineEditor.WEST){
+								temp = true;
+								break;
+							}
+			default: 		temp = false;
+
+		}
+		return temp;
+	}
 	@Override
 	public void paintComponent(Graphics g){
 		Graphics2D g2 = (Graphics2D) g;

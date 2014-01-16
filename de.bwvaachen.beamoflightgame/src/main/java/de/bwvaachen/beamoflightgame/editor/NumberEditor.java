@@ -61,16 +61,16 @@ public class NumberEditor extends BeamsOfLightEditor
 	}
 
 	@Override
-	public String getTileStats() {
-		this.totalTiles = col*row ;
-		this.remainingTiles = totalTiles ;
+	public void updateTileStats() {
+		totalTiles = col*row ;
+		remainingTiles = totalTiles ;
 		
 		for(TileButton tile : tileList){
 			if(tile.getState() == TileState.NUMBER){
 				this.remainingTiles -= (tile.getLightPower() + 1); 
 			}
 		}
-		return "Felder (Gesamt): "+totalTiles+"\nFelder (Verbleibend): "+remainingTiles;
+		tileStatsTextArea.setText("Fields (Total): "+totalTiles+"\nFields (Remaining): "+remainingTiles+"\n");
 	}
 
 	@Override
@@ -182,14 +182,30 @@ public class NumberEditor extends BeamsOfLightEditor
 					do{
 						input = (String) JOptionPane.showInputDialog(
 									this,
-									"Lichtstaerke(1-" + maxLightPower + "):\n",
-									"Lichtstaerkeneingabe",
+									"Light Power(1-" + maxLightPower + "):\n",
+									"Enter Light Power",
 									JOptionPane.PLAIN_MESSAGE,
 									null,
 									null,
 									"1");
 						lightPower = Integer.valueOf(input);
-					}while(lightPower > maxLightPower || lightPower < 1);
+						if(lightPower > maxLightPower){
+							JOptionPane.showMessageDialog(	this,
+															"Light Power cannot be bigger than "+maxLightPower+"!",
+															"Error",
+															JOptionPane.ERROR_MESSAGE);
+						}else if(lightPower < 1){
+							JOptionPane.showMessageDialog(	this,
+															"Light Power cannot be less than 1!",
+															"Error",
+															JOptionPane.ERROR_MESSAGE);
+						}else if(remainingTiles-(lightPower+1) < 0){
+							JOptionPane.showMessageDialog(	this,
+															"Only "+remainingTiles+" empy fields remaining.\nLight Power Maximum: "+(remainingTiles-1),
+															"Error",
+															JOptionPane.ERROR_MESSAGE);
+						}
+					}while(lightPower > maxLightPower || lightPower < 1 || remainingTiles-(lightPower+1) < 0);
 				
 					clickedTile.setLightPower(lightPower);
 			}
@@ -203,7 +219,7 @@ public class NumberEditor extends BeamsOfLightEditor
 			//TODO
 			e.printStackTrace();
 		}finally{
-			tileStats.setText(getTileStats());
+			updateTileStats();
 			checkButtons();
 		}
 	}

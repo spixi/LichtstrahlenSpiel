@@ -50,12 +50,13 @@ public abstract class BeamsOfLightEditor extends JFrame
 	protected int 			totalTiles;
 	protected int 			remainingTiles;
 	protected double 		rotationAngle;
+	protected String		tileStats;
 	protected boolean		displayAllTiles;
 	protected JPanel 		buttonPanel;
 	protected JPanel 		southPanel;
 	protected JButton 		solveButton; 
 	protected JButton 		resetButton; 
-	protected JTextArea 	tileStats;
+	protected JTextArea 	tileStatsTextArea;
 	
 	protected JPanel 		tiles;
 	protected CardLayout 	cl;
@@ -90,8 +91,11 @@ public abstract class BeamsOfLightEditor extends JFrame
 		solveButton = new JButton("Try to solve");
 		resetButton = new JButton("Reset");
 		
+		tileStatsTextArea = new JTextArea();
+		
 		initComponents();
-		tileStats = new JTextArea(getTileStats());
+		updateTileStats();
+		
 		tiles.add(tilesPanel,"1");
 		tiles.add(onlyNumberTilesPanel,"2");
 		checkButtons();
@@ -105,7 +109,7 @@ public abstract class BeamsOfLightEditor extends JFrame
 		southPanel = new JPanel();
 		southPanel.setLayout(new BorderLayout());
 		southPanel.add(BorderLayout.CENTER,buttonPanel);
-		southPanel.add(BorderLayout.SOUTH,tileStats);
+		southPanel.add(BorderLayout.SOUTH,tileStatsTextArea);
 		
 		setJMenuBar(editorMenu);
 		add(BorderLayout.CENTER,tiles);
@@ -186,7 +190,7 @@ public abstract class BeamsOfLightEditor extends JFrame
 		}finally{
 			setSize(col*128,row*128 + 110);
 			setMinimumSize(getSize());
-			tileStats.setText(getTileStats());
+			updateTileStats();
 			checkButtons();
 			pack();
 			repaint();
@@ -220,5 +224,5 @@ public abstract class BeamsOfLightEditor extends JFrame
 	public abstract void importPuzzleBoard(IBeamsOfLightPuzzleBoard source)	throws NumberFormatException, IIOException, IOException;
 	public abstract void convertTilesPanel();
 	public abstract IBeamsOfLightPuzzleBoard convertToBoard();
-	public abstract String getTileStats();
+	public abstract void updateTileStats();
 }

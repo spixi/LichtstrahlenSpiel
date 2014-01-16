@@ -38,6 +38,11 @@ import de.bwvaachen.beamoflightgame.ui.GraficFactory;
 public class LineEditor extends BeamsOfLightEditor
 	implements MouseMotionListener, MouseListener{
 	
+	public static final double		NORTH = 0.0;
+	public static final double		EAST  = 90.0;
+	public static final double		SOUTH = 180.0;
+	public static final double		WEST  = 270.0;
+	
 	private Point 					lineStart;
 	private Point					lineEnd;
 	private Line2D 					line;
@@ -75,16 +80,16 @@ public class LineEditor extends BeamsOfLightEditor
 	}
 	
 	@Override
-	public String getTileStats() {
-		this.totalTiles = col*row ;
-		this.remainingTiles = totalTiles ;
+	public void updateTileStats() {
+		totalTiles = col*row ;
+		remainingTiles = totalTiles ;
 		
 		for(TilePanel tile : tileList){
 			if(tile.getState() == TileState.NUMBER){
 				this.remainingTiles -= (tile.getLightPower() + 1); 
 			}
 		}
-		return "Fields (Total): "+totalTiles+"\nFields (Remaining): "+remainingTiles+"\n";
+		tileStatsTextArea.setText("Fields (Total): "+totalTiles+"\nFields (Remaining): "+remainingTiles+"\n");
 	}
 
 	@Override
@@ -131,20 +136,20 @@ public class LineEditor extends BeamsOfLightEditor
 					double rotationAngle ;
 					
 					switch(c){
-						case 'n':	rotationAngle = 0.0;
+						case 'n':	rotationAngle = NORTH;
 									break;
-						case 's':	rotationAngle = 180.0;
+						case 'e':	rotationAngle = EAST;
 									break;
-						case 'w':	rotationAngle = 270.0;
+						case 's':	rotationAngle = SOUTH;
 									break;
-						case 'e':	rotationAngle = 90.0;
+						case 'w':	rotationAngle = WEST;
 									break;
-						default: 	rotationAngle = 0.0 ;
+						default: 	rotationAngle = NORTH;
 					}
 					if(new GraficFactory(source).isEnd((LightTile)currentTile)){
-						tile.setImage("resources/themes/moon/light2.png", rotationAngle);
+						tile.setImage("resources/themes/moon/light2.png",rotationAngle);
 					}else{
-						tile.setImage("resources/themes/moon/light1.png", rotationAngle);
+						tile.setImage("resources/themes/moon/light1.png",rotationAngle);
 					}
 				}else if(currentTile.getClass().getSimpleName().equals("NumberTile")){
 					NumberTileState currentTileState = (NumberTileState) currentTile.getTileState() ;
@@ -177,73 +182,63 @@ public class LineEditor extends BeamsOfLightEditor
 		
 		int deltaXabs = Math.abs(startTile.getCol() - endTile.getCol());
 		int deltaYabs = Math.abs(startTile.getRow() - endTile.getRow());
-		int deltaX = startTile.getCol() - endTile.getCol();
-		int deltaY = startTile.getRow() - endTile.getRow();
+		int deltaX 	  = startTile.getCol() - endTile.getCol();
+		int deltaY    = startTile.getRow() - endTile.getRow();
 				
-		double angle = 0.0 ;
+		double 				angle = NORTH ;
+		if(deltaXabs > 0){	angle = EAST;}
+		if(deltaY    < 0){	angle = SOUTH;}
+		if(deltaX    > 0){	angle = WEST;}
+		
 		boolean crossingNonEmptyTile = false ;
-		boolean errorDisplayed = false ;
 		
 		for(TilePanel tile : tileList){
-			if(	line.intersects(tile.getBounds())
-			&&  !(tile.getBounds().contains(lineStart)))
-			{
-				if(tile.getState() != TileState.EMPTY){
+			
+			if(	  line.intersects(tile.getBounds())
+			&&  !(tile.getBounds().contains(lineStart))
+			){
+				if(  tile.getState() != TileState.EMPTY 
+				&& !(tile.isOrientation(angle))
+				){
 					crossingNonEmptyTile = true ;
 					break ;
 				}
 			}
 		}
 		
-		if(		startTile != endTile 
-			&&  (deltaXabs == 0 ^ deltaYabs == 0) 
-			&& 	(startTile.getState() == TileState.NUMBER || startTile.getState() == TileState.EMPTY)
-			&& 	endTile.getState() == TileState.EMPTY
-			&&	!crossingNonEmptyTile
+		if(	 startTile != endTile 
+		&&  (deltaXabs == 0 ^ deltaYabs == 0) 
+		&& 	(startTile.getState() == TileState.NUMBER || startTile.getState() == TileState.EMPTY)
+		&& 	 endTile.getState() == TileState.EMPTY
+		&&	!crossingNonEmptyTile
 		  ){
 			validLine = true ;			
 		}else{ 
-			if(deltaXabs >= 1 && deltaYabs >= 1 && !errorDisplayed){
+			if(deltaXabs >= 1 && deltaYabs >= 1){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
 												"Unable to draw diagonal beams!",
 												"Error",
 												JOptionPane.ERROR_MESSAGE);
-				errorDisplayed = true ;
-			}
-			if(startTile == endTile && !errorDisplayed){
+			}else if(startTile == endTile){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
 												"Beams cannot start and end in the same field!",
 												"Error",
 												JOptionPane.ERROR_MESSAGE);
-				errorDisplayed = true ;
-			}
-			if(!(startTile.getState() == TileState.EMPTY || startTile.getState() == TileState.NUMBER) && !errorDisplayed){
+			}else if(!(startTile.getState() == TileState.EMPTY || startTile.getState() == TileState.NUMBER)){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
 												"Startfield has to be empty or already numberfield!\nRightclick on fields to clear them.",
 												"Error",
 												JOptionPane.ERROR_MESSAGE);
-				errorDisplayed = true ;
-			}
-			if(crossingNonEmptyTile && !errorDisplayed){
+			}else if(crossingNonEmptyTile){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
 												"Beams must not cross!\nRightclick on fields to clear them.",
 												"Error",
 												JOptionPane.ERROR_MESSAGE);
-				errorDisplayed = true ;
 			}
-		}
-		if(deltaXabs > 0){
-			angle = 90.0 ;
-		}
-		if(deltaX > 0){
-			angle = 270.0 ;
-		}
-		if(deltaY < 0){
-			angle = 180.0 ;
 		}
 		return angle ;
 	} //checkLine
@@ -257,7 +252,7 @@ public class LineEditor extends BeamsOfLightEditor
 				if(tile.getBounds().contains(clicked)){
 					tile.reset();
 				}
-			tileStats.setText(getTileStats());
+			updateTileStats();
 			checkButtons();
 		}
 	}
@@ -273,23 +268,29 @@ public class LineEditor extends BeamsOfLightEditor
 		if(SwingUtilities.isLeftMouseButton(me)){
 
 			lineEnd = me.getPoint();
-			TilePanel startTile = null ;
-			TilePanel endTile = null ;
+			TilePanel startTile = null;
+			TilePanel endTile = null;
 			
 			try{
 				for(TilePanel tile : tileList){
-					if(line.intersects(tile.getBounds()) && !(tile.getBounds().contains(lineStart)) && tile.getState() == TileState.EMPTY){
-						tileCount++;
-					}
 					if(tile.getBounds().contains(lineStart)){
-						startTile = tile ;
+						startTile = tile;
 					}
 					if(tile.getBounds().contains(lineEnd)){
-						endTile = tile ;
+						endTile = tile;
 					}
 				}
 				
 				rotationAngle = checkLine(startTile,endTile);
+				
+				for(TilePanel tile : tileList){
+					if(	 line.intersects(tile.getBounds()) 
+					&& !(tile.getBounds().contains(lineStart)) 
+					&&   tile.getState() == TileState.EMPTY
+					){
+						tileCount++;
+					}
+				}
 				
 				if(validLine){
 					endTile.setImage("resources/themes/moon/light2.png",rotationAngle);
@@ -313,7 +314,7 @@ public class LineEditor extends BeamsOfLightEditor
 			}finally{
 				//System.out.println("START: "+ startTile.getCol() +","+ startTile.getRow());
 				//System.out.println("END: "+ endTile.getCol() +","+ endTile.getRow());
-				tileStats.setText(getTileStats());
+				updateTileStats();
 				checkButtons();
 				tileCount = 0 ;
 				line = new Line2D.Double();
