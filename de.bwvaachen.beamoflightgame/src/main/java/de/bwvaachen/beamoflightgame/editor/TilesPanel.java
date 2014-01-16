@@ -11,8 +11,8 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class TilesPanel extends JPanel {
 
-	private Line2D line = null ;
-	private RenderingHints rh ;
+	private Line2D 			line = null ;
+	private RenderingHints 	rh ;
 	
 	public TilesPanel(){
 		super();

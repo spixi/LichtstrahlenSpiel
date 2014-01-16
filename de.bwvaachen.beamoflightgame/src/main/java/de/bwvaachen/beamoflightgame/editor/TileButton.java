@@ -21,11 +21,11 @@ import javax.swing.JButton;
 @SuppressWarnings("serial")
 public class TileButton extends JButton {
 	
-	private int col ;
-	private int row ;
-	private BufferedImage image ;
-	private TileState state ;
-	private int lightPower ;
+	private int 			col;
+	private int 			row;
+	private BufferedImage 	image;
+	private TileState 		state;
+	private int 			lightPower;
 	
 	/**
 	 * Eigener Konstruktor

@@ -199,4 +199,3 @@ public class NumberEditor extends BeamsOfLightEditor
 		}
 	}
 }
-

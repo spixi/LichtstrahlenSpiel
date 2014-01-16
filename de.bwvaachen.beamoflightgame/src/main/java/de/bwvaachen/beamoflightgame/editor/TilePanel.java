@@ -21,11 +21,11 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class TilePanel extends JPanel{
 
-	private int col ;
-	private int row ;
-	private BufferedImage image ;
-	private TileState state ;
-	private int lightPower ;
+	private int 			col;
+	private int 			row;
+	private BufferedImage 	image;
+	private TileState 		state;
+	private int 			lightPower;
 	
 	/**
 	 * Eigener Konstruktor

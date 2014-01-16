@@ -326,19 +326,6 @@ public class LineEditor extends BeamsOfLightEditor
 		}
 	}
 	
-	/*
-	@Override
-	public void actionPerformed(ActionEvent ae) {
-		super.actionPerformed(ae);
-		
-		if(ae.getSource() == resetButton){
-			for(TilePanel tile : tileList){
-				tile.reset();
-			}
-		}
-	}
-	*/
-	
 	public TilePanel createTilePanel(int row, int col){
 		TilePanel temp = new TilePanel(col,row);
 		temp.setSize(128,128);

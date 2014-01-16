@@ -94,16 +94,26 @@ public class EditorMenu extends JMenuBar
 		
 		jrbMenuItemAllTiles = new JRadioButtonMenuItem("Display All Tiles",editor.getDisplayAllTiles());
 		jrbMenuItemAllTiles.addActionListener(this);
-		if(editor.getEditorType() == EditorType.NumberEditor){jrbMenuItemAllTiles.setEnabled(false);}
+		jrbMenuItemAllTiles.setEnabled(false);
 		buttonGroupDisplay.add(jrbMenuItemAllTiles);
 		editMenu.add(jrbMenuItemAllTiles);
 		
-		
 		jrbMenuItemNumberTiles = new JRadioButtonMenuItem("Display Number Tiles Only",!editor.getDisplayAllTiles());
 		jrbMenuItemNumberTiles.addActionListener(this);
-		if(editor.getEditorType() == EditorType.NumberEditor){jrbMenuItemAllTiles.setEnabled(false);}
+		jrbMenuItemNumberTiles.setEnabled(false);
 		buttonGroupDisplay.add(jrbMenuItemNumberTiles);
 		editMenu.add(jrbMenuItemNumberTiles);
+		
+		JSeparator separator5 = new JSeparator();
+		editMenu.add(separator5);
+		
+		menuItemSolve = new JMenuItem("Solve");
+		menuItemSolve.addActionListener(this);
+		editMenu.add(menuItemSolve);
+		
+		menuItemReset = new JMenuItem("Reset");
+		menuItemReset.addActionListener(this);
+		editMenu.add(menuItemReset);
 		
 		helpMenu = new JMenu("Help");
 		this.add(helpMenu);
@@ -112,13 +122,12 @@ public class EditorMenu extends JMenuBar
 		menuItemIns.addActionListener(this);
 		helpMenu.add(menuItemIns);
 		
-		JSeparator separator5 = new JSeparator();
-		helpMenu.add(separator5);
+		JSeparator separator6 = new JSeparator();
+		helpMenu.add(separator6);
 		
 		menuItemAbout = new JMenuItem("About");
 		menuItemAbout.addActionListener(this);
 		helpMenu.add(menuItemAbout);
-		
 	}
 
 	@Override
@@ -141,6 +150,10 @@ public class EditorMenu extends JMenuBar
 			editor.setDisplayAllTiles(true);
 		}else if(ae.getSource() == jrbMenuItemNumberTiles){
 			editor.setDisplayAllTiles(false);
+		}else if(ae.getSource() == menuItemSolve){
+			editor.getSolveButton().doClick();
+		}else if(ae.getSource() == menuItemReset){
+			editor.getResetButton().doClick();
 		}else if(ae.getSource() == menuItemIns){
 			
 		}else if(ae.getSource() == menuItemAbout){
@@ -201,5 +214,9 @@ public class EditorMenu extends JMenuBar
 	
 	public JRadioButtonMenuItem getJRBMenuItemNumberTiles(){
 		return jrbMenuItemNumberTiles;
+	}
+	
+	public JMenuItem getMenuItemSolve(){
+		return menuItemSolve;
 	}
 }

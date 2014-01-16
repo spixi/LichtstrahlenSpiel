@@ -34,34 +34,34 @@ public abstract class BeamsOfLightEditor extends JFrame
 	implements ActionListener{
 	
 	private Dimension 		screenSize;
-	protected EditorType 	editorType ;
+	protected EditorType 	editorType;
 	protected EditorMenu 	editorMenu;
 	protected int 			row;
 	protected int 			col;
 	protected int 			totalTiles;
 	protected int 			remainingTiles;
-	protected double 		rotationAngle ;
-	protected boolean		displayAllTiles ;
+	protected double 		rotationAngle;
+	protected boolean		displayAllTiles;
 	protected JPanel 		buttonPanel;
 	protected JPanel 		southPanel;
 	protected JButton 		solveButton; 
 	protected JButton 		resetButton; 
-	protected JTextArea 	tileStats ;
+	protected JTextArea 	tileStats;
 	
-	protected JPanel 		tiles ;
-	protected CardLayout 	cl ;
-	protected GridLayout 	gl ;
+	protected JPanel 		tiles;
+	protected CardLayout 	cl;
+	protected GridLayout 	gl;
 	protected TilesPanel 	tilesPanel;
-	protected TilesPanel 	onlyNumberTilesPanel ;
+	protected TilesPanel 	onlyNumberTilesPanel;
 	
 	public BeamsOfLightEditor(EditorType editorType, int width, int height){
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		this.col = width ; this.row = height ;
-		this.totalTiles = col * row ;
-		this.editorType = editorType ;
-		this.rotationAngle = 0.0 ;
+		this.col = width; this.row = height;
+		this.totalTiles = col * row;
+		this.editorType = editorType;
+		this.rotationAngle = 0.0;
 		
-		setSize(col*128, row*128 + 75);
+		setSize(col*128, row*128 + 110);
 		setMinimumSize(getSize());
 		setLocation((screenSize.width - getSize().width)/2,(screenSize.height - getSize().height)/2);
 		setResizable(false);
@@ -167,7 +167,7 @@ public abstract class BeamsOfLightEditor extends JFrame
 			// TODO 
 			e.printStackTrace();
 		}finally{
-			setSize(col*128,row*128 + 75);
+			setSize(col*128,row*128 + 110);
 			setMinimumSize(getSize());
 			tileStats.setText(getTileStats());
 			checkButtons();
@@ -197,6 +197,7 @@ public abstract class BeamsOfLightEditor extends JFrame
 	public EditorType getEditorType(){return editorType;}
 	public boolean getDisplayAllTiles(){return displayAllTiles;}
 	public JButton getResetButton(){return resetButton;}
+	public JButton getSolveButton(){return solveButton;}
 	
 	public abstract void initComponents();
 	public abstract void importPuzzleBoard(IBeamsOfLightPuzzleBoard source)	throws NumberFormatException, IIOException, IOException;
