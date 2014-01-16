@@ -19,6 +19,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 
+import de.bwvaachen.beamoflightgame.helper.AbstractTileVisitor;
 import de.bwvaachen.beamoflightgame.helper.ITileVisitor;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
@@ -206,6 +207,30 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard, Change
 		for(ChangeListener l: changeListeners) {
 			l.stateChanged(e);
 		}	
+	}
+	public IBeamsOfLightPuzzleBoard clone()
+	{
+		IBeamsOfLightPuzzleBoard ret = new BeamsOfLightPuzzleBoard();
+		ret.init(this.width,this.height);
+		for(int h =0; h< this.height;h++)
+		{
+			for(int w = 0; w<this.width;w++)
+			{
+				ITile t = this.getTileAt(w, h);
+				if(t instanceof NumberTile)
+				{
+					NumberTile num = (NumberTile)t;
+					ret.putTile(new NumberTile(ret,num.getNumber(),w,h));
+				}
+				else if (t instanceof LightTile)
+				{
+					LightTile lig = (LightTile)t;
+					ret.putTile(new LightTile(ret,w,h,lig.getTileState()));
+				}
+			}
+		}
+		
+		return ret;
 	}
 
 }
