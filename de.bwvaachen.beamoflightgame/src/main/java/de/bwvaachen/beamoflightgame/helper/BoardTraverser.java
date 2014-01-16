@@ -40,6 +40,14 @@ public class BoardTraverser {
 		return board.getTileAt(x, y);
 	}
 	
+	public int getStartX(){
+		return startX;
+	}
+	
+	public int getStartY(){
+		return startY;
+	}
+	
 	public int getX() {
 		return x;
 	}

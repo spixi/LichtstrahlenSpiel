@@ -93,7 +93,7 @@ public class CreateRandomBoard
 		{
 			
 			BoardTraverser oTraverser = new BoardTraverser(oNumTiles.get(i));	
-			
+			System.out.println("startX: " + oTraverser.getStartX() + " x: " + oTraverser.getX() + "\n" + "startY: " + oTraverser.getStartY() + " y: " + oTraverser.getY());
 			while (oTraverser.shift(LightTileState.NORTH.getTraverseDirection()))
 			{
 				if(oTraverser.get() == null && oBoard.hasField(oTraverser.getX(), oTraverser.getY()))
