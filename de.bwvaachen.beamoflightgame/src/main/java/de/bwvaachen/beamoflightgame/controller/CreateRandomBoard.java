@@ -77,7 +77,7 @@ public class CreateRandomBoard
 	}
 
 	/**
-	 * An algorithm to determine the strength of Lightmachines (NumberTiles). Needs an ArrayList of NumberTiles wich are already put on a BeamOfLightPuzzleBoard.
+	 * An algorithm to determine the strength of Lightmachines (NumberTiles). Needs an ArrayList of NumberTiles which are already put on a BeamOfLightPuzzleBoard.
 	 * @author cfruehholz
 	 * @param oNumTiles
 	 */

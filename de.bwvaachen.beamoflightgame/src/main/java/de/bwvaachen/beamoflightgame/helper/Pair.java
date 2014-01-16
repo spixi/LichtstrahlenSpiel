@@ -1,3 +1,5 @@
+package de.bwvaachen.beamoflightgame.helper;
+
 /*
 Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
 
@@ -6,8 +8,6 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 
 See the COPYING file for more details.
 */
-
-package de.bwvaachen.beamoflightgame.helper;
 
 /**
 * Pair: Compose objects dynamically into a simple binary tree
