@@ -34,6 +34,8 @@ import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
+
+import de.bwvaachen.beamoflightgame.controller.CreateRandomBoard;
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.SolverBuilder;
 import de.bwvaachen.beamoflightgame.controller.impl.LightController;
@@ -49,6 +51,7 @@ import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
+import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 
 public class LightgameUI extends JFrame {
 	
@@ -371,13 +374,18 @@ public class LightgameUI extends JFrame {
 	 *  Initialisieren des Fensters
 	 *  @author gbraun , pauls_and	 *  
 	 */
-	public LightgameUI() {
+	public LightgameUI()
+	{
+		 this(new PrototypModelForLonelyFieldStrategy());
+	}
+	
+	public LightgameUI(IBeamsOfLightPuzzleBoard b) {
 		
 		try {	
 
 			// Setzen der initialen Fensterposition und Grï¿½ï¿½e.
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			setBounds(100, 100, 450, 300);
+			//setBounds(100, 100, 450, 300);
 			// Verändern der Fenstergröße verhindern
 			setResizable( false ) ;
 					
@@ -399,7 +407,7 @@ public class LightgameUI extends JFrame {
 			contentPane.add(rasterPanel, BorderLayout.CENTER);
 	
 			// Controller mit Test Prototyp fï¿½r GUI fï¿½llen.
-			controller . setBoard ( new PrototypModelForLonelyFieldStrategy() ) ;
+			controller . setBoard ( b ) ;
 			
 			// Vom Controller die Musterlösung generieren lassen.
 			controller . solve() ;
@@ -442,11 +450,11 @@ public class LightgameUI extends JFrame {
 			//TODO end
 			
 			// Das Spielfeld vom Controller holen:
-			IBeamsOfLightPuzzleBoard currentModel = controller.getCurrentModel() ;
+			
 			
 			// TODO temporï¿½r feste Werte fï¿½r Tests eingetragen.
-			int rows = currentModel.getHeight() ;
-			int cols = currentModel.getWidth() ;
+			int rows = b.getHeight() ;
+			int cols = b.getWidth() ;
 			
 			//IBeamsOfLightPuzzleBoard currentModel = controller . getCurrentModel();
 			rasterPanel . setLayout ( new GridLayout ( rows , cols , 0 , 0 ) ) ;
@@ -461,11 +469,11 @@ public class LightgameUI extends JFrame {
 				for ( int col=0 ;col<cols ; col++ ) {
 	
 					// Neuen Button erzeugen
-					final TileButton newTileButton = new TileButton ( currentModel . getTileAt ( col , row ) ) ;
-					newTileButton . setPreferredSize( new Dimension (127 , 127 ) ) ;
+					final TileButton newTileButton = new TileButton ( b . getTileAt ( col , row ) ) ;
+					newTileButton . setPreferredSize( new Dimension (128 , 128 ) ) ;
 					// Action hinzufï¿½gen
 					
-					currentModel . getTileAt ( col , row ) . accept( new ITileVisitor() {
+					b . getTileAt ( col , row ) . accept( new ITileVisitor() {
 
 						@Override
 						public void visitLightTile(LightTile t) {
@@ -490,9 +498,8 @@ public class LightgameUI extends JFrame {
 				} // for ( int col=0 ;col<cols ; col++ )
 			} // for ( int row=0 ; row<rows ; row++ )
 			
-			//Der JButton implementiert ImageObserver ... Wir brauchen also eigentlich nur das Bild
-			//austauschen und -schwupp- sollte der Button sich mitÃ¤ndern, oder etwa nicht?
-			Update( currentModel ) ;
+			
+			Update( b ) ;
 			
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -530,6 +537,44 @@ public class LightgameUI extends JFrame {
 		JMenuItem mntmNew = new JMenuItem("New");
 		mnFile.add(mntmNew);
 		
+		mntmNew.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				//JOptionPane.showMessageDialog(null,"Dieses Feature ist nur in der Vollversion verfügbar","Fehler", JOptionPane.ERROR_MESSAGE);      
+				IBeamsOfLightPuzzleBoard board = new BeamsOfLightPuzzleBoard();
+				boolean boardOk = false;
+				while(!boardOk)
+				{
+					boardOk = true;
+					board.init(5, 5);
+					CreateRandomBoard.createRandom(board);
+					for(int x =0;x < board.getWidth() && boardOk;x++)
+					{
+						for(int y =0;y < board.getHeight() && boardOk;y++)
+						{
+							ITile t = board.getTileAt(x, y);
+							if(! (t instanceof ITile))
+							{
+								boardOk = false;
+							}
+						}
+					}//Iteration over Tiles
+					
+					
+				}//while Board not Ok
+				try {
+					controller.setBoard(board);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				LightgameUI frame = new LightgameUI(board);
+				frame.setVisible(true);
+			
+			}
+		});
+		
 		JSeparator separator_2 = new JSeparator();
 		mnFile.add(separator_2);
 		
@@ -547,6 +592,9 @@ public class LightgameUI extends JFrame {
 		
 		JMenu mnGame = new JMenu("Game");
 		menuBar.add(mnGame);
+		
+		
+		
 		
 		JMenuItem mntmCheckGame = new JMenuItem ( "Check Game" ) ;
 		mnGame . add ( mntmCheckGame ) . addActionListener( new ActionListener() {
