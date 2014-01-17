@@ -42,7 +42,7 @@ public class TilesPanel extends JPanel {
 	public void paint(Graphics g){
 		Graphics2D g2 = (Graphics2D) g ;
 		
-		super.paint(g);
+		super.paint(g2);
 		
 		if(line != null){	
 			g2.setStroke(new BasicStroke(2f));

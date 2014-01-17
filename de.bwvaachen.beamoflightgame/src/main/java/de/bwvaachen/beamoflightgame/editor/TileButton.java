@@ -49,14 +49,17 @@ public class TileButton extends JButton {
 		this.lightPower = 0 ;
 	} 
 	
+	public int getCol() {
+		return col;
+	}
+
 	public int getRow() {
 		return row;
 	}
 
-	public int getCol() {
-		return col;
+	public BufferedImage getImage(){
+		return image;
 	}
-	
 	public TileState getState(){
 		return state ;
 	}
@@ -76,6 +79,11 @@ public class TileButton extends JButton {
 		this.lightPower = lightPower ;
 		this.state = TileState.NUMBER ;
 		this.setImage("resources/themes/moon/"+this.lightPower+".png");
+	}
+	
+	public void setImage(BufferedImage image){
+		this.image = image;
+		repaint();
 	}
 	
 	public void setImage(String path) throws IOException, IIOException {

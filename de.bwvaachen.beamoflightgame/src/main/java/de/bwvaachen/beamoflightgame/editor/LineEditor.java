@@ -23,10 +23,12 @@ import java.util.ArrayList;
 import javax.imageio.IIOException;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
+import de.bwvaachen.beamoflightgame.model.ITileState;
 import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
@@ -110,48 +112,56 @@ public class LineEditor extends BeamsOfLightEditor
 	
 	public void importPuzzleBoard(IBeamsOfLightPuzzleBoard source) 
 			throws NumberFormatException, IIOException, IOException{
-		ITile currentTile ;
-		TilePanel tile ;
+		
+		GraficFactory 	gf = new GraficFactory(source);
+		ITile 			currentTile ;
+		ITileState 		currentTileState;
+		TilePanel 		tile;
+		char 			c;
+		double 			angle;
 		
 		col = source.getWidth();
 		row = source.getHeight();
+		gl = new GridLayout(row,col);
 		
 		tileList.clear();
+		
+		tiles = new JPanel(cl);
+		
 		tilesPanel = new TilesPanel();
-		gl = new GridLayout(row,col);
+		tilesPanel.setLayout(gl);
 		
 		for(int i=0;i<row;i++){
 			for(int j=0;j<col;j++){
+				
 				currentTile = source.getTileAt(j,i);
 				tile = createTilePanel(i,j);
+				
 				if(currentTile.getClass().getSimpleName().equals("LightTile")){
-					LightTileState currentTileState = (LightTileState) currentTile.getTileState();
-					char c = currentTileState.getSign();
-					double rotationAngle ;
+					currentTileState = (LightTileState) currentTile.getTileState();
+					c = ((LightTileState)currentTileState).getSign();
 					
 					switch(c){
-						case 'n':	rotationAngle = NORTH;
+						case 'n':	angle = NORTH;
 									break;
-						case 'e':	rotationAngle = EAST;
+						case 'e':	angle = EAST;
 									break;
-						case 's':	rotationAngle = SOUTH;
+						case 's':	angle = SOUTH;
 									break;
-						case 'w':	rotationAngle = WEST;
+						case 'w':	angle = WEST;
 									break;
-						default: 	rotationAngle = NORTH;
+						default: 	angle = 0.0;
 					}
-					if(new GraficFactory(source).isEnd((LightTile)currentTile)){
-						tile.setImage("resources/themes/moon/light2.png",rotationAngle);
+					if(gf.isEnd((LightTile)currentTile)){
+						tile.setImage("resources/themes/moon/light2.png",angle);
 					}else{
-						tile.setImage("resources/themes/moon/light1.png",rotationAngle);
+						tile.setImage("resources/themes/moon/light1.png",angle);
 					}
-				}else if(currentTile.getClass().getSimpleName().equals("NumberTile")){
-					NumberTileState currentTileState = (NumberTileState) currentTile.getTileState() ;
-					int lightPower = currentTileState.getNumber();
+				}if(currentTile.getClass().getSimpleName().equals("NumberTile")){
+					currentTileState = (NumberTileState) currentTile.getTileState() ;
+					int lightPower = ((NumberTileState) currentTileState).getNumber();
 					tile.setLightPower(lightPower);
 				}
-				tile.validate();
-				System.out.println(tile.toString());
 				tileList.add(tile);
 				tilesPanel.add(tile);
 			}
@@ -159,6 +169,7 @@ public class LineEditor extends BeamsOfLightEditor
 		tiles.add(tilesPanel,"1");
 	} //importPuzzleBoard
 	
+	@Override
 	public void convertTilesPanel(){
 		TilePanel temp ;
 		
@@ -170,7 +181,8 @@ public class LineEditor extends BeamsOfLightEditor
 				temp = createTilePanel(tile.getCol(),tile.getRow());
 				onlyNumberTilesPanel.add(temp);
 			}else{
-				onlyNumberTilesPanel.add(tile);
+				temp = createTilePanel(tile);
+				onlyNumberTilesPanel.add(temp);
 			}
 		}
 		tiles.add(onlyNumberTilesPanel,"2");
@@ -332,6 +344,13 @@ public class LineEditor extends BeamsOfLightEditor
 			tilesPanel.setLine(line);
 			tilesPanel.repaint();
 		}
+	}
+	
+	public TilePanel createTilePanel(TilePanel tile){
+		TilePanel temp = new TilePanel(tile.getCol(),tile.getRow());
+		temp.setImage(tile.getImage());
+		
+		return temp;
 	}
 	
 	public TilePanel createTilePanel(int row, int col){

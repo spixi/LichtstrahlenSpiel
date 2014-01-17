@@ -2,7 +2,7 @@ Instructions LineEditor
 
 *** Click on a field and drag the mouse to draw a line
 *** Lightbulb will be created at click location
-*** Lines can only be horizontal or vertical
+*** Lines 	can only be horizontal or vertical
 	cannot start and end in the same field
 	cannot cross
 *** Rightclicking a single field clears it

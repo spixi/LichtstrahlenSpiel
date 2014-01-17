@@ -18,7 +18,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-
 /**
  * Eine Klasse die das JPanel um Eigenschaften erweitert, die in der GUI hilfreich
  * sein k�nnen.
@@ -39,8 +38,7 @@ public class TilePanel extends JPanel{
 	/**
 	 * Eigener Konstruktor
 	 * @param row Die Zeile des Panels 
-	 * @param col Die Spalte des Panels
-	 * @throws IOException 
+	 * @param col Die Spalte des Panels 
 	 */
 	public TilePanel(int col, int row){
 		this.col = col ;
@@ -49,13 +47,17 @@ public class TilePanel extends JPanel{
 		this.state = TileState.EMPTY ;
 		this.lightPower = 0 ;
 	}
-	
+
+	public int getCol() {
+		return col;
+	}
+
 	public int getRow() {
 		return row;
 	}
 
-	public int getCol() {
-		return col;
+	public BufferedImage getImage(){
+		return image;
 	}
 	
 	public TileState getState(){
@@ -77,6 +79,11 @@ public class TilePanel extends JPanel{
 		this.lightPower += lightPower ;
 		this.state = TileState.NUMBER ;
 		this.setImage("resources/themes/moon/"+this.lightPower+".png");
+	}
+	
+	public void setImage(BufferedImage image){
+		this.image = image;
+		repaint();
 	}
 	
 	public void setImage(String path) throws IOException{

@@ -32,7 +32,9 @@ import javax.swing.JTextArea;
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.SolverBuilder;
 import de.bwvaachen.beamoflightgame.controller.impl.LightController;
+import de.bwvaachen.beamoflightgame.logic.AmbiguousPuzzleException;
 import de.bwvaachen.beamoflightgame.logic.ISolver;
+import de.bwvaachen.beamoflightgame.logic.MaximumIterationsExceededException;
 import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
 import de.bwvaachen.beamoflightgame.logic.strategies.IntersectionStrategy;
 import de.bwvaachen.beamoflightgame.logic.strategies.LonelyFieldStrategy;
@@ -48,6 +50,7 @@ public abstract class BeamsOfLightEditor extends JFrame
 	public static final double		WEST  = 270.0;
 	
 	private Dimension 		screenSize;
+	public boolean 			isSolved;
 	protected EditorType 	editorType;
 	protected EditorMenu 	editorMenu;
 	protected int 			row;
@@ -75,6 +78,7 @@ public abstract class BeamsOfLightEditor extends JFrame
 		this.totalTiles = col * row;
 		this.editorType = editorType;
 		this.rotationAngle = 0.0;
+		this.isSolved = false;
 		
 		setSize(col*128, row*128 + 110);
 		setMinimumSize(getSize());
@@ -122,7 +126,7 @@ public abstract class BeamsOfLightEditor extends JFrame
 	}
 	
 	public void checkButtons(){
-		if(remainingTiles == 0){
+		if(remainingTiles == 0 && !isSolved){
 			solveButton.setEnabled(true);
 		}else{
 			solveButton.setEnabled(false);
@@ -133,7 +137,6 @@ public abstract class BeamsOfLightEditor extends JFrame
 			solveButton.setToolTipText(null);
 		}
 		if(displayAllTiles){
-			System.out.println(tilesPanel.getComponentCount());
 			cl.show(tiles,"1");
 		}else{
 			cl.show(tiles,"2");
@@ -144,6 +147,7 @@ public abstract class BeamsOfLightEditor extends JFrame
 	public void actionPerformed(ActionEvent ae) {
 		try{
 			if(ae.getSource() == resetButton){
+				isSolved = false;
 				switch(editorType){
 					case LineEditor: 	new LineEditor(col,row);
 										this.dispose();
@@ -156,7 +160,7 @@ public abstract class BeamsOfLightEditor extends JFrame
 			}
 			
 			if(ae.getSource() == solveButton){
-				IBeamsOfLightPuzzleBoard board = this.convertToBoard();
+				IBeamsOfLightPuzzleBoard 	board = this.convertToBoard();
 				
 				ISolver s =
 				SolverBuilder.buildWith(LonelyFieldStrategy.class).
@@ -164,25 +168,35 @@ public abstract class BeamsOfLightEditor extends JFrame
 					          /*and(TryAndErrorStrategy.class).*/
 					          forBoard(board);
 			    s.solve();
+			    this.isSolved = true;
 			    remove(tiles);
-			    tiles = new JPanel(cl);
 			    importPuzzleBoard(board);
 			    convertTilesPanel();
 			    add(BorderLayout.CENTER,tiles);
-			    // if(editorType == EditorType.LineEditor){
-			    	editorMenu.getJRBMenuItemAllTiles().setEnabled(true);
-			    	editorMenu.getJRBMenuItemAllTiles().setToolTipText(null);
-			    	editorMenu.getJRBMenuItemNumberTiles().setEnabled(true);
-			    	editorMenu.getJRBMenuItemNumberTiles().setToolTipText(null);
-			    	editorMenu.getMenuItemSolve().setEnabled(true);
-			    	editorMenu.getMenuItemSolve().setToolTipText(null);
-			   // }
-			   // tiles.add(tilesPanel,"1");
-			   // tiles.add(onlyNumberTilesPanel,"2");
+			   	editorMenu.getJRBMenuItemAllTiles().setEnabled(true);
+			   	editorMenu.getJRBMenuItemAllTiles().setToolTipText(null);
+			   	editorMenu.getJRBMenuItemNumberTiles().setEnabled(true);
+			   	editorMenu.getJRBMenuItemNumberTiles().setToolTipText(null);
+			}
+		}catch(MaximumIterationsExceededException miee){
+			int userSelection = JOptionPane.showConfirmDialog(	this,
+																"Unable to find solution for this input.\nReset board?",
+																"Error",
+																JOptionPane.YES_NO_OPTION);
+			if(userSelection == JOptionPane.YES_OPTION){
+				resetButton.doClick();
 			}
 		}catch(UnsolvablePuzzleException upe){
 			int userSelection = JOptionPane.showConfirmDialog(	this,
 																"Unable to find unique solution for this input.\nReset board?",
+																"Error",
+																JOptionPane.YES_NO_OPTION);
+			if(userSelection == JOptionPane.YES_OPTION){
+				resetButton.doClick();
+			}
+		}catch(AmbiguousPuzzleException ape){
+			int userSelection = JOptionPane.showConfirmDialog(	this,
+																"Found more than one solution for this input.\nReset board?",
 																"Error",
 																JOptionPane.YES_NO_OPTION);
 			if(userSelection == JOptionPane.YES_OPTION){
@@ -194,6 +208,10 @@ public abstract class BeamsOfLightEditor extends JFrame
 		}finally{
 			setSize(col*128,row*128 + 110);
 			setMinimumSize(getSize());
+			if(isSolved){
+				JOptionPane.showMessageDialog(	this,
+					    						"Unique solution found, editing has been disabled.\nYou may now switch between views or save this game using the menu.\n");
+			}
 			updateTileStats();
 			checkButtons();
 			pack();
@@ -215,6 +233,7 @@ public abstract class BeamsOfLightEditor extends JFrame
 	public void setDisplayAllTiles(boolean newDisplayAllTiles){
 		this.displayAllTiles = newDisplayAllTiles;
 		checkButtons();
+		repaint();
 	}
 	
 	public int getRows(){return row;}
