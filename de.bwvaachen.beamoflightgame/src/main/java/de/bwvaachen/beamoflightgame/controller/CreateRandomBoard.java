@@ -36,7 +36,7 @@ public class CreateRandomBoard
 	 * @param oBoard
 	 * @return
 	 */
-	public static void createRandom(BeamsOfLightPuzzleBoard oBoard)
+	public static void createRandom(IBeamsOfLightPuzzleBoard oBoard)
 	{
 		ArrayList<NumberTile> oNumTiles = new ArrayList<NumberTile>();
 		double dblNumberTileCount;
