@@ -558,6 +558,9 @@ public class LightgameUI extends JFrame {
 							{
 								boardOk = false;
 							}
+							else if (t instanceof NumberTile)
+								if(((NumberTile)t).getNumber() == 0)
+									boardOk = false;
 						}
 					}//Iteration over Tiles
 					
