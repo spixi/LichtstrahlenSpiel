@@ -313,7 +313,9 @@ public class LightgameUI extends JFrame {
 									}
 									else
 									{
-										conflictWithBeam = true ;
+										if ( aktTile . getTileState () != aktState ) {
+											conflictWithBeam = true ;
+										}
 									}
 								} // if ( CurrentTileIsLightTile ) 
 												
