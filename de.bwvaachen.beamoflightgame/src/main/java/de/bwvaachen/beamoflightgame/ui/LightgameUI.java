@@ -278,12 +278,15 @@ public class LightgameUI extends JFrame {
 							CurrentTileIsLightTile = true ;
 							
 							int verbrauchteStaerke = 0 ;
+							boolean conflictWithBeam = false ;
 							
 							// Wandern in die aktuelle Himmelsrichtung unter folgenden Bedinungen:
 							// 1. Es ist noch mï¿½glich weiter in die Richtung zu gehen
 							// 2. Es handelt sich um ein LightTile Feld
 							// 3. Die Anzahl der Felder (aus dem NumberTile) wird nicht ï¿½berschritten.
-							while ( ( traverser . shift ( traverseDirection ) ) && ( CurrentTileIsLightTile ) && ( verbrauchteStaerke < strahlStaerke ) ) {							
+							while ( ( traverser . shift ( traverseDirection ) ) && ( CurrentTileIsLightTile ) && ( verbrauchteStaerke < strahlStaerke ) && ( conflictWithBeam == false ) ) {							
+								
+								conflictWithBeam = false ;
 								
 								// Prï¿½fen auf was fï¿½r einem Feld der Traverser aktuell steht.
 								CurrentTileIsLightTile = ( currentModel . getTileAt( traverser . getX(), traverser . getY() ) instanceof LightTile );
@@ -294,6 +297,8 @@ public class LightgameUI extends JFrame {
 									TileButton aktButton = buttons . get ( buttonArrayPos ) ;
 
 									LightTile aktTile = (LightTile) traverser . get() ;
+									
+									
 									if ( aktTile . getTileState() == LightTileState.EMPTY ) {
 										// Einfï¿½rben des Buttons
 										aktButton . markiert = true ;
@@ -302,6 +307,10 @@ public class LightgameUI extends JFrame {
 										// Es wurde mindestens ein mögliches Feld markiert. Deshalb wird dieses NumberTile gespeichert, damit man später beim Klick auf ein markiertes LightTile weiß
 										// von wo der Strahl kommt.
 										activeNumberTile = btn . getTile() ;
+									}
+									else
+									{
+										conflictWithBeam = true ;
 									}
 								} // if ( CurrentTileIsLightTile ) 
 												
