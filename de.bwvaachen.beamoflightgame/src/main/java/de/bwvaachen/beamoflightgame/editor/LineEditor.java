@@ -38,11 +38,6 @@ import de.bwvaachen.beamoflightgame.ui.GraficFactory;
 public class LineEditor extends BeamsOfLightEditor
 	implements MouseMotionListener, MouseListener{
 	
-	public static final double		NORTH = 0.0;
-	public static final double		EAST  = 90.0;
-	public static final double		SOUTH = 180.0;
-	public static final double		WEST  = 270.0;
-	
 	private Point 					lineStart;
 	private Point					lineEnd;
 	private Line2D 					line;
@@ -118,13 +113,12 @@ public class LineEditor extends BeamsOfLightEditor
 		ITile currentTile ;
 		TilePanel tile ;
 		
-		tileList.clear();
-		
 		col = source.getWidth();
 		row = source.getHeight();
-		gl = new GridLayout(row,col);
 		
-		tilesPanel.setLayout(gl);
+		tileList.clear();
+		tilesPanel = new TilesPanel();
+		gl = new GridLayout(row,col);
 		
 		for(int i=0;i<row;i++){
 			for(int j=0;j<col;j++){
@@ -156,10 +150,13 @@ public class LineEditor extends BeamsOfLightEditor
 					int lightPower = currentTileState.getNumber();
 					tile.setLightPower(lightPower);
 				}
+				tile.validate();
+				System.out.println(tile.toString());
 				tileList.add(tile);
 				tilesPanel.add(tile);
 			}
 		}
+		tiles.add(tilesPanel,"1");
 	} //importPuzzleBoard
 	
 	public void convertTilesPanel(){
@@ -176,6 +173,7 @@ public class LineEditor extends BeamsOfLightEditor
 				onlyNumberTilesPanel.add(tile);
 			}
 		}
+		tiles.add(onlyNumberTilesPanel,"2");
 	}
 	
 	private double checkLine(TilePanel startTile, TilePanel endTile) throws Exception{

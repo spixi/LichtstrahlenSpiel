@@ -95,33 +95,34 @@ public class NumberEditor extends BeamsOfLightEditor
 	public void importPuzzleBoard(IBeamsOfLightPuzzleBoard source) 
 			throws NumberFormatException, IIOException, IOException{
 		ITile currentTile ;
-		TileButton tile ;
-		
-		tileList.clear();
+		TileButton tile = null;
 		
 		col = source.getWidth();
 		row = source.getHeight();
 		gl = new GridLayout(row,col);
 		
+		tileList.clear();
+		tilesPanel = new TilesPanel();
 		tilesPanel.setLayout(gl);
-		
+	    
 		for(int i=0;i<row;i++){
 			for(int j=0;j<col;j++){
 				currentTile = source.getTileAt(j,i);
 				tile = createTileButton(i,j);
+				
 				if(currentTile.getClass().getSimpleName().equals("LightTile")){
 					LightTileState currentTileState = (LightTileState) currentTile.getTileState();
 					char c = currentTileState.getSign();
 					double rotationAngle ;
 					
 					switch(c){
-						case 'n':	rotationAngle = 0.0;
+						case 'n':	rotationAngle = NORTH;
 									break;
-						case 's':	rotationAngle = 180.0;
+						case 'e':	rotationAngle = EAST;
 									break;
-						case 'w':	rotationAngle = 270.0;
+						case 's':	rotationAngle = SOUTH;
 									break;
-						case 'e':	rotationAngle = 90.0;
+						case 'w':	rotationAngle = WEST;
 									break;
 						default: 	rotationAngle = 0.0 ;
 					}
@@ -139,6 +140,7 @@ public class NumberEditor extends BeamsOfLightEditor
 				tilesPanel.add(tile);
 			}
 		}
+		tiles.add(tilesPanel,"1");
 		editorMenu.getJRBMenuItemAllTiles().doClick();
 	} //importPuzzleBoard
 	
@@ -156,6 +158,7 @@ public class NumberEditor extends BeamsOfLightEditor
 				onlyNumberTilesPanel.add(tile);
 			}
 		}
+		tiles.add(onlyNumberTilesPanel,"2");
 	}
 	
 	public TileButton createTileButton(int row, int col){

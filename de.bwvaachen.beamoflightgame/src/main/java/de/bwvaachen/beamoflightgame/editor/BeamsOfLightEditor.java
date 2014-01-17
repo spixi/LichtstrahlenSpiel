@@ -42,6 +42,11 @@ import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 public abstract class BeamsOfLightEditor extends JFrame 
 	implements ActionListener{
 	
+	public static final double		NORTH = 0.0;
+	public static final double		EAST  = 90.0;
+	public static final double		SOUTH = 180.0;
+	public static final double		WEST  = 270.0;
+	
 	private Dimension 		screenSize;
 	protected EditorType 	editorType;
 	protected EditorMenu 	editorMenu;
@@ -84,9 +89,11 @@ public abstract class BeamsOfLightEditor extends JFrame
 		tiles = new JPanel(cl);
 		tilesPanel = new TilesPanel();
 		tilesPanel.setLayout(gl);
+		tiles.add(tilesPanel,"1");
 		
 		onlyNumberTilesPanel = new TilesPanel();
 		onlyNumberTilesPanel.setLayout(gl);
+		tiles.add(onlyNumberTilesPanel,"2");
 		
 		solveButton = new JButton("Try to solve");
 		resetButton = new JButton("Reset");
@@ -95,9 +102,6 @@ public abstract class BeamsOfLightEditor extends JFrame
 		
 		initComponents();
 		updateTileStats();
-		
-		tiles.add(tilesPanel,"1");
-		tiles.add(onlyNumberTilesPanel,"2");
 		checkButtons();
 		
 		editorMenu = new EditorMenu(this);
@@ -129,9 +133,10 @@ public abstract class BeamsOfLightEditor extends JFrame
 			solveButton.setToolTipText(null);
 		}
 		if(displayAllTiles){
-			cl.show(tiles, "1");
+			System.out.println(tilesPanel.getComponentCount());
+			cl.show(tiles,"1");
 		}else{
-			cl.show(tiles, "2");
+			cl.show(tiles,"2");
 		}
 	}
 	
@@ -152,8 +157,6 @@ public abstract class BeamsOfLightEditor extends JFrame
 			
 			if(ae.getSource() == solveButton){
 				IBeamsOfLightPuzzleBoard board = this.convertToBoard();
-				ILightController controller = new LightController();
-				controller.setBoard(board);
 				
 				ISolver s =
 				SolverBuilder.buildWith(LonelyFieldStrategy.class).
@@ -161,20 +164,21 @@ public abstract class BeamsOfLightEditor extends JFrame
 					          /*and(TryAndErrorStrategy.class).*/
 					          forBoard(board);
 			    s.solve();
-			    tilesPanel = new TilesPanel();
-			    onlyNumberTilesPanel = new TilesPanel();
-			    importPuzzleBoard(controller.getCurrentModel());
+			    remove(tiles);
+			    tiles = new JPanel(cl);
+			    importPuzzleBoard(board);
 			    convertTilesPanel();
-			    if(editorType == EditorType.LineEditor){
+			    add(BorderLayout.CENTER,tiles);
+			    // if(editorType == EditorType.LineEditor){
 			    	editorMenu.getJRBMenuItemAllTiles().setEnabled(true);
 			    	editorMenu.getJRBMenuItemAllTiles().setToolTipText(null);
 			    	editorMenu.getJRBMenuItemNumberTiles().setEnabled(true);
 			    	editorMenu.getJRBMenuItemNumberTiles().setToolTipText(null);
 			    	editorMenu.getMenuItemSolve().setEnabled(true);
 			    	editorMenu.getMenuItemSolve().setToolTipText(null);
-			    }
-				//tiles.add(tilesPanel,"1");
-			    tiles.add(onlyNumberTilesPanel,"2");
+			   // }
+			   // tiles.add(tilesPanel,"1");
+			   // tiles.add(onlyNumberTilesPanel,"2");
 			}
 		}catch(UnsolvablePuzzleException upe){
 			int userSelection = JOptionPane.showConfirmDialog(	this,

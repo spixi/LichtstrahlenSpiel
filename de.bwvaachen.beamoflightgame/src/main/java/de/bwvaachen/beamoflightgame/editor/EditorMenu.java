@@ -226,7 +226,6 @@ public class EditorMenu extends JMenuBar
 			    	controller.loadGame(file);
 				}
 				editor.importPuzzleBoard(controller.getCurrentModel());
-			 
 			}
 		}catch(IOException ioe){
 			// TODO Auto-generated catch block
