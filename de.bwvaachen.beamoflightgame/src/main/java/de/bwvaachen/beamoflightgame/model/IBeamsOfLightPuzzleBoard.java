@@ -29,4 +29,6 @@ public interface IBeamsOfLightPuzzleBoard extends Iterable<ITile>, TileComposite
 	
 	public void putTile(ITile tile);
 	
+	public IBeamsOfLightPuzzleBoard clone() ;
+	
 }

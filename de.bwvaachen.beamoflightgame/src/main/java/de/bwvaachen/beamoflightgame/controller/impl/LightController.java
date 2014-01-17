@@ -189,10 +189,10 @@ public class LightController implements ILightController {
 	public void solve () {
 		
 		try {
-			
-			solutionBoard = new PrototypModelForLonelyFieldStrategy() ;
-			
+			// Das "Spielboard" kopieren
+			solutionBoard = puzzleBoard . clone () ;			
 		
+			// Den Solver für die Musterlösung erzeugen
 			ISolver s =
 					SolverBuilder.buildWith(LonelyFieldStrategy.class).
 					and(IntersectionStrategy.class).
