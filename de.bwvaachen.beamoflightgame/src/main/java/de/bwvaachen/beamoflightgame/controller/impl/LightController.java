@@ -12,10 +12,15 @@ See the COPYING file for more details.
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
+
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.SolverBuilder;
+import de.bwvaachen.beamoflightgame.controller.Turn;
 import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
+import de.bwvaachen.beamoflightgame.helper.Pair;
 import de.bwvaachen.beamoflightgame.helper.SimpleASCIICodec;
+import de.bwvaachen.beamoflightgame.helper.WrongCodecException;
 import de.bwvaachen.beamoflightgame.helper.ZipPersister;
 import de.bwvaachen.beamoflightgame.logic.ISolver;
 import de.bwvaachen.beamoflightgame.logic.strategies.IntersectionStrategy;
@@ -34,53 +39,6 @@ public class LightController implements ILightController {
 	private IBeamsOfLightPuzzleBoard puzzleBoard;
 	public IBeamsOfLightPuzzleBoard solutionBoard ;
 	
-
-	
-
-	/*
-	@Override
-	public IBeamsOfLightPuzzleBoard getCurrentModel() {
-		return puzzleBoard;
-	}
-
-	@Override
-	public int countEmptyFields() {
-		int count=0;
-		IBeamsOfLightPuzzleBoard currentModel = getCurrentModel();
-		for(ITile field:currentModel){
-			if(field instanceof ILightTile 
-					&& ((ILightTile)field).getState()==LightTileState.EMPTY){
-				count++;
-			}
-		}
-		return count;
-	}
-
-	@Override
-	public int countLightFields() {
-		int count=0;
-		IBeamsOfLightPuzzleBoard currentModel = getCurrentModel();
-		for(ITile field:currentModel){
-			if(field instanceof ILightTile){
-				count++;
-			}
-		}
-		return count;
-	}
-
-	@Override
-	public int countLightedFields() {
-		int count=0;
-		IBeamsOfLightPuzzleBoard currentModel = getCurrentModel();
-		for(ITile field:currentModel){
-			if(field instanceof ILightTile 
-					&& ((ILightTile)field).getState()!=LightTileState.EMPTY){
-				count++;
-			}
-		}
-		return count;
-	}
-	*/
 	
 	@Override
 	public IBeamsOfLightPuzzleBoard getCurrentModel() 
@@ -91,15 +49,18 @@ public class LightController implements ILightController {
 
 	@Override
 	public void loadGame(File f) throws FileNotFoundException, IOException {
-//		FileInputStream   fis   = new FileInputStream(f);
-//		BufferedInputStream bis = new BufferedInputStream(fis);
-//		LzmaInputStream   lis   = new LzmaInputStream(bis, new Decoder());
-//		ObjectInputStream ois   = new ObjectInputStream(lis);
-//		
-//		puzzleBoard = (IBeamsOfLightPuzzleBoard)ois.readObject();
-//		turnManager = (UndoManager)ois.readObject();
-//		
-//		ois.close();
+		ZipPersister persister = new ZipPersister(new SimpleASCIICodec());
+		try {
+			
+			Pair<IBeamsOfLightPuzzleBoard,List<Turn>> pair = persister.load(f);
+			
+			this.setBoard(pair.left);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
 	} // public void loadGame(File f)
 	
 
@@ -113,39 +74,36 @@ public class LightController implements ILightController {
 
 	@Override
 	public void saveGame(File f) throws IOException {
-//		TODO You can ZipPersister or write your one persister you dont need an extern jar for zip streams  
-//		FileOutputStream  fos    = new FileOutputStream(f);
-//		LzmaOutputStream  los    = new LzmaOutputStream.Builder(fos).build();
-//		BufferedOutputStream bos = new BufferedOutputStream(los);
-//		ObjectOutputStream oos   = new ObjectOutputStream(bos);
 				
 		ZipPersister persister = new ZipPersister(new SimpleASCIICodec());
 		persister.save(f, puzzleBoard, turnManager.getTurns()); 
-		
-		
-		
+				
 	} // public void saveGame(File f)
 	
 	//Nur fuer Debugging !
-	public static void main(String[] args)
-	{
-		
-		ILightController c = new LightController();
-		IBeamsOfLightPuzzleBoard m = new PrototypModelForIntersectionStrategy();
-		try {
-			c.setBoard(m);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			c.saveGame(new File("test.bol"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
+	/**
+	 * @author Andi
+	 * @param args
+	 */
+//	public static void main(String[] args)
+//	{
+//		
+//		ILightController c = new LightController();
+//		IBeamsOfLightPuzzleBoard m = new PrototypModelForIntersectionStrategy();
+//		try {
+//			c.setBoard(m);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		try {
+//			c.saveGame(new File("test.bol"));
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//	}
 	
 	
 	/**
@@ -154,6 +112,7 @@ public class LightController implements ILightController {
 	 * @return is the String that represents the Tile
 	 * @author Andi 
 	 */
+	@Deprecated
 	private String getStringRepresentation(ITile t)
 	{
 		try{
