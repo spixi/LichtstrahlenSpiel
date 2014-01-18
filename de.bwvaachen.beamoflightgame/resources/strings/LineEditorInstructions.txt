@@ -1,0 +1,32 @@
+Instructions LineEditor
+
+*** Click on a field and drag the mouse to draw a line
+*** Lightbulb will be created at click location
+*** Lines 	can only be horizontal or vertical
+	cannot start and end in the same field
+	cannot cross
+*** Rightclicking a single field clears it
+*** Continue until no field is potentially empty to enable the "Try to solve"-Button
+*** Use the info in the bottom to track your progress
+*** Press the "Try to solve"-Button to check if the current board has a unique solution
+*** Use the "Reset"-Button to clear the board if needed
+
+Instructions Menu
+
+File
+..New		Restart the editor
+..Save		Save the current board to file
+..Save As		Save the current board to file
+..Load		Load a saved board from file
+..Exit		Exit the editor
+
+Edit
+..Change Board Size	Resize the current board
+..Display All Tiles	Show the solved board(only available if a unique solution has been found)
+..Display Number Tiles	Show the board as it would appear in a new game
+..Solve		Try to solve the current board
+..Reset		Reset the current board
+	
+Help
+..Instructions	Display this information
+..About	Display copyright information

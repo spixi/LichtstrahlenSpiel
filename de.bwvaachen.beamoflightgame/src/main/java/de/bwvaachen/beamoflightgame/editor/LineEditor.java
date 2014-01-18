@@ -1,10 +1,18 @@
 package de.bwvaachen.beamoflightgame.editor;
 
+/*
+Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
+
+See the COPYING file for more details.
+*/
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -15,10 +23,12 @@ import java.util.ArrayList;
 import javax.imageio.IIOException;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
+import de.bwvaachen.beamoflightgame.model.ITileState;
 import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
@@ -30,37 +40,36 @@ import de.bwvaachen.beamoflightgame.ui.GraficFactory;
 public class LineEditor extends BeamsOfLightEditor
 	implements MouseMotionListener, MouseListener{
 	
-	private Point lineStart, lineEnd;
-	private Line2D line;
-	private boolean validLine ;
-	private TilePanel tile;
-	private ArrayList<TilePanel> tileList ;
-	private int tileCount ;
-		
+	private Point 					lineStart;
+	private Point					lineEnd;
+	private Line2D 					line;
+	private boolean 				validLine ;
+	private int 					tileCount ;
+	
+	private ArrayList<TilePanel> 	tileList ;
+
 	public LineEditor(int width, int height){
 		super(EditorType.LineEditor, width, height);
-		
-		tilesPanel.addMouseMotionListener(this);
-		tilesPanel.addMouseListener(this);
 	}
 	
 	@Override
 	public void initComponents(){
-		
+		TilePanel tile ;
 		
 		solveButton.addActionListener(this);
 		resetButton.addActionListener(this);
 		
+		tilesPanel.addMouseMotionListener(this);
+		tilesPanel.addMouseListener(this);
+		
 		validLine = false ;
-		rotationAngle = 0.0 ;
 		tileCount = 0;
+		displayAllTiles = true ;
 		tileList = new ArrayList<TilePanel>();
 		
 		for(int i=0; i<row; i++){
 			for(int j=0; j<col; j++){
-				tile = new TilePanel(j,i);
-				tile.setSize(128,128);
-				tile.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+				tile = createTilePanel(i,j);
 				tilesPanel.add(tile);
 				tileList.add(tile);
 			}
@@ -68,16 +77,16 @@ public class LineEditor extends BeamsOfLightEditor
 	}
 	
 	@Override
-	public String getTileStats() {
-		this.totalTiles = col*row ;
-		this.remainingTiles = totalTiles ;
+	public void updateTileStats() {
+		totalTiles = col*row ;
+		remainingTiles = totalTiles ;
 		
 		for(TilePanel tile : tileList){
 			if(tile.getState() == TileState.NUMBER){
 				this.remainingTiles -= (tile.getLightPower() + 1); 
 			}
 		}
-		return "Felder (Gesamt): "+totalTiles+"\nFelder (Verbleibend): "+remainingTiles;
+		tileStatsTextArea.setText("Fields (Total): "+totalTiles+"\nFields (Remaining): "+remainingTiles+"\n");
 	}
 
 	@Override
@@ -100,138 +109,149 @@ public class LineEditor extends BeamsOfLightEditor
 		return target;
 	}
 	
-	public TilesPanel createTilesPanel(IBeamsOfLightPuzzleBoard source) 
+	
+	public void importPuzzleBoard(IBeamsOfLightPuzzleBoard source) 
 			throws NumberFormatException, IIOException, IOException{
 		
-		TilesPanel temp = new TilesPanel();
-		ITile currentTile ;
+		GraficFactory 	gf = new GraficFactory(source);
+		ITile 			currentTile ;
+		ITileState 		currentTileState;
+		TilePanel 		tile;
+		char 			c;
+		double 			angle;
+		
+		col = source.getWidth();
+		row = source.getHeight();
+		gl = new GridLayout(row,col);
 		
 		tileList.clear();
-		temp.setLayout(new GridLayout(col,row));
-		temp.addMouseListener(this);
-		temp.addMouseMotionListener(this);
+		
+		tiles = new JPanel(cl);
+		
+		tilesPanel = new TilesPanel();
+		tilesPanel.setLayout(gl);
 		
 		for(int i=0;i<row;i++){
 			for(int j=0;j<col;j++){
+				
 				currentTile = source.getTileAt(j,i);
 				tile = createTilePanel(i,j);
+				
 				if(currentTile.getClass().getSimpleName().equals("LightTile")){
-					
-					LightTileState currentTileState = (LightTileState) currentTile.getTileState();
-					char c = currentTileState.getSign();
-					double rotationAngle ;
+					currentTileState = (LightTileState) currentTile.getTileState();
+					c = ((LightTileState)currentTileState).getSign();
 					
 					switch(c){
-						case 'n':	rotationAngle = 0.0;
+						case 'n':	angle = NORTH;
 									break;
-						case 's':	rotationAngle = 180.0;
+						case 'e':	angle = EAST;
 									break;
-						case 'w':	rotationAngle = 270.0;
+						case 's':	angle = SOUTH;
 									break;
-						case 'e':	rotationAngle = 90.0;
+						case 'w':	angle = WEST;
 									break;
-						default: 	rotationAngle = 0.0 ;
+						default: 	angle = 0.0;
 					}
-					if(new GraficFactory(source).isEnd((LightTile)currentTile)){
-						tile.setImage("resources/themes/moon/light2.png", rotationAngle);
+					if(gf.isEnd((LightTile)currentTile)){
+						tile.setImage("resources/themes/moon/light2.png",angle);
 					}else{
-						tile.setImage("resources/themes/moon/light1.png", rotationAngle);
+						tile.setImage("resources/themes/moon/light1.png",angle);
 					}
-				}else if(currentTile.getClass().getSimpleName().equals("NumberTile")){
-					NumberTileState currentTileState = (NumberTileState) currentTile.getTileState() ;
-					int lightPower = currentTileState.getNumber();
+				}if(currentTile.getClass().getSimpleName().equals("NumberTile")){
+					currentTileState = (NumberTileState) currentTile.getTileState() ;
+					int lightPower = ((NumberTileState) currentTileState).getNumber();
 					tile.setLightPower(lightPower);
 				}
 				tileList.add(tile);
-				temp.add(tile);
+				tilesPanel.add(tile);
 			}
 		}
-		return temp;
-	} //initTilesPanel
+		tiles.add(tilesPanel,"1");
+	} //importPuzzleBoard
+	
+	@Override
+	public void convertTilesPanel(){
+		TilePanel temp ;
+		
+		onlyNumberTilesPanel = new TilesPanel();
+		onlyNumberTilesPanel.setLayout(gl);
+		
+		for(TilePanel tile : tileList){
+			if(tile.getState() != TileState.NUMBER){
+				temp = createTilePanel(tile.getCol(),tile.getRow());
+				onlyNumberTilesPanel.add(temp);
+			}else{
+				temp = createTilePanel(tile);
+				onlyNumberTilesPanel.add(temp);
+			}
+		}
+		tiles.add(onlyNumberTilesPanel,"2");
+	}
 	
 	private double checkLine(TilePanel startTile, TilePanel endTile) throws Exception{
 		
 		int deltaXabs = Math.abs(startTile.getCol() - endTile.getCol());
 		int deltaYabs = Math.abs(startTile.getRow() - endTile.getRow());
-		int deltaX = startTile.getCol() - endTile.getCol();
-		int deltaY = startTile.getRow() - endTile.getRow();
+		int deltaX 	  = startTile.getCol() - endTile.getCol();
+		int deltaY    = startTile.getRow() - endTile.getRow();
 				
-		double angle = 0.0 ;
+		double 				angle = NORTH ;
+		if(deltaXabs > 0){	angle = EAST;}
+		if(deltaY    < 0){	angle = SOUTH;}
+		if(deltaX    > 0){	angle = WEST;}
+		
 		boolean crossingNonEmptyTile = false ;
-		boolean errorDisplayed = false ;
 		
 		for(TilePanel tile : tileList){
-			if(	line.intersects(tile.getBounds())
-			&&  !(tile.getBounds().contains(lineStart)))
-			{
-				if(tile.getState() != TileState.EMPTY){
+			
+			if(	  line.intersects(tile.getBounds())
+			&&  !(tile.getBounds().contains(lineStart))
+			){
+				if(  tile.getState() != TileState.EMPTY 
+				&& !(tile.isOrientation(angle))
+				){
 					crossingNonEmptyTile = true ;
 					break ;
 				}
 			}
 		}
 		
-		if(		startTile != endTile 
-			&&  (deltaXabs == 0 ^ deltaYabs == 0) 
-			&& 	(startTile.getState() == TileState.NUMBER || startTile.getState() == TileState.EMPTY)
-			&& 	endTile.getState() == TileState.EMPTY
-			&&	!crossingNonEmptyTile
+		if(	 startTile != endTile 
+		&&  (deltaXabs == 0 ^ deltaYabs == 0) 
+		&& 	(startTile.getState() == TileState.NUMBER || startTile.getState() == TileState.EMPTY)
+		&& 	 endTile.getState() == TileState.EMPTY
+		&&	!crossingNonEmptyTile
 		  ){
 			validLine = true ;			
 		}else{ 
-			if(deltaXabs >= 1 && deltaYabs >= 1 && !errorDisplayed){
+			if(deltaXabs >= 1 && deltaYabs >= 1){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
-												"Diagonalen sind nicht moeglich!",
-												"Fehler",
+												"Unable to draw diagonal beams!",
+												"Error",
 												JOptionPane.ERROR_MESSAGE);
-				errorDisplayed = true ;
-			}
-			if(startTile == endTile && !errorDisplayed){
+			}else if(startTile == endTile){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
-												"Start- und Endfeld duerfen nicht gleich sein!",
-												"Fehler",
+												"Beams cannot start and end in the same field!",
+												"Error",
 												JOptionPane.ERROR_MESSAGE);
-				errorDisplayed = true ;
-			}
-			if(!(startTile.getState() == TileState.EMPTY || startTile.getState() == TileState.NUMBER) && !errorDisplayed){
+			}else if(!(startTile.getState() == TileState.EMPTY || startTile.getState() == TileState.NUMBER)){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
-												"Startfeld muss leer oder bereits Zahlenfeld sein!\nFeldbelegung loeschen mit Rechtsklick.",
-												"Fehler",
+												"Startfield has to be empty or already numberfield!\nRightclick on fields to clear them.",
+												"Error",
 												JOptionPane.ERROR_MESSAGE);
-				errorDisplayed = true ;
-			}
-			if(crossingNonEmptyTile && !errorDisplayed){
+			}else if(crossingNonEmptyTile){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
-												"Linie darf kein gefuelltes Feld schneiden!\nFeldbelegung loeschen mit Rechtsklick.",
-												"Fehler",
+												"Beams must not cross!\nRightclick on fields to clear them.",
+												"Error",
 												JOptionPane.ERROR_MESSAGE);
-				errorDisplayed = true ;
 			}
-		}
-		if(deltaXabs > 0){
-			angle = 90.0 ;
-		}
-		if(deltaX > 0){
-			angle = 270.0 ;
-		}
-		if(deltaY < 0){
-			angle = 180.0 ;
 		}
 		return angle ;
 	} //checkLine
-	
-	public TilePanel createTilePanel(int row, int col){
-		TilePanel temp = new TilePanel(col,row);
-		temp.setSize(128,128);
-		temp.setMinimumSize(new Dimension(128,128));
-		temp.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		
-		return temp ;
-	}
 	
 	@Override
 	public void mouseClicked(MouseEvent me) {
@@ -242,17 +262,9 @@ public class LineEditor extends BeamsOfLightEditor
 				if(tile.getBounds().contains(clicked)){
 					tile.reset();
 				}
-			tileStats.setText(getTileStats());
+			updateTileStats();
 			checkButtons();
 		}
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent me) {
-	}
-
-	@Override
-	public void mouseExited(MouseEvent me) {
 	}
 
 	@Override
@@ -266,23 +278,29 @@ public class LineEditor extends BeamsOfLightEditor
 		if(SwingUtilities.isLeftMouseButton(me)){
 
 			lineEnd = me.getPoint();
-			TilePanel startTile = null ;
-			TilePanel endTile = null ;
+			TilePanel startTile = null;
+			TilePanel endTile = null;
 			
 			try{
 				for(TilePanel tile : tileList){
-					if(line.intersects(tile.getBounds()) && !(tile.getBounds().contains(lineStart)) && tile.getState() == TileState.EMPTY){
-						tileCount++;
-					}
 					if(tile.getBounds().contains(lineStart)){
-						startTile = tile ;
+						startTile = tile;
 					}
 					if(tile.getBounds().contains(lineEnd)){
-						endTile = tile ;
+						endTile = tile;
 					}
 				}
 				
 				rotationAngle = checkLine(startTile,endTile);
+				
+				for(TilePanel tile : tileList){
+					if(	 line.intersects(tile.getBounds()) 
+					&& !(tile.getBounds().contains(lineStart)) 
+					&&   tile.getState() == TileState.EMPTY
+					){
+						tileCount++;
+					}
+				}
 				
 				if(validLine){
 					endTile.setImage("resources/themes/moon/light2.png",rotationAngle);
@@ -306,14 +324,14 @@ public class LineEditor extends BeamsOfLightEditor
 			}finally{
 				//System.out.println("START: "+ startTile.getCol() +","+ startTile.getRow());
 				//System.out.println("END: "+ endTile.getCol() +","+ endTile.getRow());
-				tileStats.setText(getTileStats());
+				updateTileStats();
 				checkButtons();
 				tileCount = 0 ;
 				line = new Line2D.Double();
 				validLine = false ;
 				rotationAngle = 0.0;
 				tilesPanel.setLine(line);
-				tilesPanel.repaint();
+				repaint();
 			}
 		} //if(SwingUtilities.isLeftMouseButton(me))
 }
@@ -327,20 +345,24 @@ public class LineEditor extends BeamsOfLightEditor
 			tilesPanel.repaint();
 		}
 	}
-
-	@Override
-	public void mouseMoved(MouseEvent me) {
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent ae) {
-		super.actionPerformed(ae);
+	
+	public TilePanel createTilePanel(TilePanel tile){
+		TilePanel temp = new TilePanel(tile.getCol(),tile.getRow());
+		temp.setImage(tile.getImage());
 		
-		if(ae.getSource() == resetButton){
-			for(TilePanel tile : tileList){
-				tile.reset();
-			}
-		}
-		tilesPanelSolved = null ;
+		return temp;
 	}
+	
+	public TilePanel createTilePanel(int row, int col){
+		TilePanel temp = new TilePanel(col,row);
+		temp.setSize(128,128);
+		temp.setMinimumSize(new Dimension(128,128));
+		temp.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		
+		return temp ;
+	}
+	
+	public void mouseMoved(MouseEvent me) {}
+	public void mouseEntered(MouseEvent me) {}
+	public void mouseExited(MouseEvent me) {}
 }

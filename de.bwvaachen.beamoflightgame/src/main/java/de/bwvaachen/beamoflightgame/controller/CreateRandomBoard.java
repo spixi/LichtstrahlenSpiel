@@ -1,34 +1,48 @@
 package de.bwvaachen.beamoflightgame.controller;
 
+/*
+Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
+
+See the COPYING file for more details.
+*/
+
+
 import java.util.ArrayList;
+import java.util.Collections;
 
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
-import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
+import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
+import de.bwvaachen.beamoflightgame.model.NumberTileState;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 
 public class CreateRandomBoard 
 {
-	final static ArrayList<NumberTile> oNumTiles = new ArrayList<NumberTile>();
-
 	public static void main(String[] args)
 	{
 		BeamsOfLightPuzzleBoard b = new BeamsOfLightPuzzleBoard();
 		b.init(5, 6);
-		System.out.println(createRandom(b));
-
-		setNumbers(b, oNumTiles);
-
+		createRandom(b);
 	}
-	public static BeamsOfLightPuzzleBoard createRandom(BeamsOfLightPuzzleBoard oBoard)
+	
+	/**
+	 * Creates a random PuzzleBoard. Needs an initialized BeamOfLightPuzzleBoard as parameter and places NumberTiles in pseudo random order on it. Calls setNumbers().
+	 * @author cfruehholz
+	 * @param oBoard
+	 * @return
+	 */
+	public static void createRandom(IBeamsOfLightPuzzleBoard oBoard)
 	{
-		//1,5*math.sqrt(x,y)+-20%
-		//TODO Tiles Holen, Anzahl NumberTiles berechnen, NumberTiles Random setzen, LightTiles auffüllen, Zahlen vergeben
+		ArrayList<NumberTile> oNumTiles = new ArrayList<NumberTile>();
 		double dblNumberTileCount;
+		
+		//TODO In Berechnung des NumberTileCount den Randomfaktor einbauen.
 		dblNumberTileCount = (1.5 * Math.sqrt(oBoard.getHeight()*oBoard.getWidth()));//100*(Math.random()*20);
-		//final ArrayList<NumberTile> oNumTiles = new ArrayList<NumberTile>();
-
 
 		for(int i = 0; i < (int)dblNumberTileCount; i++)
 		{
@@ -56,56 +70,92 @@ public class CreateRandomBoard
 				oBoard.putTile(oNumTiles.get(i));
 			}
 		}
-
-		return oBoard;
+		
+		System.out.println(oBoard);
+		setNumbers(oNumTiles);
+		System.out.println(oBoard);
 	}
 
-	public static void setNumbers(BeamsOfLightPuzzleBoard oBoard, ArrayList<NumberTile> oNumTiles)
+	/**
+	 * An algorithm to determine the strength of Lightmachines (NumberTiles). Needs an ArrayList of NumberTiles which are already put on a BeamOfLightPuzzleBoard.
+	 * @author cfruehholz
+	 * @param oNumTiles
+	 */
+	public static void setNumbers(ArrayList<NumberTile> oNumTiles)
 	{
+		IBeamsOfLightPuzzleBoard oBoard = oNumTiles.get(0).getBoard();
 		int iCountOfLightTiles = (oBoard.getHeight()*oBoard.getWidth())-oBoard.getNumOfNumberTiles();
 		int iNumber = 0;
 
+		Collections.shuffle(oNumTiles);
+		
 		for (int i = 0; i < oNumTiles.size(); i++)
 		{
+			
 			BoardTraverser oTraverser = new BoardTraverser(oNumTiles.get(i));	
+			System.out.println("startX: " + oTraverser.getStartX() + " x: " + oTraverser.getX() + "\n" + "startY: " + oTraverser.getStartY() + " y: " + oTraverser.getY());
 			while (oTraverser.shift(LightTileState.NORTH.getTraverseDirection()))
 			{
-				if(oTraverser.get() == null)
+				if(oTraverser.get() == null && oBoard.hasField(oTraverser.getX(), oTraverser.getY()))
 				{
+					oBoard.putTile(new LightTile(oBoard, oTraverser.getX(), oTraverser.getY()));
 					iNumber++;
 					iCountOfLightTiles--;
+				}
+				else
+				{
+					break;
 				}
 			}
 			oTraverser.reset();
 			while (oTraverser.shift(LightTileState.EAST.getTraverseDirection()))
 			{
-				if(oTraverser.get() == null)
+				if(oTraverser.get() == null && oBoard.hasField(oTraverser.getX(), oTraverser.getY()))
 				{
+					oBoard.putTile(new LightTile(oBoard, oTraverser.getX(), oTraverser.getY()));
 					iNumber++;
 					iCountOfLightTiles--;
+				}
+				else
+				{
+					break;
 				}
 			}
 			oTraverser.reset();
 			while (oTraverser.shift(LightTileState.SOUTH.getTraverseDirection()))
 			{
-				if(oTraverser.get() == null)
+				if(oTraverser.get() == null && oBoard.hasField(oTraverser.getX(), oTraverser.getY()))
 				{
+					oBoard.putTile(new LightTile(oBoard, oTraverser.getX(), oTraverser.getY()));
 					iNumber++;
 					iCountOfLightTiles--;
+				}
+				else
+				{
+					break;
 				}
 			}
 			oTraverser.reset();
 			while (oTraverser.shift(LightTileState.WEST.getTraverseDirection()))
 			{
-				if(oTraverser.get() == null)
+				if(oTraverser.get() == null && oBoard.hasField(oTraverser.getX(), oTraverser.getY()))
 				{
+					oBoard.putTile(new LightTile(oBoard, oTraverser.getX(), oTraverser.getY()));
 					iNumber++;
 					iCountOfLightTiles--;
 				}
+				else
+				{
+					break;
+				}
 			}
+			
+			oNumTiles.get(i).setState(new NumberTileState(iNumber), true);
+			iNumber = 0;
 			oTraverser.reset();
-
-			//TODO Von jedem NumberTile in alle Himmelsrichtungen traversieren so weit möglich und daraus Zahl errechnen.
+			
+			if(iCountOfLightTiles == 0)
+				break;
 		}
 	}
 }

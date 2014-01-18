@@ -1,20 +1,19 @@
 package de.bwvaachen.beamoflightgame.controller.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+/*
+Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
+
+See the COPYING file for more details.
+*/
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.List;
-
-import javax.swing.text.html.HTMLDocument.Iterator;
-import javax.swing.undo.CannotUndoException;
-
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.SolverBuilder;
-import de.bwvaachen.beamoflightgame.controller.Turn;
 import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
 import de.bwvaachen.beamoflightgame.helper.SimpleASCIICodec;
 import de.bwvaachen.beamoflightgame.helper.ZipPersister;
@@ -190,10 +189,10 @@ public class LightController implements ILightController {
 	public void solve () {
 		
 		try {
-			
-			solutionBoard = new PrototypModelForLonelyFieldStrategy() ;
-			
+			// Das "Spielboard" kopieren
+			solutionBoard = puzzleBoard . clone () ;			
 		
+			// Den Solver für die Musterlösung erzeugen
 			ISolver s =
 					SolverBuilder.buildWith(LonelyFieldStrategy.class).
 					and(IntersectionStrategy.class).

@@ -1,6 +1,14 @@
 package de.bwvaachen.beamoflightgame.model.impl;
 
-import java.util.Collection;
+/*
+Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
+
+See the COPYING file for more details.
+*/
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -11,6 +19,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 
+import de.bwvaachen.beamoflightgame.helper.AbstractTileVisitor;
 import de.bwvaachen.beamoflightgame.helper.ITileVisitor;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
@@ -198,6 +207,30 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard, Change
 		for(ChangeListener l: changeListeners) {
 			l.stateChanged(e);
 		}	
+	}
+	public IBeamsOfLightPuzzleBoard clone()
+	{
+		IBeamsOfLightPuzzleBoard ret = new BeamsOfLightPuzzleBoard();
+		ret.init(this.width,this.height);
+		for(int h =0; h< this.height;h++)
+		{
+			for(int w = 0; w<this.width;w++)
+			{
+				ITile t = this.getTileAt(w, h);
+				if(t instanceof NumberTile)
+				{
+					NumberTile num = (NumberTile)t;
+					ret.putTile(new NumberTile(ret,num.getNumber(),w,h));
+				}
+				else if (t instanceof LightTile)
+				{
+					LightTile lig = (LightTile)t;
+					ret.putTile(new LightTile(ret,w,h,lig.getTileState()));
+				}
+			}
+		}
+		
+		return ret;
 	}
 
 }

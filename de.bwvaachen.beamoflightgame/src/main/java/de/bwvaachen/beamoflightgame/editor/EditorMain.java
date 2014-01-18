@@ -1,5 +1,14 @@
 package de.bwvaachen.beamoflightgame.editor;
 
+/*
+Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
+
+See the COPYING file for more details.
+*/
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -20,15 +29,25 @@ import javax.swing.JOptionPane;
 public class EditorMain extends JFrame
 	implements ActionListener{
 
-	private int width, height ;
-	private int maxWidth, maxHeight ;
-	private Dimension screenSize ;
-	private Dimension frameSize ;
-	private JTextField inputWidthTF, inputHeightTF ;
-	private JLabel inputWidthL, inputHeightL, editorTypeL, header ;
-	private JPanel contentPanel, boardSizePanel, editorTypePanel, buttonPanel ;
-	private JButton okButton, cancelButton ;
-	private JComboBox<EditorType> editorTypeBox ;
+	private int 					width ;
+	private int 					height ;
+	private int 					maxHeight ;
+	private int 					maxWidth ;
+	private Dimension 				screenSize ;
+	private Dimension 				frameSize ;
+	private JTextField 				inputWidthTF ;
+	private JTextField				inputHeightTF ;
+	private JLabel 					inputWidthL ;
+	private JLabel					inputHeightL ;
+	private JLabel					editorTypeL ;
+	private JLabel					header ;
+	private JPanel 					contentPanel ;
+	private JPanel 					boardSizePanel ;
+	private JPanel 					editorTypePanel ; 
+	private JPanel 					buttonPanel ;
+	private JButton 				okButton ;
+	private JButton					cancelButton ;
+	private JComboBox<EditorType> 	editorTypeBox ;
 	
 	public EditorMain(){
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -39,7 +58,7 @@ public class EditorMain extends JFrame
 		setMinimumSize(frameSize) ;								
 		setLocation((screenSize.width - frameSize.width)/2,(screenSize.height - frameSize.height)/2);
 		setResizable(false);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setTitle("BeamOfLightGame Editor");
 		
 		initComponents();
@@ -58,16 +77,16 @@ public class EditorMain extends JFrame
 		editorTypePanel = new JPanel();
 		buttonPanel = new JPanel();
 		
-		header = new JLabel("<html>Dimensionen des Lichtstrahlen-Spielbretts angeben:<br></html>");
+		header = new JLabel("Enter dimensions for BeamOfLightGame board:");
 		header.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
 		
-		inputWidthTF = new JTextField("5", 10);
-		inputHeightTF = new JTextField("5", 10);
-		inputWidthL = new JLabel("Breite:");
-		inputHeightL = new JLabel("Hoehe:");
+		inputWidthTF = new JTextField("4", 10);
+		inputHeightTF = new JTextField("4", 10);
+		inputWidthL = new JLabel("Width:");
+		inputHeightL = new JLabel("Height:");
 		
-		editorTypeL = new JLabel("<html>Editor-Modus: <br></html>");
+		editorTypeL = new JLabel("Editor Mode:");
 		editorTypeL.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		editorTypeBox = new JComboBox<EditorType>(EditorType.values());
 		
@@ -79,10 +98,9 @@ public class EditorMain extends JFrame
 		editorTypePanel.add(editorTypeL);
 		editorTypePanel.add(editorTypeBox);
 		
-		
 		okButton = new JButton("OK") ;
 		okButton.addActionListener(this);
-		cancelButton = new JButton("Abbrechen");
+		cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener(this);
 		
 		buttonPanel.add(okButton);
@@ -99,8 +117,8 @@ public class EditorMain extends JFrame
 		
 		if(e.getSource() == okButton && (inputWidth > maxWidth || inputHeight > maxHeight)){
 			JOptionPane.showMessageDialog(	this,
-											"Darstellung bei aktueller Aufloesung nicht moeglich!\nMaximale Breite: " + maxWidth + "\nMaximale Hoehe: " + maxHeight + "\n",
-											"Fehler",
+											"Unable to display with current resolution!\nMaximum Width: " + maxWidth + "\nMaximum Height: " + maxHeight + "\n",
+											"Error",
 											JOptionPane.ERROR_MESSAGE
 										 );
 		}else{

@@ -1,12 +1,19 @@
 package de.bwvaachen.beamoflightgame.ui;
 
+/*
+Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
+
+See the COPYING file for more details.
+*/
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -15,9 +22,6 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -27,27 +31,27 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.undo.UndoManager;
 
+import de.bwvaachen.beamoflightgame.controller.CreateRandomBoard;
 import de.bwvaachen.beamoflightgame.controller.ILightController;
-import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
 import de.bwvaachen.beamoflightgame.controller.SolverBuilder;
 import de.bwvaachen.beamoflightgame.controller.impl.LightController;
+import de.bwvaachen.beamoflightgame.editor.EditorMain;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.ITileVisitor;
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.logic.ISolver;
 import de.bwvaachen.beamoflightgame.logic.strategies.IntersectionStrategy;
 import de.bwvaachen.beamoflightgame.logic.strategies.LonelyFieldStrategy;
-import de.bwvaachen.beamoflightgame.logic.strategies.TryAndErrorStrategy;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
-import de.bwvaachen.beamoflightgame.model.NumberTileState;
+import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 
 public class LightgameUI extends JFrame {
 	
@@ -277,12 +281,15 @@ public class LightgameUI extends JFrame {
 							CurrentTileIsLightTile = true ;
 							
 							int verbrauchteStaerke = 0 ;
+							boolean conflictWithBeam = false ;
 							
 							// Wandern in die aktuelle Himmelsrichtung unter folgenden Bedinungen:
 							// 1. Es ist noch mï¿½glich weiter in die Richtung zu gehen
 							// 2. Es handelt sich um ein LightTile Feld
 							// 3. Die Anzahl der Felder (aus dem NumberTile) wird nicht ï¿½berschritten.
-							while ( ( traverser . shift ( traverseDirection ) ) && ( CurrentTileIsLightTile ) && ( verbrauchteStaerke < strahlStaerke ) ) {							
+							while ( ( traverser . shift ( traverseDirection ) ) && ( CurrentTileIsLightTile ) && ( verbrauchteStaerke < strahlStaerke ) && ( conflictWithBeam == false ) ) {							
+								
+								conflictWithBeam = false ;
 								
 								// Prï¿½fen auf was fï¿½r einem Feld der Traverser aktuell steht.
 								CurrentTileIsLightTile = ( currentModel . getTileAt( traverser . getX(), traverser . getY() ) instanceof LightTile );
@@ -293,6 +300,8 @@ public class LightgameUI extends JFrame {
 									TileButton aktButton = buttons . get ( buttonArrayPos ) ;
 
 									LightTile aktTile = (LightTile) traverser . get() ;
+									
+									
 									if ( aktTile . getTileState() == LightTileState.EMPTY ) {
 										// Einfï¿½rben des Buttons
 										aktButton . markiert = true ;
@@ -301,6 +310,12 @@ public class LightgameUI extends JFrame {
 										// Es wurde mindestens ein mögliches Feld markiert. Deshalb wird dieses NumberTile gespeichert, damit man später beim Klick auf ein markiertes LightTile weiß
 										// von wo der Strahl kommt.
 										activeNumberTile = btn . getTile() ;
+									}
+									else
+									{
+										if ( aktTile . getTileState () != aktState ) {
+											conflictWithBeam = true ;
+										}
 									}
 								} // if ( CurrentTileIsLightTile ) 
 												
@@ -361,13 +376,18 @@ public class LightgameUI extends JFrame {
 	 *  Initialisieren des Fensters
 	 *  @author gbraun , pauls_and	 *  
 	 */
-	public LightgameUI() {
+	public LightgameUI()
+	{
+		 this(new PrototypModelForLonelyFieldStrategy());
+	}
+	
+	public LightgameUI(IBeamsOfLightPuzzleBoard b) {
 		
 		try {	
 
 			// Setzen der initialen Fensterposition und Grï¿½ï¿½e.
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			setBounds(100, 100, 450, 300);
+			//setBounds(100, 100, 450, 300);
 			// Verändern der Fenstergröße verhindern
 			setResizable( false ) ;
 					
@@ -389,7 +409,7 @@ public class LightgameUI extends JFrame {
 			contentPane.add(rasterPanel, BorderLayout.CENTER);
 	
 			// Controller mit Test Prototyp fï¿½r GUI fï¿½llen.
-			controller . setBoard ( new PrototypModelForLonelyFieldStrategy() ) ;
+			controller . setBoard ( b ) ;
 			
 			// Vom Controller die Musterlösung generieren lassen.
 			controller . solve() ;
@@ -432,11 +452,11 @@ public class LightgameUI extends JFrame {
 			//TODO end
 			
 			// Das Spielfeld vom Controller holen:
-			IBeamsOfLightPuzzleBoard currentModel = controller.getCurrentModel() ;
+			
 			
 			// TODO temporï¿½r feste Werte fï¿½r Tests eingetragen.
-			int rows = currentModel.getHeight() ;
-			int cols = currentModel.getWidth() ;
+			int rows = b.getHeight() ;
+			int cols = b.getWidth() ;
 			
 			//IBeamsOfLightPuzzleBoard currentModel = controller . getCurrentModel();
 			rasterPanel . setLayout ( new GridLayout ( rows , cols , 0 , 0 ) ) ;
@@ -451,11 +471,11 @@ public class LightgameUI extends JFrame {
 				for ( int col=0 ;col<cols ; col++ ) {
 	
 					// Neuen Button erzeugen
-					final TileButton newTileButton = new TileButton ( currentModel . getTileAt ( col , row ) ) ;
-					newTileButton . setPreferredSize( new Dimension (127 , 127 ) ) ;
+					final TileButton newTileButton = new TileButton ( b . getTileAt ( col , row ) ) ;
+					newTileButton . setPreferredSize( new Dimension (128 , 128 ) ) ;
 					// Action hinzufï¿½gen
 					
-					currentModel . getTileAt ( col , row ) . accept( new ITileVisitor() {
+					b . getTileAt ( col , row ) . accept( new ITileVisitor() {
 
 						@Override
 						public void visitLightTile(LightTile t) {
@@ -480,9 +500,8 @@ public class LightgameUI extends JFrame {
 				} // for ( int col=0 ;col<cols ; col++ )
 			} // for ( int row=0 ; row<rows ; row++ )
 			
-			//Der JButton implementiert ImageObserver ... Wir brauchen also eigentlich nur das Bild
-			//austauschen und -schwupp- sollte der Button sich mitÃ¤ndern, oder etwa nicht?
-			Update( currentModel ) ;
+			
+			Update( b ) ;
 			
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -520,6 +539,47 @@ public class LightgameUI extends JFrame {
 		JMenuItem mntmNew = new JMenuItem("New");
 		mnFile.add(mntmNew);
 		
+		mntmNew.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				//JOptionPane.showMessageDialog(null,"Dieses Feature ist nur in der Vollversion verfügbar","Fehler", JOptionPane.ERROR_MESSAGE);      
+				IBeamsOfLightPuzzleBoard board = new BeamsOfLightPuzzleBoard();
+				boolean boardOk = false;
+				while(!boardOk)
+				{
+					boardOk = true;
+					board.init(5, 5);
+					CreateRandomBoard.createRandom(board);
+					for(int x =0;x < board.getWidth() && boardOk;x++)
+					{
+						for(int y =0;y < board.getHeight() && boardOk;y++)
+						{
+							ITile t = board.getTileAt(x, y);
+							if(! (t instanceof ITile))
+							{
+								boardOk = false;
+							}
+							else if (t instanceof NumberTile)
+								if(((NumberTile)t).getNumber() == 0)
+									boardOk = false;
+						}
+					}//Iteration over Tiles
+					
+					
+				}//while Board not Ok
+				try {
+					controller.setBoard(board);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				LightgameUI frame = new LightgameUI(board);
+				frame.setVisible(true);
+			
+			}
+		});
+		
 		JSeparator separator_2 = new JSeparator();
 		mnFile.add(separator_2);
 		
@@ -537,6 +597,9 @@ public class LightgameUI extends JFrame {
 		
 		JMenu mnGame = new JMenu("Game");
 		menuBar.add(mnGame);
+		
+		
+		
 		
 		JMenuItem mntmCheckGame = new JMenuItem ( "Check Game" ) ;
 		mnGame . add ( mntmCheckGame ) . addActionListener( new ActionListener() {
@@ -631,6 +694,22 @@ public class LightgameUI extends JFrame {
 				
 		
 		mnGame.add(mntmBackToMark);
+		
+		JMenu mnEditor = new JMenu("Editor");
+		menuBar.add(mnEditor);
+		
+		JMenuItem mntmStartEditor = new JMenuItem("Start Editor");
+		mntmStartEditor.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent ae){
+				SwingUtilities.invokeLater(new Runnable(){
+					public void run(){
+					new EditorMain();
+					}});
+			}
+		});
+		
+		mnEditor.add(mntmStartEditor);
 		
 		/*
 		//TODO: J(Toggle)Button instead of JMenuItem
