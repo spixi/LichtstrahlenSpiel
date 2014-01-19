@@ -208,8 +208,13 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard, Change
 			l.stateChanged(e);
 		}	
 	}
+	/**
+	 * @author Andi
+	 * 
+	 */
 	public IBeamsOfLightPuzzleBoard clone()
 	{
+		//Clones the instance and returns an equal one.
 		IBeamsOfLightPuzzleBoard ret = new BeamsOfLightPuzzleBoard();
 		ret.init(this.width,this.height);
 		for(int h =0; h< this.height;h++)

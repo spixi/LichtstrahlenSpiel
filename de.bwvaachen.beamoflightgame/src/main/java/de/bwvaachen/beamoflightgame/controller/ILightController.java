@@ -28,5 +28,6 @@ public interface ILightController {
 	
 	public void solve();
 	public boolean GameIsCorrect () ;
+	public void swapModelWithSolution();
 	
 } // public interface ILightController
