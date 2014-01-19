@@ -101,6 +101,13 @@ public class CreateRandomBoard
 					oBoard.putTile(new LightTile(oBoard, oTraverser.getX(), oTraverser.getY()));
 					iNumber++;
 					iCountOfLightTiles--;
+					//A little bit more random. This allows a puzzles where a 
+					//The beam stops before reaching another tile.
+					//example: 2 e e w w 2
+					//
+					//Without this tweak, we always would generate
+					// 4 e e e e 0  or  0 w w w w 4
+					if(Math.random() > 0.5) break;
 				}
 				else
 				{
@@ -109,9 +116,6 @@ public class CreateRandomBoard
 			}
 			oTraverser.reset();
 			}
-			
-			iNumber = iNumber * 1 + 1;
-
 			
 			oNumTiles.get(i).setState(new NumberTileState(iNumber), true);
 			iNumber = 0;
