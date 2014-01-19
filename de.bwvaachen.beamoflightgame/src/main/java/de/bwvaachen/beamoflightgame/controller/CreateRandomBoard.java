@@ -78,6 +78,7 @@ public class CreateRandomBoard
 	 */
 	public static void setNumbers(ArrayList<NumberTile> oNumTiles)
 	{
+		if(oNumTiles.size() == 0) return;
 		IBeamsOfLightPuzzleBoard oBoard = oNumTiles.get(0).getBoard();
 		int iCountOfLightTiles = (oBoard.getHeight()*oBoard.getWidth())-oBoard.getNumOfNumberTiles();
 		int iNumber = 0;
