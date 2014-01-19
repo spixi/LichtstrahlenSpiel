@@ -9,74 +9,31 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 See the COPYING file for more details.
 */
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.ref.SoftReference;
 import java.util.Properties;
 
 public class GameProperties extends Properties {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3492171893828000103L;
 	public static final GameProperties INSTANCE = new GameProperties();
-	private File file;
-	private SoftReference<BufferedOutputStream> outputStream;
+	private File file; //TODO
 	
-	{
-		String userHome = System.getenv("user.home");
-		
+	static {
+		INSTANCE.init();
+	}
+
+	private GameProperties(){
+		String userHome = System.getProperty("user.home");
 		file = new File(userHome + File.separator + "beamoflightgame.cfg");
-		if(!file.exists()) {
-			try {
-				file.createNewFile();
-			} catch (IOException e) {
-			}
-			reset();
-		}
-		else {
-			try {
-				loadFromXML(new BufferedInputStream(new FileInputStream(file)));
-			} catch (Exception e) {
-				reset();
-			}
-		}
 	}
 	
-	@Override
-	public Object put(Object key, Object value) {
-		Object oldValue = super.put(key, value);
-		
-		if(outputStream.get() == null) {
-			try {
-				outputStream = new SoftReference<BufferedOutputStream>(new BufferedOutputStream(new FileOutputStream(file)));
-			} catch (FileNotFoundException e) {
-				try {
-					file.createNewFile();
-				} catch (IOException e1) {
-				}
-			}
-		}
-		
-		if (oldValue != value) {
-			try {
-				storeToXML(outputStream.get(), (String) null);
-			} catch (IOException e) {
-			}
-		}
-		
-		return oldValue;
-	}
-	
-	public void reset() {
+	private void init() {
 		clear();
-		
-		//Initial values here.
-		put("randomFactor", 20);
-		put("lightTileDensity", 1.5D);
+		put("newgame:density", -0.2);
+		put("newgame:height", 6);
+		put("newgame:width", 5);
 	}
-	
-	
 	
 }

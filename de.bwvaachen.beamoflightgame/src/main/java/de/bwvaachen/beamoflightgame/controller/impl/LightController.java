@@ -37,7 +37,7 @@ import de.bwvaachen.beamoflightgame.ui.PrototypModelForLonelyFieldStrategy;
 public class LightController implements ILightController {
 	private TurnUndoManager          turnManager;
 	private IBeamsOfLightPuzzleBoard puzzleBoard;
-	public IBeamsOfLightPuzzleBoard solutionBoard ;
+	private IBeamsOfLightPuzzleBoard solutionBoard ;
 	
 	
 	@Override
@@ -131,8 +131,11 @@ public class LightController implements ILightController {
 	@Override
 	public void setBoard(IBeamsOfLightPuzzleBoard _board) throws Exception {
 		puzzleBoard = _board ;
+		solutionBoard = null;
 		turnManager = new TurnUndoManager();
+		
 		puzzleBoard.addUndoableEditListener(turnManager);
+		solve();
 	}
 
 	@Override
@@ -204,6 +207,14 @@ public class LightController implements ILightController {
 		
 		
 		return gameIsCorrect ;
+	}
+
+	@Override
+	public void swapModelWithSolution() {
+		IBeamsOfLightPuzzleBoard tmp;
+		tmp = puzzleBoard;
+		puzzleBoard = solutionBoard;
+		solutionBoard = tmp;
 	}
 	
 } // public class LightController

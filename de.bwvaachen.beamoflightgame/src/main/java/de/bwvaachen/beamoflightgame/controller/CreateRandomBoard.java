@@ -12,6 +12,8 @@ See the COPYING file for more details.
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
@@ -25,9 +27,8 @@ public class CreateRandomBoard
 {
 	public static void main(String[] args)
 	{
-		BeamsOfLightPuzzleBoard b = new BeamsOfLightPuzzleBoard();
-		b.init(5, 6);
-		createRandom(b);
+		IBeamsOfLightPuzzleBoard b =
+		createRandom(5,6,-0.2);
 	}
 	
 	/**
@@ -36,44 +37,38 @@ public class CreateRandomBoard
 	 * @param oBoard
 	 * @return
 	 */
-	public static void createRandom(IBeamsOfLightPuzzleBoard oBoard)
+	public static IBeamsOfLightPuzzleBoard createRandom(final int width, final int height, double density)
 	{
-		ArrayList<NumberTile> oNumTiles = new ArrayList<NumberTile>();
-		double dblNumberTileCount;
+		IBeamsOfLightPuzzleBoard oBoard = new BeamsOfLightPuzzleBoard();
+		oBoard.init(width,height);
 		
-		//TODO In Berechnung des NumberTileCount den Randomfaktor einbauen.
-		dblNumberTileCount = (1.5 * Math.sqrt(oBoard.getHeight()*oBoard.getWidth()));//100*(Math.random()*20);
-
-		for(int i = 0; i < (int)dblNumberTileCount; i++)
-		{
-			int iHeight = (int)((oBoard.getHeight()*Math.random())-1);
-
-			if(i >= oBoard.getWidth())
-			{
-				int iWidth;
-				do
-				{
-					iWidth = (int)((oBoard.getWidth()*Math.random())-1);
-					iHeight = (int)((oBoard.getHeight()*Math.random())-1);
-
-					if(oBoard.getTileAt(iWidth, iHeight) == null)
-					{
-						oNumTiles.add(new NumberTile(oBoard, 0, iWidth, iHeight));
-					}
+		ArrayList<NumberTile> oNumTiles = new ArrayList<NumberTile>();
+		Random heightRandom = new Random(System.nanoTime());
+		Random widthRandom  = new Random(System.nanoTime() ^ -1L);
+		
+		double randomHelper;
+		
+		//The Gaussian random generator ensures that the tiles are equally derivated
+		//to the x and the y direction
+		for(int x = 0; x<width; x++) {
+			for(int y = 0; y<height; y++) {
+				randomHelper = widthRandom.nextGaussian() * heightRandom.nextGaussian()
+						      +density;
+				if(Math.signum(randomHelper) == 1.0) {
+					//If we encounter a positive number, we will place a NumberTile
+					NumberTile nt = new NumberTile(oBoard,0,x,y);
+					nt.put();
+					oNumTiles.add(nt);
 				}
-				while(oBoard.getTileAt(iWidth, iHeight) != null);
-				oBoard.putTile(oNumTiles.get(i));
-			}
-			else
-			{
-				oNumTiles.add(new NumberTile(oBoard, 0, i, iHeight));
-				oBoard.putTile(oNumTiles.get(i));
+				
 			}
 		}
 		
 		System.out.println(oBoard);
 		setNumbers(oNumTiles);
 		System.out.println(oBoard);
+		
+		return oBoard;
 	}
 
 	/**
@@ -86,15 +81,20 @@ public class CreateRandomBoard
 		IBeamsOfLightPuzzleBoard oBoard = oNumTiles.get(0).getBoard();
 		int iCountOfLightTiles = (oBoard.getHeight()*oBoard.getWidth())-oBoard.getNumOfNumberTiles();
 		int iNumber = 0;
+		List<LightTileState> allDirections = LightTileState.allDirections();
 
 		Collections.shuffle(oNumTiles);
 		
 		for (int i = 0; i < oNumTiles.size(); i++)
 		{
 			
-			BoardTraverser oTraverser = new BoardTraverser(oNumTiles.get(i));	
+			BoardTraverser oTraverser = new BoardTraverser(oNumTiles.get(i));
 			System.out.println("startX: " + oTraverser.getStartX() + " x: " + oTraverser.getX() + "\n" + "startY: " + oTraverser.getStartY() + " y: " + oTraverser.getY());
-			while (oTraverser.shift(LightTileState.NORTH.getTraverseDirection()))
+			
+			Collections.shuffle(allDirections);
+			
+			for(LightTileState lts: allDirections){
+			while (oTraverser.shift(lts.getTraverseDirection()))
 			{
 				if(oTraverser.get() == null && oBoard.hasField(oTraverser.getX(), oTraverser.getY()))
 				{
@@ -108,47 +108,10 @@ public class CreateRandomBoard
 				}
 			}
 			oTraverser.reset();
-			while (oTraverser.shift(LightTileState.EAST.getTraverseDirection()))
-			{
-				if(oTraverser.get() == null && oBoard.hasField(oTraverser.getX(), oTraverser.getY()))
-				{
-					oBoard.putTile(new LightTile(oBoard, oTraverser.getX(), oTraverser.getY()));
-					iNumber++;
-					iCountOfLightTiles--;
-				}
-				else
-				{
-					break;
-				}
 			}
-			oTraverser.reset();
-			while (oTraverser.shift(LightTileState.SOUTH.getTraverseDirection()))
-			{
-				if(oTraverser.get() == null && oBoard.hasField(oTraverser.getX(), oTraverser.getY()))
-				{
-					oBoard.putTile(new LightTile(oBoard, oTraverser.getX(), oTraverser.getY()));
-					iNumber++;
-					iCountOfLightTiles--;
-				}
-				else
-				{
-					break;
-				}
-			}
-			oTraverser.reset();
-			while (oTraverser.shift(LightTileState.WEST.getTraverseDirection()))
-			{
-				if(oTraverser.get() == null && oBoard.hasField(oTraverser.getX(), oTraverser.getY()))
-				{
-					oBoard.putTile(new LightTile(oBoard, oTraverser.getX(), oTraverser.getY()));
-					iNumber++;
-					iCountOfLightTiles--;
-				}
-				else
-				{
-					break;
-				}
-			}
+			
+			iNumber = iNumber * 1 + 1;
+
 			
 			oNumTiles.get(i).setState(new NumberTileState(iNumber), true);
 			iNumber = 0;
