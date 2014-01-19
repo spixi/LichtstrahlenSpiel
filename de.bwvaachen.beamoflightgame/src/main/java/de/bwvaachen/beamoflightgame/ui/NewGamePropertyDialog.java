@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -44,9 +45,9 @@ public final class NewGamePropertyDialog extends JDialog {
 			
 			boolean boardOk = false;
 
-			double density = (double) properties.get("newgame:density");
-			int height     = (int) properties.get("newgame:height");
-			int width      = (int) properties.get("newgame:width");
+			final double density = (double) properties.get("newgame:density");
+			final int height     = (int) properties.get("newgame:height");
+			final int width      = (int) properties.get("newgame:width");
 			
 			while(!boardOk)
 			{

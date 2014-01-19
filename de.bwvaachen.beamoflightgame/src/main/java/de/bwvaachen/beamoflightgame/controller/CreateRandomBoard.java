@@ -64,10 +64,7 @@ public class CreateRandomBoard
 			}
 		}
 		
-		System.out.println(oBoard);
-		setNumbers(oNumTiles);
-		System.out.println(oBoard);
-		
+		setNumbers(oNumTiles);	
 		return oBoard;
 	}
 
@@ -90,7 +87,6 @@ public class CreateRandomBoard
 		{
 			
 			BoardTraverser oTraverser = new BoardTraverser(oNumTiles.get(i));
-			System.out.println("startX: " + oTraverser.getStartX() + " x: " + oTraverser.getX() + "\n" + "startY: " + oTraverser.getStartY() + " y: " + oTraverser.getY());
 			
 			Collections.shuffle(allDirections);
 			
