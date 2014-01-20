@@ -30,7 +30,7 @@ public class NumberTile extends AbstractTile<NumberTileState> implements IChange
 
 	public int getRemainingLightRange() {
 		int counter = 0;
-		BoardTraverser traverser = new BoardTraverser(this.board, this.getX(), this.getY());
+		BoardTraverser traverser = new BoardTraverser(this);
 		for(LightTileState lts : LightTileState.allDirections()) {
 			traverser.reset();
 			while(traverser.shift(lts.getTraverseDirection())){

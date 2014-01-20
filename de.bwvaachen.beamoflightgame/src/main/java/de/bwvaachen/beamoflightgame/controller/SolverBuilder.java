@@ -9,6 +9,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 See the COPYING file for more details.
 */
 
+import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,14 +47,20 @@ public class SolverBuilder {
 				//we are unable to find out, whether a puzzle is
 				//solvable or not, so we stop after a fix number of
 				//iterations
-				final int MAX_ITERATIONS = 100;
+				final int MAX_ITERATIONS = 1;
 
 				@Override
 				public void solve() throws UnsolvablePuzzleException, MaximumIterationsExceededException, AmbiguousPuzzleException {
 					boolean solved = false;
 					for(int i = 0; i< MAX_ITERATIONS; i++) {
 						for(ITile tile: board) {
-							step(tile, 0);
+							try {
+								step(tile, 0);
+							}
+							//Temporär
+							catch (Exception ex) {
+								ex.printStackTrace();
+							}
 						}
 						//This is a assignment, not a comparation!
 						if((solved = isSolved())) break;
@@ -81,7 +88,6 @@ public class SolverBuilder {
 						step(tile, stackPointer+1);
 					}
 					else {
-						System.out.printf("Feld: (%d,%d), Strategie: %s\n", tile.getX(), tile.getY(), currentStrategy.getClass().toString());
 						currentStrategy.init(tile);
 						boolean canSolve = currentStrategy.tryToSolve();
 						if(!canSolve) step(tile, stackPointer+1);

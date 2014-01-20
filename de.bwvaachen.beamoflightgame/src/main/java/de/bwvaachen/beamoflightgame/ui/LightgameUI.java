@@ -358,7 +358,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 			public void run() {
 				try {
 					ILightController c = new LightController();
-					c.setBoard(new PrototypModelForIntersectionStrategy());
+					c.setBoard(new PrototypModelJanko());
 					LightgameUI frame = new LightgameUI(c);
 					c.addBoardChangeListener(frame);
 					frame.setVisible(true);
