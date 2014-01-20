@@ -165,6 +165,7 @@ public class LightController implements ILightController {
 		}
 		catch ( Exception e ) {
 			System . out . println ( e.getMessage() ) ;
+			solutionBoard = null ;
 		} // try .. catch
 		
 	} // public void solve () 
@@ -207,7 +208,34 @@ public class LightController implements ILightController {
 		
 		
 		return gameIsCorrect ;
-	}
+	} // public boolean GameIsCorrect () 
+	
+	
+	/*
+	 * @author Georg Braun
+	 * @Prüfen ob das übergeben Feld richtig ist (Vergleich mit der Musterlösung)
+	 */
+	public boolean IsTileCorrect ( int _x , int _y ) {
+		
+		if ( ( puzzleBoard != null ) && ( solutionBoard != null ) ) {
+			ITile puzzleTile   = puzzleBoard . getTileAt( _x , _y) ;
+			ITile solutionTile = solutionBoard . getTileAt( _x , _y) ;
+			
+			// Prüfung ob es LightTiles sind
+			if ( ( puzzleTile instanceof LightTile ) && ( solutionTile instanceof LightTile ) ) {
+				
+				LightTile puzzleLightTile = (LightTile) puzzleTile ;
+				LightTile solutionLightTile = (LightTile) solutionTile ;
+				
+				if (  puzzleLightTile . getTileState() .equals( solutionLightTile . getTileState() )  ) {
+					return true ;
+				}
+				
+			}
+		}
+		return false ;
+		
+	} // public boolean IsTileCorrect ( int _x , int _y ) 
 
 	@Override
 	public void swapModelWithSolution() {

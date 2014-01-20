@@ -176,6 +176,12 @@ public class LightgameUI extends JFrame {
 						}
 						LightTile currentTile = (LightTile) traverser.get() ; 
 						currentTile . setState( lichtRichtung, firstTile) ;
+						
+						if ( ( controller . GameIsCorrect() == false ) ) {							
+							controller . getUndoManager() . setError() ;							
+						}
+						
+						
 						firstTile = false;
 						traverser . shift ( traverseDirection ) ;
 					} while(true);
@@ -400,7 +406,7 @@ public class LightgameUI extends JFrame {
 	public LightgameUI(ILightController cntrl) {
 		controller = cntrl;
 		
-
+		
 			// Setzen der initialen Fensterposition und Grï¿½ï¿½e.
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			//setBounds(100, 100, 450, 300);
