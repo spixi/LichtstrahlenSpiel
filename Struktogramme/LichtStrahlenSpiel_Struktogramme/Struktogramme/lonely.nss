@@ -4,7 +4,7 @@
 \assign{\(i \gets 0\)}
 \assign{Setze Traverser auf \(feld\)}
 \until{\(\lnot randErreicht \wedge aktFeld \in \{richtung, EMPTY\}\)}
-\assign{\(aktFeld \gets Traverser.next()\)}
+\assign{\(aktFeld \gets Traverser.next(umkehren(richtung))\)}
 \assign{\(i \gets i+1\)}
 \ifthenelse{3}{1}{\(istZahlenfeld(aktFeld)\)}{j}{n}
 \ifthenelse{2}{1}{\(verf"ugbarerRange(akt) \ge i\)}{j}{n}

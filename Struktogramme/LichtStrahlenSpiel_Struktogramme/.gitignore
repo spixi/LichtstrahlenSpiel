@@ -10,3 +10,4 @@
 #Workaround to pretend that someone pushes a .gitignore file
 #where strutogramme.pdf is listed
 .gitignore
+/struktogramme.pdf

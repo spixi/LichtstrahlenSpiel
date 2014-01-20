@@ -13,6 +13,9 @@ import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.bwvaachen.beamoflightgame.helper.Holder;
+import de.bwvaachen.beamoflightgame.helper.ITileVisitor;
+import de.bwvaachen.beamoflightgame.helper.Pair;
 import de.bwvaachen.beamoflightgame.logic.AmbiguousPuzzleException;
 import de.bwvaachen.beamoflightgame.logic.ISolver;
 import de.bwvaachen.beamoflightgame.logic.IStrategy;
@@ -21,7 +24,9 @@ import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
 import de.bwvaachen.beamoflightgame.logic.solver.AbstractSolver;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
+import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
+import de.bwvaachen.beamoflightgame.model.NumberTile;
 
 public class SolverBuilder {
 	
@@ -47,11 +52,40 @@ public class SolverBuilder {
 				//we are unable to find out, whether a puzzle is
 				//solvable or not, so we stop after a fix number of
 				//iterations
-				final int MAX_ITERATIONS = 1;
+				final int MAX_ITERATIONS = 100;
+				
+				private boolean isPlausible() {
+					
+					final Holder<Integer> sumOfNumberTiles = new Holder<Integer>(0);
+					final Holder<Integer> numOfLightTiles  = new Holder<Integer>(0);
+					
+					for(ITile tile : board) {
+						tile.accept(new ITileVisitor() {
+
+							@Override
+							public void visitLightTile(LightTile t) {
+								numOfLightTiles.value ++;
+							}
+
+							@Override
+							public void visitNumberTile(NumberTile t) {
+								sumOfNumberTiles.value += t.getNumber();
+							}
+							
+						});
+					}
+					
+					return (sumOfNumberTiles.value == numOfLightTiles.value);
+				}
 
 				@Override
 				public void solve() throws UnsolvablePuzzleException, MaximumIterationsExceededException, AmbiguousPuzzleException {
 					boolean solved = false;
+					
+					if(!isPlausible())
+						throw new UnsolvablePuzzleException(board.getTileAt(board.getWidth()-1, board.getHeight()-1));
+					
+					
 					for(int i = 0; i< MAX_ITERATIONS; i++) {
 						for(ITile tile: board) {
 							try {

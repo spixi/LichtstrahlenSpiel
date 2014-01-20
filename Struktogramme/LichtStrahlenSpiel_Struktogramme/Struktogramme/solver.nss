@@ -8,6 +8,8 @@
 \assign{
 \begin{declaration}[globale Variablen]
 \description{\(strategien\)}{Array von Strategien}
+\description{\(lichtfelder\)}{Array von Lichtfeldern}
+\description{\(zahlenfelder\)}{Array von Zahlenfeldern}
 \end{declaration}
 }
 \assign{
@@ -21,6 +23,9 @@
 \description{\(maxIterations\)}{Maximale Anzahl Iterationen}
 \end{declaration}
 }
+\ifthenelse{1}{2}{\(sum(lichtfelder) \ne sum(zahlenfelder)\)}{\sTrue}{\sFalse}
+\return{Puzzle unl"osbar}
+\change
 \assign{\(i \gets 0\)}
 \while{\(\lnot istGel"ost(board) \wedge i \le maxIterationen\)}
 \while{\(\forall tile \in board\)}
@@ -28,8 +33,9 @@
 \assign{\(i \gets i+1\)}
 \whileend
 \whileend
-\ifthenelse{1}{1}{\(i = maxIterationen\)}{\sTrue}{\sFalse}
+\ifthenelse{2}{1}{\(i = maxIterationen\)}{\sTrue}{\sFalse}
 \return{Max. Anz. Iterationen "uberschritten}
 \change
+\ifend
 \ifend
 \end{struktogramm}
