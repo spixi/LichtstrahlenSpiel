@@ -1,5 +1,7 @@
 package de.bwvaachen.beamoflightgame.logic;
 
+
+
 /*
 Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
 

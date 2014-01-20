@@ -47,6 +47,7 @@ import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.SolverBuilder;
 import de.bwvaachen.beamoflightgame.controller.impl.LightController;
 import de.bwvaachen.beamoflightgame.editor.EditorMain;
+import de.bwvaachen.beamoflightgame.helper.BoardChangeListener;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.Holder;
 import de.bwvaachen.beamoflightgame.helper.ITileVisitor;
@@ -61,7 +62,7 @@ import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 
-public class LightgameUI extends JFrame {
+public class LightgameUI extends JFrame implements BoardChangeListener {
 	
 	class ExtensionFileFilter extends FileFilter {
 		  String description;
@@ -365,6 +366,7 @@ public class LightgameUI extends JFrame {
 					ILightController c = new LightController();
 					c.setBoard(new PrototypModelForIntersectionStrategy());
 					LightgameUI frame = new LightgameUI(c);
+					c.addBoardChangeListener(frame);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -440,7 +442,6 @@ public class LightgameUI extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					try {
 						controller.swapModelWithSolution();
-						boardHasChanged();
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -455,7 +456,7 @@ public class LightgameUI extends JFrame {
 		
 	} // public LightgameUI()
 	
-	private void boardHasChanged() {
+	public void boardHasChanged() {
 		initialize();
 		buildRaster();
 		updateButtonGraphics();
@@ -569,18 +570,12 @@ public class LightgameUI extends JFrame {
 		mnFile.add(mntmNew);
 		
 		mntmNew.addActionListener(new ActionListener() {
-			
-			IBeamsOfLightPuzzleBoard board;
-			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				IBeamsOfLightPuzzleBoard before = controller.getCurrentModel();
+				
 				NewGamePropertyDialog newGameDialog = new NewGamePropertyDialog(controller);
 				newGameDialog.setVisible(true);
-				
-				boardHasChanged();
-				//LightgameUI.this.dispose();
-				//new LightgameUI(controller);
-				
 			}
 		});
 		
@@ -768,12 +763,6 @@ public class LightgameUI extends JFrame {
 					//Update(controller.loadGame(new File("")));
 					//TODO obrigen Code einbinden sobald der Controller implementiert ist
 					controller.loadGame(new File(""));
-					
-					//boardHasChanged holt sich automatisch das neue Board vom Controller,
-					//dann brauchen wir keinen Rückgabewert vom Controller. Auch Update() alias
-					//updateButtonGraphics brauchen wir nicht, da dieses nur die Icons neu lädt,
-					//stattdessen boardHasChanged aufrufen, um das ganze Grid neu aufzubauen.
-					boardHasChanged();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}

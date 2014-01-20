@@ -34,6 +34,7 @@ public class GameProperties extends Properties {
 		put("newgame:density", -0.2);
 		put("newgame:height", 6);
 		put("newgame:width", 5);
+		put("newgame:zerotiles", false);
 	}
 	
 }
