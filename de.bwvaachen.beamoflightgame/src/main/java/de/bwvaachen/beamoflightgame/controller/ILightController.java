@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import de.bwvaachen.beamoflightgame.helper.BoardChangeListener;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
  
 public interface ILightController {
@@ -29,5 +30,8 @@ public interface ILightController {
 	public void solve();
 	public boolean GameIsCorrect () ;
 	public void swapModelWithSolution();
+	
+	public void addBoardChangeListener(BoardChangeListener bcl);
+	public void removeBoardChangeListener(BoardChangeListener bcl);
 	
 } // public interface ILightController

@@ -12,12 +12,15 @@ See the COPYING file for more details.
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.SolverBuilder;
 import de.bwvaachen.beamoflightgame.controller.Turn;
 import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
+import de.bwvaachen.beamoflightgame.helper.BoardChangeListener;
 import de.bwvaachen.beamoflightgame.helper.Pair;
 import de.bwvaachen.beamoflightgame.helper.SimpleASCIICodec;
 import de.bwvaachen.beamoflightgame.helper.WrongCodecException;
@@ -37,7 +40,12 @@ import de.bwvaachen.beamoflightgame.ui.PrototypModelForLonelyFieldStrategy;
 public class LightController implements ILightController {
 	private TurnUndoManager          turnManager;
 	private IBeamsOfLightPuzzleBoard puzzleBoard;
-	private IBeamsOfLightPuzzleBoard solutionBoard ;
+	private IBeamsOfLightPuzzleBoard solutionBoard;
+	private Set<BoardChangeListener> boardChangeListeners;
+	
+	public LightController() {
+		boardChangeListeners = new HashSet<BoardChangeListener>();
+	}
 	
 	
 	@Override
@@ -130,12 +138,18 @@ public class LightController implements ILightController {
 
 	@Override
 	public void setBoard(IBeamsOfLightPuzzleBoard _board) throws Exception {
+		if(_board == puzzleBoard) {
+			//no change has happened!
+			return;
+		}
+		
 		puzzleBoard = _board ;
 		solutionBoard = null;
 		turnManager = new TurnUndoManager();
 		
 		puzzleBoard.addUndoableEditListener(turnManager);
 		solve();
+		notifyBoardChangeListeners();
 	}
 
 	@Override
@@ -215,6 +229,24 @@ public class LightController implements ILightController {
 		tmp = puzzleBoard;
 		puzzleBoard = solutionBoard;
 		solutionBoard = tmp;
+		notifyBoardChangeListeners();
+	}
+	
+	private void notifyBoardChangeListeners() {
+		for(BoardChangeListener bcl : boardChangeListeners)
+			bcl.boardHasChanged();
+	}
+
+
+	@Override
+	public void addBoardChangeListener(BoardChangeListener bcl) {
+		boardChangeListeners.add(bcl);
+	}
+
+
+	@Override
+	public void removeBoardChangeListener(BoardChangeListener bcl) {
+		boardChangeListeners.remove(bcl);
 	}
 	
 } // public class LightController

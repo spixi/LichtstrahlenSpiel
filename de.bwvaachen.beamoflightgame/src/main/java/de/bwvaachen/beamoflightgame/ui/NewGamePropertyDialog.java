@@ -1,6 +1,7 @@
 package de.bwvaachen.beamoflightgame.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -11,16 +12,20 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import de.bwvaachen.beamoflightgame.controller.CouldNotCreatePuzzleException;
 import de.bwvaachen.beamoflightgame.controller.CreateRandomBoard;
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.helper.GameProperties;
@@ -48,37 +53,30 @@ public final class NewGamePropertyDialog extends JDialog {
 			final double density = (double) properties.get("newgame:density");
 			final int height     = (int) properties.get("newgame:height");
 			final int width      = (int) properties.get("newgame:width");
+			final boolean zerotiles = (boolean)properties.get("newgame:zerotiles");
 			
-			while(!boardOk)
-			{
-				boardOk = true;
-				board = CreateRandomBoard.createRandom(height, width, density);
-				for(int x =0;x < board.getWidth() && boardOk;x++)
-				{
-					for(int y =0;y < board.getHeight() && boardOk;y++)
-					{
-						ITile t = board.getTileAt(x, y);
-						if(! (t instanceof ITile))
-						{
-							boardOk = false;
-						}
-						else if (t instanceof NumberTile)
-							if(((NumberTile)t).getNumber() == 0)
-								boardOk = false;
-					}
-				}//Iteration over Tiles
-				
-				
-			}//while Board not Ok
-			try {
-				controller.setBoard(board);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			int repeat = JOptionPane.NO_OPTION;
+			
+			do {
+				try {
+					board = CreateRandomBoard.createRandom(height, width, density, zerotiles);
+					boardOk = true;
+				}
+				catch(CouldNotCreatePuzzleException ex) {
+					Object[] options = {"Repeat", "Abort"};
+					repeat = JOptionPane.showOptionDialog((Component)NewGamePropertyDialog.this, (Object)ex.getMessage(), "Error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, (Icon) null, options, options[0]);
+				}
+			} while(!boardOk && (repeat == JOptionPane.YES_OPTION));
+			
+			if(boardOk) {
+				try {
+					controller.setBoard(board);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-		
-		//Close the window
-		dispose();
+			
 		}
 		
 	}
@@ -90,12 +88,14 @@ public final class NewGamePropertyDialog extends JDialog {
 		
 		//Make the Dialog modal, so that all other Windows have to wait for it.
 		setModalityType(Dialog.DEFAULT_MODALITY_TYPE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		setTitle("Einstellungen für \"Neues Spiel\"");
 		controller = cntrl;
 		
-		JPanel  mainPanel, densityPanel, widthPanel, heightPanel;
+		JPanel  mainPanel, densityPanel, widthPanel, heightPanel, noZeroPanel;
 		JSlider densitySlider, widthSlider, heightSlider;
+		JCheckBox noZeroCheckBox;
 		JButton okButton;
 		
 		setLayout(new BorderLayout());
@@ -164,11 +164,28 @@ public final class NewGamePropertyDialog extends JDialog {
 			}
 		});
 		
+		noZeroPanel = new JPanel();
+		noZeroPanel.setLayout(new FlowLayout());
+		
+		noZeroPanel.add(new JLabel("Allow zero tiles"));
+		
+		noZeroCheckBox = new JCheckBox();
+		noZeroCheckBox.setSelected((boolean)properties.get("newgame:zerotiles"));
+		noZeroCheckBox.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				boolean value = ((JCheckBox) e.getSource()).isSelected();
+				properties.put("newgame:zerotiles", value);
+			}
+		});
+		
+		noZeroPanel.add(noZeroCheckBox);
+		
 		mainPanel = new JPanel();
-		mainPanel.setLayout(new GridLayout(3,1));
+		mainPanel.setLayout(new GridLayout(2,2));
 		mainPanel.add(heightPanel);
 		mainPanel.add(widthPanel);
 		mainPanel.add(densityPanel);
+		mainPanel.add(noZeroPanel);
 		
 		add(mainPanel,BorderLayout.CENTER);
 		
