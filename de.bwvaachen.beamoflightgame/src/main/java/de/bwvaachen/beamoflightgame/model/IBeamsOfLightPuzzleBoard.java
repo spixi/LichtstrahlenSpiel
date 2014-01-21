@@ -10,6 +10,8 @@ See the COPYING file for more details.
 */
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Iterator;
 
 public interface IBeamsOfLightPuzzleBoard extends Iterable<ITile>, TileComposite , Serializable {
 	public void enqueueTile(ITile tile);
@@ -18,6 +20,7 @@ public interface IBeamsOfLightPuzzleBoard extends Iterable<ITile>, TileComposite
 	public int getHeight();
 	
 	public int getNumOfNumberTiles();
+	public Iterator<NumberTile> numberTileIterator();
 	
 	public ITile getTileAt(int x, int y) throws IndexOutOfBoundsException;
 	public int getWidth();

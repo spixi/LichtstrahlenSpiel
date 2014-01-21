@@ -9,6 +9,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 See the COPYING file for more details.
 */
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -236,6 +237,10 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard, Change
 		}
 		
 		return ret;
+	}
+	
+	public Iterator<NumberTile> numberTileIterator() {
+		return Collections.unmodifiableList(numberTiles).iterator();
 	}
 
 }
