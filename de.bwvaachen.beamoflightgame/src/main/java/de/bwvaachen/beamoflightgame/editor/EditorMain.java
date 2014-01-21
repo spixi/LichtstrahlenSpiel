@@ -9,6 +9,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 See the COPYING file for more details.
 */
 
+import static de.bwvaachen.beamoflightgame.i18n.I18N.*;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -59,7 +60,7 @@ public class EditorMain extends JFrame
 		setLocation((screenSize.width - frameSize.width)/2,(screenSize.height - frameSize.height)/2);
 		setResizable(false);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setTitle("BeamOfLightGame Editor");
+		setTitle(_("EditorTitle1"));
 		
 		initComponents();
 		setLayout(new BorderLayout());
@@ -77,16 +78,16 @@ public class EditorMain extends JFrame
 		editorTypePanel = new JPanel();
 		buttonPanel = new JPanel();
 		
-		header = new JLabel("Enter dimensions for BeamOfLightGame board:");
+		header = new JLabel(_("EditorDimensionsPrompt"));
 		header.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
 		
 		inputWidthTF = new JTextField("4", 10);
 		inputHeightTF = new JTextField("4", 10);
-		inputWidthL = new JLabel("Width:");
-		inputHeightL = new JLabel("Height:");
+		inputWidthL = new JLabel(_("EditorWidthPrompt"));
+		inputHeightL = new JLabel(_("EditorHeightPrompt"));
 		
-		editorTypeL = new JLabel("Editor Mode:");
+		editorTypeL = new JLabel(_("EditorModePrompt"));
 		editorTypeL.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		editorTypeBox = new JComboBox<EditorType>(EditorType.values());
 		
@@ -98,9 +99,9 @@ public class EditorMain extends JFrame
 		editorTypePanel.add(editorTypeL);
 		editorTypePanel.add(editorTypeBox);
 		
-		okButton = new JButton("OK") ;
+		okButton = new JButton(_("OK")) ;
 		okButton.addActionListener(this);
-		cancelButton = new JButton("Cancel");
+		cancelButton = new JButton(_("Cancel"));
 		cancelButton.addActionListener(this);
 		
 		buttonPanel.add(okButton);
@@ -117,8 +118,8 @@ public class EditorMain extends JFrame
 		
 		if(e.getSource() == okButton && (inputWidth > maxWidth || inputHeight > maxHeight)){
 			JOptionPane.showMessageDialog(	this,
-											"Unable to display with current resolution!\nMaximum Width: " + maxWidth + "\nMaximum Height: " + maxHeight + "\n",
-											"Error",
+											_f("EditorScreenResolutionWarning",maxWidth,maxHeight),
+											_("Error"),
 											JOptionPane.ERROR_MESSAGE
 										 );
 		}else{

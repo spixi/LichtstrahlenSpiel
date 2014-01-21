@@ -1,6 +1,7 @@
 package de.bwvaachen.beamoflightgame.ui;
 
 import java.awt.BorderLayout;
+import static de.bwvaachen.beamoflightgame.i18n.I18N.*;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
@@ -9,9 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -30,8 +28,6 @@ import de.bwvaachen.beamoflightgame.controller.CreateRandomBoard;
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.helper.GameProperties;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
-import de.bwvaachen.beamoflightgame.model.ITile;
-import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 
 public final class NewGamePropertyDialog extends JDialog {
@@ -63,8 +59,8 @@ public final class NewGamePropertyDialog extends JDialog {
 					boardOk = true;
 				}
 				catch(CouldNotCreatePuzzleException ex) {
-					Object[] options = {"Repeat", "Abort"};
-					repeat = JOptionPane.showOptionDialog((Component)NewGamePropertyDialog.this, (Object)ex.getMessage(), "Error", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, (Icon) null, options, options[0]);
+					Object[] options = {_("Repeat"), _("Cancel")};
+					repeat = JOptionPane.showOptionDialog((Component)NewGamePropertyDialog.this, (Object)ex.getMessage(), _("Error"), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, (Icon) null, options, options[0]);
 				}
 			} while(!boardOk && (repeat == JOptionPane.YES_OPTION));
 			
@@ -90,7 +86,7 @@ public final class NewGamePropertyDialog extends JDialog {
 		setModalityType(Dialog.DEFAULT_MODALITY_TYPE);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
-		setTitle("Einstellungen für \"Neues Spiel\"");
+		setTitle(_("NewGameProperties"));
 		controller = cntrl;
 		
 		JPanel  mainPanel, densityPanel, widthPanel, heightPanel, noZeroPanel;
@@ -189,7 +185,7 @@ public final class NewGamePropertyDialog extends JDialog {
 		
 		add(mainPanel,BorderLayout.CENTER);
 		
-		okButton = new JButton("Generate Puzzle!");
+		okButton = new JButton(_("GeneratePuzzle"));
 		okButton.addActionListener(new CreateRandomMediator());
 		add(okButton, BorderLayout.SOUTH);
 		

@@ -63,14 +63,15 @@ public class GraficFactory {
 		try{
 			NumberTile num = (NumberTile) meineKachel;
 
-			String url = "themes/moon/"+ num.getNumber() + ".png";
+			String url = String.format("themes/moon/%d.png", num.getNumber());
 			URL u = this.getClass().getClassLoader().getResource(url);
 			
 			ii = new ImageIcon(u);
 			return ii ;
 			
 		}catch (Exception e){/*Kein Exception handling da in allen anderen Faellen ein LightTile vorhanden ist*/} 
-			
+		//TODO: Andreas: Was machst du denn bitte, wenn ein Tile mit einer Zahl größer 14 gefunden wird, dann wird
+		//die URL nicht gefunden und eine FileNotFoundException geworfen ...
 		
 		LightTile lig = (LightTile) meineKachel;
 		String url ="";

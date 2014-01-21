@@ -9,6 +9,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 See the COPYING file for more details.
 */
 
+import static de.bwvaachen.beamoflightgame.i18n.I18N.*;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoableEdit;
@@ -69,17 +70,17 @@ public class Turn implements UndoableEdit
 	@Override
 	public String getPresentationName() {
 		// TODO
-		return String.format("Zug %d", 0);
+		return _f("TurnNo", 0);
 	}
 
 	@Override
 	public String getRedoPresentationName() {
-		return String.format("%s wiederholen", getPresentationName());
+		return _f("RepeatTurn", getPresentationName());
 	}
 
 	@Override
 	public String getUndoPresentationName() {
-		return String.format("%s rÃ¼ckgÃ¤ngig machen", getPresentationName());
+		return _f("UndoTurn", getPresentationName());
 	}
 	
 	public boolean hasFlag(int flag) {

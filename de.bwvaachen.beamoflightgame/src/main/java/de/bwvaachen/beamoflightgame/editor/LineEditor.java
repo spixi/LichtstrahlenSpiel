@@ -9,6 +9,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 See the COPYING file for more details.
 */
 
+import static de.bwvaachen.beamoflightgame.i18n.I18N.*;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -86,7 +87,7 @@ public class LineEditor extends BeamsOfLightEditor
 				this.remainingTiles -= (tile.getLightPower() + 1); 
 			}
 		}
-		tileStatsTextArea.setText("Fields (Total): "+totalTiles+"\nFields (Remaining): "+remainingTiles+"\n");
+		tileStatsTextArea.setText(_pf("EditorTotalAndRemainingTiles",remainingTiles, totalTiles, remainingTiles));
 	}
 
 	@Override
@@ -227,26 +228,26 @@ public class LineEditor extends BeamsOfLightEditor
 			if(deltaXabs >= 1 && deltaYabs >= 1){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
-												"Unable to draw diagonal beams!",
-												"Error",
+												_("LineEditorNoDiagonal"),
+												_("Error"),
 												JOptionPane.ERROR_MESSAGE);
 			}else if(startTile == endTile){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
-												"Beams cannot start and end in the same field!",
-												"Error",
+						                        _("LineEditorSameField"),
+												_("Error"),
 												JOptionPane.ERROR_MESSAGE);
 			}else if(!(startTile.getState() == TileState.EMPTY || startTile.getState() == TileState.NUMBER)){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
-												"Startfield has to be empty or already numberfield!\nRightclick on fields to clear them.",
-												"Error",
+												_("LineEditorBadStartField"),
+												_("Error"),
 												JOptionPane.ERROR_MESSAGE);
 			}else if(crossingNonEmptyTile){
 				validLine = false ;
 				JOptionPane.showMessageDialog(	this,
-												"Beams must not cross!\nRightclick on fields to clear them.",
-												"Error",
+												_("LineEditorDontCross"),
+												_("Error"),
 												JOptionPane.ERROR_MESSAGE);
 			}
 		}

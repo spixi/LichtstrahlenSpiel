@@ -11,25 +11,18 @@ See the COPYING file for more details.
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
-
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -37,30 +30,23 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
-import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 
-import de.bwvaachen.beamoflightgame.controller.CreateRandomBoard;
 import de.bwvaachen.beamoflightgame.controller.ILightController;
-import de.bwvaachen.beamoflightgame.controller.SolverBuilder;
 import de.bwvaachen.beamoflightgame.controller.impl.LightController;
 import de.bwvaachen.beamoflightgame.editor.EditorMain;
 import de.bwvaachen.beamoflightgame.helper.BoardChangeListener;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
-import de.bwvaachen.beamoflightgame.helper.Holder;
 import de.bwvaachen.beamoflightgame.helper.ITileVisitor;
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
-import de.bwvaachen.beamoflightgame.logic.ISolver;
-import de.bwvaachen.beamoflightgame.logic.strategies.IntersectionStrategy;
-import de.bwvaachen.beamoflightgame.logic.strategies.LonelyFieldStrategy;
+import static de.bwvaachen.beamoflightgame.i18n.I18N.*;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
-import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 
 public class LightgameUI extends JFrame implements BoardChangeListener {
 	
@@ -429,7 +415,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 			contentPane.add(progressBar, BorderLayout.SOUTH);
 			
 			//SolverButton
-			javax.swing.JButton solverButton = new javax.swing.JButton("Puzzle loesen");
+			javax.swing.JButton solverButton = new javax.swing.JButton(_("Solve"));
 			solverButton.addActionListener(new ActionListener() {
 
 				@Override
@@ -557,17 +543,16 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
-		JMenu mnFile = new JMenu("File");
+		JMenu mnFile = new JMenu(_("File"));
 		menuBar.add(mnFile);
 		
-		JMenuItem mntmNew = new JMenuItem("New");
+		JMenuItem mntmNew = new JMenuItem(_("New"));
 		mnFile.add(mntmNew);
 		
 		mntmNew.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				IBeamsOfLightPuzzleBoard before = controller.getCurrentModel();
-				
+
 				NewGamePropertyDialog newGameDialog = new NewGamePropertyDialog(controller);
 				newGameDialog.setVisible(true);
 			}
@@ -576,35 +561,35 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		JSeparator separator_2 = new JSeparator();
 		mnFile.add(separator_2);
 		
-		JMenuItem mntmSave = new JMenuItem("Save");
+		JMenuItem mntmSave = new JMenuItem(_("Save"));
 		mnFile.add(mntmSave);
 		
-		JMenuItem mntmSaveAs = new JMenuItem("Save As");
+		JMenuItem mntmSaveAs = new JMenuItem(_("SaveAs"));
 		mnFile.add(mntmSaveAs);
 		
 		JSeparator separator_1 = new JSeparator();
 		mnFile.add(separator_1);
 		
-		JMenuItem mntmLoad = new JMenuItem("Load");
+		JMenuItem mntmLoad = new JMenuItem(_("Load"));
 		mnFile.add(mntmLoad);
 		
-		JMenu mnGame = new JMenu("Game");
+		JMenu mnGame = new JMenu(_("Game"));
 		menuBar.add(mnGame);
 		
 		
 		
 		
-		JMenuItem mntmCheckGame = new JMenuItem ( "Check Game" ) ;
+		JMenuItem mntmCheckGame = new JMenuItem ( _("Check") ) ;
 		mnGame . add ( mntmCheckGame ) . addActionListener( new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String message = new String() ;
 				if ( controller . GameIsCorrect() ) {
-					message = "Nice turn! It's correct." ;					
+					message = _("GameIsCorrect") ;					
 				} 
 				else {
-					message = "Wrong track dude ;)" ;
+					message = _("GameIsNotCorrect") ;
 				}
 				JOptionPane . showMessageDialog( null , message , "" ,  JOptionPane . PLAIN_MESSAGE ) ;
 				
@@ -615,7 +600,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		
 		mnGame.add ( new JSeparator() );
 		
-		JMenuItem mntmbacktoFailure = new JMenuItem("Back to failure");
+		JMenuItem mntmbacktoFailure = new JMenuItem(_("BackToFailure"));
 		mnGame.add(mntmbacktoFailure);
 		
 		mntmbacktoFailure . addActionListener(new ActionListener() {
@@ -629,7 +614,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		JSeparator separator_3 = new JSeparator();
 		mnGame.add(separator_3);
 		
-		JMenuItem mntmsetMarker = new JMenuItem("Set mark");
+		JMenuItem mntmsetMarker = new JMenuItem(_("SetMarker"));
 		mnGame.add(mntmsetMarker);
 		
 		mntmsetMarker . addActionListener(new ActionListener() {
@@ -645,7 +630,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		JSeparator separator_4 = new JSeparator();
 		mnGame.add(separator_4);
 		
-		JMenuItem mntmDeleteMarker = new JMenuItem("Delete mark");
+		JMenuItem mntmDeleteMarker = new JMenuItem(_p("DeleteMarker",1));
 		mnGame.add(mntmDeleteMarker);
 		mntmDeleteMarker . addActionListener(new ActionListener() {
 			
@@ -658,7 +643,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		
 		// Delete all marks
 		mnGame . add ( new JSeparator() ) ;
-		JMenuItem mntmDeleteAllMarker = new JMenuItem( "Delete all marks" ) ;
+		JMenuItem mntmDeleteAllMarker = new JMenuItem(_p("DeleteMarker",2)) ;
 		mnGame . add ( mntmDeleteAllMarker )  ;
 		mntmDeleteAllMarker . addActionListener( new ActionListener () {
 			
@@ -675,7 +660,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		JSeparator separator_5 = new JSeparator();
 		mnGame.add(separator_5);
 		
-		JMenuItem mntmBackToMark = new JMenuItem("Back to mark");
+		JMenuItem mntmBackToMark = new JMenuItem(_("BackToMarker"));
 		mntmBackToMark . addActionListener(new ActionListener() {
 			
 			@Override
@@ -688,10 +673,10 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		
 		mnGame.add(mntmBackToMark);
 		
-		JMenu mnEditor = new JMenu("Editor");
+		JMenu mnEditor = new JMenu(_("Editor"));
 		menuBar.add(mnEditor);
 		
-		JMenuItem mntmStartEditor = new JMenuItem("Start Editor");
+		JMenuItem mntmStartEditor = new JMenuItem(_("UIStartEditor"));
 		mntmStartEditor.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent ae){
@@ -743,7 +728,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 				//Dialog zum ermitteln des Dateipfades einbinden
 				
 				JFileChooser fileChooser=new JFileChooser();
-				FileFilter filter = new ExtensionFileFilter("Beam of light puzzle saves", new String[] { "BOL" });
+				FileFilter filter = new ExtensionFileFilter(_p("SaveGameType",2), new String[] { "BOL" });
 				fileChooser.setFileFilter(filter);
 				if(fileChooser.showOpenDialog(LightgameUI.this)!=JFileChooser.CANCEL_OPTION){
 					File selectedFile = fileChooser.getSelectedFile();
@@ -770,7 +755,9 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 				JFrame parentFrame = new JFrame();
 				 
 				JFileChooser fileChooser = new JFileChooser();
-				fileChooser.setDialogTitle("Save As");   
+				FileFilter filter = new ExtensionFileFilter(_p("SaveGameType",2), new String[] { "BOL" });
+				fileChooser.setFileFilter(filter);
+				fileChooser.setDialogTitle(_("SaveAs"));   
 				 
 				int userSelection = fileChooser.showSaveDialog(parentFrame);
 				 
@@ -790,7 +777,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		JSeparator separator = new JSeparator();
 		mnFile.add(separator);
 		
-		JMenuItem mntmExit = new JMenuItem("Exit");
+		JMenuItem mntmExit = new JMenuItem(_("Exit"));
 		mnFile.add(mntmExit);
 		mntmExit.addActionListener(new ActionListener() {
 			@Override

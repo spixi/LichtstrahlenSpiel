@@ -10,13 +10,9 @@ See the COPYING file for more details.
 */
 
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
-
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.IndexedSet;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
@@ -25,6 +21,7 @@ import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.NumberTileState;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
+import static de.bwvaachen.beamoflightgame.i18n.I18N.*;
 
 public class CreateRandomBoard 
 {
@@ -62,7 +59,7 @@ public class CreateRandomBoard
 			oBoard.init(width,height);
 			
 			if((iteration++) == MAX_ITERATIONS) {
-				throw new CouldNotCreatePuzzleException("Maximum number of iterations exceeded.");
+				throw new CouldNotCreatePuzzleException(_("MaxNoOfIterationsExceeded"));
 			}
 			
 			

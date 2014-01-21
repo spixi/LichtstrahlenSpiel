@@ -9,6 +9,8 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 See the COPYING file for more details.
 */
 
+import static de.bwvaachen.beamoflightgame.i18n.I18N.*;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -72,7 +74,7 @@ public class NumberEditor extends BeamsOfLightEditor
 				this.remainingTiles -= (tile.getLightPower() + 1); 
 			}
 		}
-		tileStatsTextArea.setText("Fields (Total): "+totalTiles+"\nFields (Remaining): "+remainingTiles+"\n");
+		tileStatsTextArea.setText(_pf("EditorTotalAndRemainingTiles",remainingTiles, totalTiles, remainingTiles));
 	}
 
 	@Override
@@ -202,8 +204,8 @@ public class NumberEditor extends BeamsOfLightEditor
 					do{
 						input = (String) JOptionPane.showInputDialog(
 									this,
-									"Light Power(1-" + maxLightPower + "):\n",
-									"Enter Light Power",
+									_f("NumberEditorLightRange",maxLightPower),
+									_("NumberEditorEnterLightRange"),
 									JOptionPane.PLAIN_MESSAGE,
 									null,
 									null,
@@ -211,18 +213,18 @@ public class NumberEditor extends BeamsOfLightEditor
 						lightPower = Integer.valueOf(input);
 						if(lightPower > maxLightPower){
 							JOptionPane.showMessageDialog(	this,
-															"Light Power cannot be bigger than "+maxLightPower+"!",
-															"Error",
+															_f("NumberEditorLightRangeGreaterMax", maxLightPower),
+															_("Error"),
 															JOptionPane.ERROR_MESSAGE);
 						}else if(lightPower < 1){
 							JOptionPane.showMessageDialog(	this,
-															"Light Power cannot be less than 1!",
-															"Error",
+															_("NumberEditorLightRangeLessThanOne"),
+															_("Error"),
 															JOptionPane.ERROR_MESSAGE);
 						}else if(remainingTiles-(lightPower+1) < 0){
 							JOptionPane.showMessageDialog(	this,
-															"Only "+remainingTiles+" empy fields remaining.\nLight Power Maximum: "+(remainingTiles-1),
-															"Error",
+															_pf("NumberEditorLightRangeLessTilesRemaining",remainingTiles,remainingTiles,remainingTiles-1),
+															_("Error"),
 															JOptionPane.ERROR_MESSAGE);
 						}
 					}while(lightPower > maxLightPower || lightPower < 1 || remainingTiles-(lightPower+1) < 0);
