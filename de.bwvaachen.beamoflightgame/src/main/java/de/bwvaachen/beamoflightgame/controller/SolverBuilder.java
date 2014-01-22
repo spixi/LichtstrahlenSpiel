@@ -10,6 +10,7 @@ See the COPYING file for more details.
 */
 
 import java.io.PrintStream;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -103,9 +104,30 @@ public class SolverBuilder {
 				}
 				
 				public boolean isSolved() {
+					return isSolved_v2();
+				}
+				
+				public boolean isSolved_v1() {
 					for(ITile tile: board) {
 						//The puzzle is not solved if there are any empty fields remaining.
 						if(tile.getTileState().equals(LightTileState.EMPTY))
+							return false;
+					}
+					return true;
+				}
+				
+				//TODO
+				//Maybe we could move this method (together with isPlausible())
+				//to the IBeamsOfLightPuzzleBoard class
+				
+				public boolean isSolved_v2() {
+					//New implementation
+					//The puzzle board is solved when no number tile has remaining range
+					Iterator<NumberTile> it = board.numberTileIterator();
+					int max = board.getNumOfNumberTiles();
+					for(int i=max; i>0; i--) {
+						NumberTile nt = it.next();
+						if(nt.getRemainingLightRange() != 0)
 							return false;
 					}
 					return true;
