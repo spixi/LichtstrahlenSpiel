@@ -118,4 +118,8 @@ public final class MathHelper {
 		return value;
 	}
 	
+	public static int[][] M(int[] ... value) {
+		return value;
+	}
+	
 }

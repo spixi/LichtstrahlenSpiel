@@ -1,4 +1,5 @@
 package de.bwvaachen.beamoflightgame.controller;
+import static de.bwvaachen.beamoflightgame.i18n.I18N.*;
 
 /*
 Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
@@ -11,7 +12,7 @@ See the COPYING file for more details.
 
 public class IllegalPlacementException extends RuntimeException {
 	IllegalPlacementException() {
-		super("Dieser Zug ist nicht moeglich.");
+		super(_("TurnNotPossible"));
 	}
 	
 	IllegalPlacementException(String message) {

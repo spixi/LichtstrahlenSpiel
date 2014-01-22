@@ -9,6 +9,8 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 See the COPYING file for more details.
 */
 
+import static de.bwvaachen.beamoflightgame.i18n.I18N._;
+
 import java.awt.event.ActionEvent;
 
 import javax.swing.JOptionPane;
@@ -31,7 +33,7 @@ public class RedoButton extends AbstractUndoRedoButton {
 		undoManager.redo();
 		}
 		catch (CannotRedoException ex) {
-			JOptionPane.showMessageDialog(null,"Wiederholen nicht mÃ¶glich");
+			JOptionPane.showMessageDialog(null,_("RedoImpossible"));
 		}
 	}
 	

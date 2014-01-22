@@ -9,6 +9,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 See the COPYING file for more details.
 */
 
+import static de.bwvaachen.beamoflightgame.i18n.I18N.*;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -85,7 +86,7 @@ public abstract class BeamsOfLightEditor extends JFrame
 		setLocation((screenSize.width - getSize().width)/2,(screenSize.height - getSize().height)/2);
 		setResizable(false);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setTitle("BeamsOfLightGame - " + editorType);
+		setTitle(_f("EditorTitle", editorType));
 		setLayout(new BorderLayout());
 		
 		cl = new CardLayout();
@@ -99,8 +100,8 @@ public abstract class BeamsOfLightEditor extends JFrame
 		onlyNumberTilesPanel.setLayout(gl);
 		tiles.add(onlyNumberTilesPanel,"2");
 		
-		solveButton = new JButton("Try to solve");
-		resetButton = new JButton("Reset");
+		solveButton = new JButton(_("EditorSolveButton"));
+		resetButton = new JButton(_("Reset"));
 		
 		tileStatsTextArea = new JTextArea();
 		
@@ -132,7 +133,7 @@ public abstract class BeamsOfLightEditor extends JFrame
 			solveButton.setEnabled(false);
 		}
 		if(!solveButton.isEnabled()){
-			solveButton.setToolTipText("Only available when remaining fields = 0");
+			solveButton.setToolTipText(_("EditorToolTipSolveButton"));
 		}else{
 			solveButton.setToolTipText(null);
 		}
@@ -180,24 +181,24 @@ public abstract class BeamsOfLightEditor extends JFrame
 			}
 		}catch(MaximumIterationsExceededException miee){
 			int userSelection = JOptionPane.showConfirmDialog(	this,
-																"Unable to find solution for this input.\nReset board?",
-																"Error",
+																_("EditorSolverMaximumIterationsExceeded"),
+																_("Error"),
 																JOptionPane.YES_NO_OPTION);
 			if(userSelection == JOptionPane.YES_OPTION){
 				resetButton.doClick();
 			}
 		}catch(UnsolvablePuzzleException upe){
 			int userSelection = JOptionPane.showConfirmDialog(	this,
-																"Unable to find unique solution for this input.\nReset board?",
-																"Error",
+																_("EditorSolverUnsolvablePuzzle"),
+																_("Error"),
 																JOptionPane.YES_NO_OPTION);
 			if(userSelection == JOptionPane.YES_OPTION){
 				resetButton.doClick();
 			}
 		}catch(AmbiguousPuzzleException ape){
 			int userSelection = JOptionPane.showConfirmDialog(	this,
-																"Found more than one solution for this input.\nReset board?",
-																"Error",
+																_("EditorSolverAmbiguousPuzzle"),
+																_("Error"),
 																JOptionPane.YES_NO_OPTION);
 			if(userSelection == JOptionPane.YES_OPTION){
 				resetButton.doClick();
@@ -210,7 +211,7 @@ public abstract class BeamsOfLightEditor extends JFrame
 			setMinimumSize(getSize());
 			if(isSolved){
 				JOptionPane.showMessageDialog(	this,
-					    						"Unique solution found, editing has been disabled.\nYou may now switch between views or save this game using the menu.\n");
+					    						_("EditorSolverUniqueSolution"));
 			}
 			updateTileStats();
 			checkButtons();

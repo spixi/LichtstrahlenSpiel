@@ -8,7 +8,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 
 See the COPYING file for more details.
 */
-
+import static de.bwvaachen.beamoflightgame.i18n.I18N.*;
 import java.util.Hashtable;
 import java.util.LinkedHashSet;
 
@@ -116,7 +116,7 @@ public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 		Class<?>   receivedClass = received.getClass();
 		
 		if (! isStateAllowed((Class<? extends LightTileState>) receivedClass))
-			throw new IllegalStateException("Die Zustandsklasse " + receivedClass + " ist nicht kompatibel mit " + allowedStateClass);
+			throw new IllegalStateException(_f("AbstractTileStateClassNotAllowed", receivedClass, allowedStateClass));
 		tileState = received;
 	}
 	protected final void setTileState(T newState, boolean significant) {

@@ -9,6 +9,8 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 See the COPYING file for more details.
 */
 
+import static de.bwvaachen.beamoflightgame.i18n.I18N._;
+
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import javax.swing.undo.CannotUndoException;
@@ -30,7 +32,7 @@ public class UndoButton extends AbstractUndoRedoButton {
 		undoManager.undo();
 		}
 		catch (CannotUndoException ex) {
-			JOptionPane.showMessageDialog(null,"RÃ¼ckgÃ¤ngig nicht mÃ¶glich");
+			JOptionPane.showMessageDialog(null,_("UndoImpossible"));
 		}
 	}
 	

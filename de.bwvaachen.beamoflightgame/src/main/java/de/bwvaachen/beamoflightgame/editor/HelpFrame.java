@@ -1,5 +1,6 @@
 package de.bwvaachen.beamoflightgame.editor;
 
+import static de.bwvaachen.beamoflightgame.i18n.I18N.*;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -36,7 +37,7 @@ public class HelpFrame extends JFrame {
 		setLocation((screenSize.width - getSize().width)/2,(screenSize.height - getSize().height)/2);
 		setResizable(false);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setTitle("BeamsOfLightGame - Help");
+		setTitle(_f("EditorTitle",_("Help")));
 		pack();
 		setVisible(true);
 	}
