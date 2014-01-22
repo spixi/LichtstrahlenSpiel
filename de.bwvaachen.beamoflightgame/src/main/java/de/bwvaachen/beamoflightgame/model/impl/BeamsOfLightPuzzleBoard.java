@@ -38,17 +38,11 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard, Change
 
 	@Override
 	public void addChangeListener(ChangeListener cl) {
-		for(ITile t: this) {
-			t.addChangeListener(cl);
-		}
 		changeListeners.add(cl);
 	}
 
 	@Override
 	public void addUndoableEditListener(UndoableEditListener ul) {
-		for(ITile t: this) {
-			t.addUndoableEditListener(ul);
-		}
 		undoableEditListeners.add(ul);		
 	}
 
