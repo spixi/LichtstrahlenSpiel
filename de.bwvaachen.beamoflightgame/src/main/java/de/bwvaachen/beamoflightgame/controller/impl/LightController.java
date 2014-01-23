@@ -172,8 +172,8 @@ public class LightController implements ILightController {
 			// Den Solver für die Musterlösung erzeugen
 			ISolver s =
 					SolverBuilder.buildWith(LonelyFieldStrategy.class).
-					//and(IntersectionStrategy.class).
-					and(TryAndErrorStrategy.class).
+					and(IntersectionStrategy.class).
+					//and(TryAndErrorStrategy.class).
 					forBoard(solutionBoard);
 			s.solve();
 			
