@@ -9,6 +9,9 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 See the COPYING file for more details.
 */
 
+import java.util.Collection;
+
+import de.bwvaachen.beamoflightgame.logic.solver.AbstractSolver;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.ITileState;
 
@@ -20,6 +23,8 @@ public interface IStrategy<T extends ITileState> {
 	public double getComplexity();
 	public void init(ITile<T> t);
 	public boolean isAppliableForTile(ITile<?> t);
+	public boolean hasHooks();
+	public Collection<? extends AbstractSolver.Hook> getHooks();
 	
 	public boolean tryToSolve() throws UnsolvablePuzzleException, AmbiguousPuzzleException;
 }

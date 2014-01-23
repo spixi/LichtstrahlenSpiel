@@ -9,7 +9,10 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 See the COPYING file for more details.
 */
 
+import java.util.Collection;
+
 import de.bwvaachen.beamoflightgame.logic.IStrategy;
+import de.bwvaachen.beamoflightgame.logic.solver.AbstractSolver;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.ITileState;
 
@@ -22,5 +25,14 @@ public abstract class AbstractStrategy<T extends ITileState> implements IStrateg
 	public final void init(ITile<T> t) {
 		tile = t;
 		_init();
+	}
+	
+	public final boolean hasHooks() {
+		Collection<? extends AbstractSolver.Hook> hooks = getHooks();
+		return (hooks != null) && (hooks.size() > 0);
+	}
+	
+	public Collection<? extends AbstractSolver.Hook> getHooks() {
+		return null;
 	}
 }

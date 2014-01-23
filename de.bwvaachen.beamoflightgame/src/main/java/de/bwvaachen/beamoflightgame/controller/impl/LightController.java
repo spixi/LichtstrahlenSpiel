@@ -28,6 +28,7 @@ import de.bwvaachen.beamoflightgame.helper.ZipPersister;
 import de.bwvaachen.beamoflightgame.logic.ISolver;
 import de.bwvaachen.beamoflightgame.logic.strategies.IntersectionStrategy;
 import de.bwvaachen.beamoflightgame.logic.strategies.LonelyFieldStrategy;
+import de.bwvaachen.beamoflightgame.logic.strategies.TryAndErrorStrategy;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
@@ -171,8 +172,8 @@ public class LightController implements ILightController {
 			// Den Solver für die Musterlösung erzeugen
 			ISolver s =
 					SolverBuilder.buildWith(LonelyFieldStrategy.class).
-					and(IntersectionStrategy.class).
-					/*and(TryAndErrorStrategy.class).*/
+					//and(IntersectionStrategy.class).
+					and(TryAndErrorStrategy.class).
 					forBoard(solutionBoard);
 			s.solve();
 			
