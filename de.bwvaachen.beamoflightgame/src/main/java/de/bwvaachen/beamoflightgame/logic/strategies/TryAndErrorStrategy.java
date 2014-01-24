@@ -1,7 +1,7 @@
 package de.bwvaachen.beamoflightgame.logic.strategies;
 
 /*
-Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
+Copyright (C) 2013 - 2014 by Andreas Pauls, Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
@@ -10,21 +10,30 @@ See the COPYING file for more details.
 */
 
 import java.lang.ref.WeakReference;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Set;
+import java.util.Stack;
 
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
+import javax.swing.undo.CompoundEdit;
+import javax.swing.undo.UndoableEdit;
 
 import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
 import de.bwvaachen.beamoflightgame.helper.AbstractTileVisitor;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.Holder;
 import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
+import de.bwvaachen.beamoflightgame.logic.solver.AbstractSolver;
+import de.bwvaachen.beamoflightgame.logic.solver.AbstractSolver.Hook;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.ITileState;
 import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
+import de.bwvaachen.beamoflightgame.model.NumberTile;
 
 public class TryAndErrorStrategy extends AbstractStrategy<ITileState> implements UndoableEditListener  {
 	private TurnUndoManager um;
@@ -71,6 +80,8 @@ public class TryAndErrorStrategy extends AbstractStrategy<ITileState> implements
 		}
 	}
 	
+	private BacktrackingHook hook;
+	
 	/*
 	 * This is an initializator list (indeed, a very seldom used Java construct)
 	 * Never write a constructor, because the SolverBuilder would be unable to load
@@ -82,6 +93,7 @@ public class TryAndErrorStrategy extends AbstractStrategy<ITileState> implements
 				                         LightTileState.EAST,
 				                         LightTileState.SOUTH,
 				                         LightTileState.WEST);
+		hook = new BacktrackingHook();
 	}
 	
 	protected void _init() {
@@ -110,8 +122,15 @@ public class TryAndErrorStrategy extends AbstractStrategy<ITileState> implements
 
 	@Override
 	public boolean isAppliableForTile(ITile t) {
-		//TODO
-		return true;
+		final Holder<Boolean> isAppliable = new Holder<Boolean>(false);
+		
+		t.accept(new AbstractTileVisitor() {
+			public void visitNumberTile(NumberTile t) {
+				isAppliable.value = (t.getRemainingLightRange() > 0);
+			}
+		});
+		
+		return isAppliable.value;
 	}
 	
 	@Override
@@ -139,7 +158,7 @@ public class TryAndErrorStrategy extends AbstractStrategy<ITileState> implements
 						if (!(lts.equals(LightTileState.EMPTY)))
 							error.value = true;
 					}
-					public void visitOtherTile() {
+					public void visitOtherTile(ITile t) {
 						//We reached a non-lightTile
 						error.value = true;
 					}
@@ -159,22 +178,25 @@ public class TryAndErrorStrategy extends AbstractStrategy<ITileState> implements
 		if(remainingDirections.isEmpty())
 			throw new UnsolvablePuzzleException(tile);
 		else {
-			//TODO: Select one remaining direction
-			//Undo everything, if an UnsolvablePuzzleException is detected
-			//and try the next direction until there is no
-			//remaining direction left
-			//However, how can we implement recursion here, when we don't
-			//know the current solver???
+			LightTileState guess = (LightTileState) remainingDirections.toArray()[0];
+			
+			t.shift(guess.getTraverseDirection());
+			((LightTile) t.get()).setState(guess, true);
+			return true;
 		}
-		
-		
-		//TODO
-		return false;
-		// TODO Auto-generated method stub
-		
-		
 	}
-
+	
+	public Collection<BacktrackingHook> getHooks() {
+		return Collections.singleton(new BacktrackingHook());
+	}
+	
+	private class BacktrackingHook implements AbstractSolver.Hook {
+		@Override
+		public void run() {
+			while(um.canUndo())
+				um.undo();
+		}
+	}
 
 	@Override
 	public void undoableEditHappened(UndoableEditEvent e) {

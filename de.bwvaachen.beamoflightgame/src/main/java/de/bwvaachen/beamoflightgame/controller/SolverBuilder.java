@@ -1,7 +1,7 @@
 package de.bwvaachen.beamoflightgame.controller;
 
 /*
-Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
+Copyright (C) 2013 - 2014 by Andreas Pauls, Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
@@ -23,6 +23,7 @@ import de.bwvaachen.beamoflightgame.logic.IStrategy;
 import de.bwvaachen.beamoflightgame.logic.MaximumIterationsExceededException;
 import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
 import de.bwvaachen.beamoflightgame.logic.solver.AbstractSolver;
+import de.bwvaachen.beamoflightgame.logic.solver.AbstractSolver.Hook;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
@@ -33,15 +34,23 @@ public class SolverBuilder {
 	
 	private class SolverBuilderContext implements ISolverBuilderContext  {
 		private List<IStrategy> strategies;
+		private List<Hook>      hooks;
 		
 		private SolverBuilderContext() {
 			strategies = new LinkedList<IStrategy>();
+			hooks      = new LinkedList<Hook>();
 		}
 
 		@Override
 		public ISolverBuilderContext and(Class<? extends IStrategy> s)
 				throws InstantiationException, IllegalAccessException {
+			IStrategy theStrategy = s.newInstance();
 		    strategies.add(s.newInstance());
+		    
+		    if(theStrategy.hasHooks()) {
+		    	hooks.addAll(theStrategy.getHooks());
+		    }
+		    
 			return this;
 		}
 
@@ -145,8 +154,16 @@ public class SolverBuilder {
 					}
 					else {
 						currentStrategy.init(tile);
-						boolean canSolve = currentStrategy.tryToSolve();
-						if(!canSolve) step(tile, stackPointer+1);
+						try {
+							boolean canSolve = currentStrategy.tryToSolve();
+							if(!canSolve) step(tile, stackPointer+1);
+						}
+						catch (UnsolvablePuzzleException e) {
+							if(hooks == null) throw e;
+							for(Hook h : hooks) {
+								h.run();
+							}
+						}
 					}
 				}
 				
@@ -154,6 +171,8 @@ public class SolverBuilder {
 		}
 		
 	}
+	
+
 	
 	private static SolverBuilder instance = new SolverBuilder();
 

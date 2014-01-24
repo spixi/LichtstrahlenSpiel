@@ -1,7 +1,7 @@
 package de.bwvaachen.beamoflightgame.ui;
 
 /*
-Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
+Copyright (C) 2013 - 2014 by Andreas Pauls, Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
@@ -157,6 +157,12 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 					
 					boolean alleGezeichnet = false ;
 					boolean firstTile = true;
+					
+					// Ermitteln was die letzte Zug-Nummer ist.
+					int currentTurnNumber = controller . getCurrentModel() . getCurrentTurnNumber() ;
+					// Diese Zug-Nummer für diesen neuen Zug erhöhen
+					controller . getCurrentModel() . setCurrentTurnNumber( currentTurnNumber + 1 ) ;
+					
 					do  {
 						if ( ( numberTileX == traverser . getX() ) && ( numberTileY == traverser . getY() ) ) {
 							break;
@@ -200,8 +206,15 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 						boolean significant = true ;
 						// Vom Ausgangs-Tile bis zum "Strahlende" die TileStates auf EMPTY setzen.
 						LightTile currentTile = ausgangsTile ;						
+						
+						
+						// Ermitteln was die letzte Zug-Nummer ist.
+						int currentTurnNumber = controller . getCurrentModel() . getCurrentTurnNumber() ;
+						// Diese Zug-Nummer für diesen neuen Zug erhöhen
+						controller . getCurrentModel() . setCurrentTurnNumber( currentTurnNumber + 1 ) ;
+						
 						while ( currentTile . getTileState() . getTraverseDirection() == traverseDirection ) {
-							currentTile . setState ( LightTileState . EMPTY , significant ) ;
+							currentTile . setState ( LightTileState . EMPTY , true ) ;
 							significant = false ;
 							traverser . shift ( traverseDirection ) ;
 							currentTile = (LightTile) traverser . get() ;
@@ -584,7 +597,6 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		
 		
 		
-		
 		JMenuItem mntmCheckGame = new JMenuItem ( _("Check") ) ;
 		mnGame . add ( mntmCheckGame ) . addActionListener( new ActionListener() {
 
@@ -671,8 +683,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				controller.getUndoManager().undoToLastMarker();
-				
+				controller.getUndoManager().undoToLastMarker();				
 			}
 		});
 				
@@ -739,18 +750,15 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 				if(fileChooser.showOpenDialog(LightgameUI.this)!=JFileChooser.CANCEL_OPTION){
 					File selectedFile = fileChooser.getSelectedFile();
 					if(selectedFile!=null&& selectedFile.exists()){
-							//oeffnen
-					}
-					
-				}
-				try {
-					//im Design ist das hier nicht void sondern gibt ein Puzzle zurueck, das sollten wir dann aufbauen
-					//Update(controller.loadGame(new File("")));
-					//TODO obrigen Code einbinden sobald der Controller implementiert ist
-					controller.loadGame(new File(""));
+						try {
+					controller.loadGame(selectedFile);
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
+					}
+					
+				}
+				
 			}
 		});
 		

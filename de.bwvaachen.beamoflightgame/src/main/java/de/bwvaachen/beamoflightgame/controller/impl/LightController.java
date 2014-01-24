@@ -1,7 +1,7 @@
 package de.bwvaachen.beamoflightgame.controller.impl;
 
 /*
-Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
+Copyright (C) 2013 - 2014 by Andreas Pauls, Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
@@ -28,6 +28,7 @@ import de.bwvaachen.beamoflightgame.helper.ZipPersister;
 import de.bwvaachen.beamoflightgame.logic.ISolver;
 import de.bwvaachen.beamoflightgame.logic.strategies.IntersectionStrategy;
 import de.bwvaachen.beamoflightgame.logic.strategies.LonelyFieldStrategy;
+import de.bwvaachen.beamoflightgame.logic.strategies.TryAndErrorStrategy;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
@@ -60,9 +61,10 @@ public class LightController implements ILightController {
 		ZipPersister persister = new ZipPersister(new SimpleASCIICodec());
 		try {
 			
-			Pair<IBeamsOfLightPuzzleBoard,List<Turn>> pair = persister.load(f);
+			Pair<IBeamsOfLightPuzzleBoard[],List<Turn>> pair = persister.load(f);
 			
-			this.setBoard(pair.left);
+			this.setBoard(pair.left[0]);
+			this.solutionBoard = pair.left[1];
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -75,6 +77,7 @@ public class LightController implements ILightController {
 	@Override
 	public void newGame(int width, int height) throws Exception 
 	{
+		solutionBoard = null;
 		setBoard(new BeamsOfLightPuzzleBoard());
 		puzzleBoard.init(width, height);
 	} // public IBeamsOfLightPuzzleBoard newGame(int x, int y)
@@ -84,7 +87,7 @@ public class LightController implements ILightController {
 	public void saveGame(File f) throws IOException {
 				
 		ZipPersister persister = new ZipPersister(new SimpleASCIICodec());
-		persister.save(f, puzzleBoard, turnManager.getTurns()); 
+		persister.save(f, puzzleBoard, turnManager.getTurns(),solutionBoard); 
 				
 	} // public void saveGame(File f)
 	
@@ -120,19 +123,19 @@ public class LightController implements ILightController {
 	 * @return is the String that represents the Tile
 	 * @author Andi 
 	 */
-	@Deprecated
-	private String getStringRepresentation(ITile t)
-	{
-		try{
-			NumberTile ti = (NumberTile) t;
-			return String.format("{%s|%d|%d|%d}","N",ti.getNumber(),ti.getX(),ti.getY());
-		}
-		catch (Exception e)
-		{
-			LightTile ti = (LightTile) t;
-			return String.format("{%s|%d|%d|%d}","L",ti.getTileState().getSign(),ti.getX(),ti.getY());		
-		}
-	}
+//	@Deprecated
+//	private String getStringRepresentation(ITile t)
+//	{
+//		try{
+//			NumberTile ti = (NumberTile) t;
+//			return String.format("{%s|%d|%d|%d}","N",ti.getNumber(),ti.getX(),ti.getY());
+//		}
+//		catch (Exception e)
+//		{
+//			LightTile ti = (LightTile) t;
+//			return String.format("{%s|%d|%d|%d}","L",ti.getTileState().getSign(),ti.getX(),ti.getY());		
+//		}
+//	}
 	
 	
 
@@ -144,11 +147,14 @@ public class LightController implements ILightController {
 		}
 		
 		puzzleBoard = _board ;
-		solutionBoard = null;
+		if(solutionBoard == null)
+		{		
+			solve();
+		}
 		turnManager = new TurnUndoManager();
 		
 		puzzleBoard.addUndoableEditListener(turnManager);
-		solve();
+
 		notifyBoardChangeListeners();
 	}
 
@@ -172,7 +178,7 @@ public class LightController implements ILightController {
 			ISolver s =
 					SolverBuilder.buildWith(LonelyFieldStrategy.class).
 					and(IntersectionStrategy.class).
-					/*and(TryAndErrorStrategy.class).*/
+					//and(TryAndErrorStrategy.class).
 					forBoard(solutionBoard);
 			s.solve();
 			

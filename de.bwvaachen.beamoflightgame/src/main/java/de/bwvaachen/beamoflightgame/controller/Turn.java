@@ -1,7 +1,7 @@
 package de.bwvaachen.beamoflightgame.controller;
 
 /*
-Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
+Copyright (C) 2013 - 2014 by Andreas Pauls, Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
@@ -31,13 +31,23 @@ public class Turn implements UndoableEdit
 	private IBeamsOfLightPuzzleBoard board;
 	private int x, y;
 	private ITileState oldTileState, newTileState;
+	private int turnNumber = 0 ;
 	
-	public Turn(IBeamsOfLightPuzzleBoard b, int x, int y, ITileState oldTileState, ITileState newTileState) {
+	public int getTurnNumber() {
+		return turnNumber;
+	}
+
+	public void setTurnNumber(int turnNumber) {
+		this.turnNumber = turnNumber;
+	}
+
+	public Turn(IBeamsOfLightPuzzleBoard b, int x, int y, ITileState oldTileState, ITileState newTileState, int turnNumber) {
 		board        = b;
 		this.x       = x;
 		this.y       = y;
 		this.oldTileState = oldTileState;
 		this.newTileState = newTileState;
+		this.turnNumber = turnNumber ; 
 		flags |= FLAG_ALIVE;
 		flags |= FLAG_HAS_BEEN_DONE;
 		flags |= FLAG_SIGNIFICANT;
@@ -70,7 +80,7 @@ public class Turn implements UndoableEdit
 	@Override
 	public String getPresentationName() {
 		// TODO
-		return _f("TurnNo", 0);
+		return _f("TurnNo", getTurnNumber());
 	}
 
 	@Override

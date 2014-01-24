@@ -1,7 +1,7 @@
 package de.bwvaachen.beamoflightgame.model;
 
 /*
-Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
+Copyright (C) 2013 - 2014 by Andreas Pauls, Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
@@ -128,8 +128,9 @@ public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 		
 		if (undoMode) return; // Don't raise an event in UndoMode!!!
 		
+		int currentTurnNumber = board . getCurrentTurnNumber() ;
 		for (UndoableEditListener l : undoableEditListeners) {
-			Turn t = new Turn (board, x, y, oldState, newState);
+			Turn t = new Turn (board, x, y, oldState, newState,currentTurnNumber);
 			t.setSignificant(significant);
 			l.undoableEditHappened(
 					new UndoableEditEvent(this, t)
