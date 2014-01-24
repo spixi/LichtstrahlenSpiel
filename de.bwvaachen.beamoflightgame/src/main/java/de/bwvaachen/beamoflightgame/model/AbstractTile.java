@@ -128,8 +128,9 @@ public abstract class AbstractTile<T extends ITileState> implements ITile<T> {
 		
 		if (undoMode) return; // Don't raise an event in UndoMode!!!
 		
+		int currentTurnNumber = board . getCurrentTurnNumber() ;
 		for (UndoableEditListener l : undoableEditListeners) {
-			Turn t = new Turn (board, x, y, oldState, newState);
+			Turn t = new Turn (board, x, y, oldState, newState,currentTurnNumber);
 			t.setSignificant(significant);
 			l.undoableEditHappened(
 					new UndoableEditEvent(this, t)

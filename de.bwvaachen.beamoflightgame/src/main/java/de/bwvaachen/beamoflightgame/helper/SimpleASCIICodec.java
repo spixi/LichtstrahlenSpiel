@@ -106,7 +106,7 @@ public class SimpleASCIICodec implements ICodec {
 			int col=lineScanner.nextInt();
 			LightTileState oldState=LightTileState.signToState(lineScanner.next().charAt(0));
 			LightTileState newState=LightTileState.signToState(lineScanner.next().charAt(0));
-			turns.add(new Turn(board, row, col, oldState, newState));
+			turns.add(new Turn(board, row, col, oldState, newState,0));
 			
 		}
 		return turns;

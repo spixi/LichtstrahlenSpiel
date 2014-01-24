@@ -31,13 +31,23 @@ public class Turn implements UndoableEdit
 	private IBeamsOfLightPuzzleBoard board;
 	private int x, y;
 	private ITileState oldTileState, newTileState;
+	private int turnNumber = 0 ;
 	
-	public Turn(IBeamsOfLightPuzzleBoard b, int x, int y, ITileState oldTileState, ITileState newTileState) {
+	public int getTurnNumber() {
+		return turnNumber;
+	}
+
+	public void setTurnNumber(int turnNumber) {
+		this.turnNumber = turnNumber;
+	}
+
+	public Turn(IBeamsOfLightPuzzleBoard b, int x, int y, ITileState oldTileState, ITileState newTileState, int turnNumber) {
 		board        = b;
 		this.x       = x;
 		this.y       = y;
 		this.oldTileState = oldTileState;
 		this.newTileState = newTileState;
+		this.turnNumber = turnNumber ; 
 		flags |= FLAG_ALIVE;
 		flags |= FLAG_HAS_BEEN_DONE;
 		flags |= FLAG_SIGNIFICANT;

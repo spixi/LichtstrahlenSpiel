@@ -34,4 +34,7 @@ public interface IBeamsOfLightPuzzleBoard extends Iterable<ITile>, TileComposite
 	
 	public IBeamsOfLightPuzzleBoard clone() ;
 	
+	public int getCurrentTurnNumber() ;
+	public void setCurrentTurnNumber(int currentTurnNumber) ;
+	
 }

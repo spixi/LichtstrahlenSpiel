@@ -36,6 +36,15 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard, Change
 	private ConcurrentLinkedQueue<ITile> tileQueue = new ConcurrentLinkedQueue<ITile>();
 	private HashSet<ChangeListener> changeListeners = new HashSet<ChangeListener>();
 	private HashSet<UndoableEditListener> undoableEditListeners = new HashSet<UndoableEditListener>();
+	private int currentTurnNumber = 0 ; 
+	
+	public int getCurrentTurnNumber() {
+		return currentTurnNumber;
+	}
+
+	public void setCurrentTurnNumber(int currentTurnNumber) {
+		this.currentTurnNumber = currentTurnNumber;
+	}
 
 	@Override
 	public void addChangeListener(ChangeListener cl) {
