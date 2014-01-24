@@ -61,9 +61,10 @@ public class LightController implements ILightController {
 		ZipPersister persister = new ZipPersister(new SimpleASCIICodec());
 		try {
 			
-			Pair<IBeamsOfLightPuzzleBoard,List<Turn>> pair = persister.load(f);
+			Pair<IBeamsOfLightPuzzleBoard[],List<Turn>> pair = persister.load(f);
 			
-			this.setBoard(pair.left);
+			this.setBoard(pair.left[0]);
+			this.solutionBoard = pair.left[1];
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -145,11 +146,14 @@ public class LightController implements ILightController {
 		}
 		
 		puzzleBoard = _board ;
-		solutionBoard = null;
+		if(solutionBoard == null)
+		{		
+			solve();
+		}
 		turnManager = new TurnUndoManager();
 		
 		puzzleBoard.addUndoableEditListener(turnManager);
-		solve();
+
 		notifyBoardChangeListeners();
 	}
 

@@ -17,7 +17,7 @@ import de.bwvaachen.beamoflightgame.controller.Turn;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 
 public interface IPersistenceHelper {
-	Pair<IBeamsOfLightPuzzleBoard, List<Turn>> load(File path) throws IOException, WrongCodecException, InstantiationException, IllegalAccessException, ClassNotFoundException;
+	Pair<IBeamsOfLightPuzzleBoard[], List<Turn>> load(File path) throws IOException, WrongCodecException, InstantiationException, IllegalAccessException, ClassNotFoundException;
 	/**
 	 * 
 	 * @param path
