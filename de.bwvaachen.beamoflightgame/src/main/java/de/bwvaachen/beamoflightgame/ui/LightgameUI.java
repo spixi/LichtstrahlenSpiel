@@ -157,6 +157,12 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 					
 					boolean alleGezeichnet = false ;
 					boolean firstTile = true;
+					
+					// Ermitteln was die letzte Zug-Nummer ist.
+					int currentTurnNumber = controller . getCurrentModel() . getCurrentTurnNumber() ;
+					// Diese Zug-Nummer für diesen neuen Zug erhöhen
+					controller . getCurrentModel() . setCurrentTurnNumber( currentTurnNumber + 1 ) ;
+					
 					do  {
 						if ( ( numberTileX == traverser . getX() ) && ( numberTileY == traverser . getY() ) ) {
 							break;
@@ -194,8 +200,15 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 						boolean significant = true ;
 						// Vom Ausgangs-Tile bis zum "Strahlende" die TileStates auf EMPTY setzen.
 						LightTile currentTile = ausgangsTile ;						
+						
+						
+						// Ermitteln was die letzte Zug-Nummer ist.
+						int currentTurnNumber = controller . getCurrentModel() . getCurrentTurnNumber() ;
+						// Diese Zug-Nummer für diesen neuen Zug erhöhen
+						controller . getCurrentModel() . setCurrentTurnNumber( currentTurnNumber + 1 ) ;
+						
 						while ( currentTile . getTileState() . getTraverseDirection() == traverseDirection ) {
-							currentTile . setState ( LightTileState . EMPTY , significant ) ;
+							currentTile . setState ( LightTileState . EMPTY , true ) ;
 							significant = false ;
 							traverser . shift ( traverseDirection ) ;
 							currentTile = (LightTile) traverser . get() ;
@@ -664,8 +677,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				controller.getUndoManager().undoToLastMarker();
-				
+				controller.getUndoManager().undoToLastMarker();				
 			}
 		});
 				

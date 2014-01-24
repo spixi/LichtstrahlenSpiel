@@ -176,8 +176,9 @@ public class TurnUndoManager extends UndoManager
 		LinkedList<Turn> turns = new LinkedList<Turn>();
 		for(UndoableEdit e : edits)
 		{
-			if (e instanceof Turn)
+			if (e instanceof Turn) 
 				turns.add((Turn)e);
+				
 		}
 		return turns;
 	}
