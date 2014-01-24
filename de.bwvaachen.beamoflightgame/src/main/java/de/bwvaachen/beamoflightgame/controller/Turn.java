@@ -80,7 +80,7 @@ public class Turn implements UndoableEdit
 	@Override
 	public String getPresentationName() {
 		// TODO
-		return _f("TurnNo", 0);
+		return _f("TurnNo", getTurnNumber());
 	}
 
 	@Override
