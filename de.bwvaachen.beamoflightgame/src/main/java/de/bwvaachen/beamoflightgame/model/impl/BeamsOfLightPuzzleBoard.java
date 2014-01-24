@@ -1,7 +1,7 @@
 package de.bwvaachen.beamoflightgame.model.impl;
 
 /*
-Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
+Copyright (C) 2013 - 2014 by Andreas Pauls, Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
@@ -36,6 +36,15 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard, Change
 	private ConcurrentLinkedQueue<ITile> tileQueue = new ConcurrentLinkedQueue<ITile>();
 	private HashSet<ChangeListener> changeListeners = new HashSet<ChangeListener>();
 	private HashSet<UndoableEditListener> undoableEditListeners = new HashSet<UndoableEditListener>();
+	private int currentTurnNumber = 0 ; 
+	
+	public int getCurrentTurnNumber() {
+		return currentTurnNumber;
+	}
+
+	public void setCurrentTurnNumber(int currentTurnNumber) {
+		this.currentTurnNumber = currentTurnNumber;
+	}
 
 	@Override
 	public void addChangeListener(ChangeListener cl) {
