@@ -85,7 +85,7 @@ public class LightController implements ILightController {
 	public void saveGame(File f) throws IOException {
 				
 		ZipPersister persister = new ZipPersister(new SimpleASCIICodec());
-		persister.save(f, puzzleBoard, turnManager.getTurns()); 
+		persister.save(f, puzzleBoard, turnManager.getTurns(),solutionBoard); 
 				
 	} // public void saveGame(File f)
 	

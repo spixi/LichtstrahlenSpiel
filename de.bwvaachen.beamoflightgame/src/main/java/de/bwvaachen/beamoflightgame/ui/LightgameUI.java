@@ -578,7 +578,6 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		
 		
 		
-		
 		JMenuItem mntmCheckGame = new JMenuItem ( _("Check") ) ;
 		mnGame . add ( mntmCheckGame ) . addActionListener( new ActionListener() {
 
@@ -733,18 +732,15 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 				if(fileChooser.showOpenDialog(LightgameUI.this)!=JFileChooser.CANCEL_OPTION){
 					File selectedFile = fileChooser.getSelectedFile();
 					if(selectedFile!=null&& selectedFile.exists()){
-							//oeffnen
-					}
-					
-				}
-				try {
-					//im Design ist das hier nicht void sondern gibt ein Puzzle zurueck, das sollten wir dann aufbauen
-					//Update(controller.loadGame(new File("")));
-					//TODO obrigen Code einbinden sobald der Controller implementiert ist
-					controller.loadGame(new File(""));
+						try {
+					controller.loadGame(selectedFile);
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
+					}
+					
+				}
+				
 			}
 		});
 		

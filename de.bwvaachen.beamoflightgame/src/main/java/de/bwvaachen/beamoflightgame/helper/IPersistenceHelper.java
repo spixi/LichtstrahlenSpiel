@@ -25,5 +25,5 @@ public interface IPersistenceHelper {
 	 * @param turns 
 	 * @throws IOException
 	 */
-	void save(File path,IBeamsOfLightPuzzleBoard board, List<Turn> turns) throws IOException;
+	void save(File path,IBeamsOfLightPuzzleBoard board, List<Turn> turns, IBeamsOfLightPuzzleBoard solution) throws IOException;
 }
