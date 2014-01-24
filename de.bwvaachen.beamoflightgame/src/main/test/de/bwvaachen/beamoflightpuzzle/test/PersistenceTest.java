@@ -73,7 +73,7 @@ public class PersistenceTest {
 		
 		IBeamsOfLightPuzzleBoard board2 = null;
 		try {
-			test.save(new File("/tmp/Test.zip"), board1, new LinkedList<Turn>());
+			test.save(new File("/tmp/Test.zip"), board1, new LinkedList<Turn>(),board1);
 			board2 = test.load(new File("/tmp/Test.zip")).left;
 			System.out.println(board2);
 		} catch (Exception e) {

@@ -39,6 +39,7 @@ public class ZipPersister implements IPersistenceHelper {
 		this.codec = saveCodec;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public Pair<IBeamsOfLightPuzzleBoard,List<Turn>> load(File path) throws IOException, WrongCodecException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
@@ -79,7 +80,7 @@ public class ZipPersister implements IPersistenceHelper {
 	}
 
 	@Override
-	public void save(File path, IBeamsOfLightPuzzleBoard board, List<Turn> turns)
+	public void save(File path, IBeamsOfLightPuzzleBoard board, List<Turn> turns, IBeamsOfLightPuzzleBoard solution)
 			throws IOException {
 
 		FileOutputStream fileOutputStream = new FileOutputStream(path);
@@ -96,6 +97,10 @@ public class ZipPersister implements IPersistenceHelper {
 
 			zipOut.putNextEntry(new ZipEntry("turns"));
 			codec.turnsToOutputstream(zipOut, turns);
+			zipOut.closeEntry();
+			
+			zipOut.putNextEntry(new ZipEntry("solution"));
+			codec.boardToOutputstream(zipOut, solution);
 			zipOut.closeEntry();
 			
 			zipOut.finish();
