@@ -77,6 +77,7 @@ public class LightController implements ILightController {
 	@Override
 	public void newGame(int width, int height) throws Exception 
 	{
+		solutionBoard = null;
 		setBoard(new BeamsOfLightPuzzleBoard());
 		puzzleBoard.init(width, height);
 	} // public IBeamsOfLightPuzzleBoard newGame(int x, int y)
@@ -122,19 +123,19 @@ public class LightController implements ILightController {
 	 * @return is the String that represents the Tile
 	 * @author Andi 
 	 */
-	@Deprecated
-	private String getStringRepresentation(ITile t)
-	{
-		try{
-			NumberTile ti = (NumberTile) t;
-			return String.format("{%s|%d|%d|%d}","N",ti.getNumber(),ti.getX(),ti.getY());
-		}
-		catch (Exception e)
-		{
-			LightTile ti = (LightTile) t;
-			return String.format("{%s|%d|%d|%d}","L",ti.getTileState().getSign(),ti.getX(),ti.getY());		
-		}
-	}
+//	@Deprecated
+//	private String getStringRepresentation(ITile t)
+//	{
+//		try{
+//			NumberTile ti = (NumberTile) t;
+//			return String.format("{%s|%d|%d|%d}","N",ti.getNumber(),ti.getX(),ti.getY());
+//		}
+//		catch (Exception e)
+//		{
+//			LightTile ti = (LightTile) t;
+//			return String.format("{%s|%d|%d|%d}","L",ti.getTileState().getSign(),ti.getX(),ti.getY());		
+//		}
+//	}
 	
 	
 
