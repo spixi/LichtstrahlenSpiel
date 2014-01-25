@@ -76,6 +76,7 @@ public final class NewGamePropertyDialog extends JDialog {
 			if(boardOk) {
 				try {
 					controller.setBoard(board);
+					controller.solve();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

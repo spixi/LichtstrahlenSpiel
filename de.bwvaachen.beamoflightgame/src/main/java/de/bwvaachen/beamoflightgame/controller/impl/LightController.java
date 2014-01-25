@@ -178,7 +178,7 @@ public class LightController implements ILightController {
 			ISolver s =
 					SolverBuilder.buildWith(LonelyFieldStrategy.class).
 					and(IntersectionStrategy.class).
-					//and(TryAndErrorStrategy.class).
+					and(TryAndErrorStrategy.class).
 					forBoard(solutionBoard);
 			s.solve();
 			

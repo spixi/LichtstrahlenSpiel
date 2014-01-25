@@ -178,8 +178,8 @@ public class TryAndErrorStrategy extends AbstractStrategy<ITileState> implements
 		if(remainingDirections.isEmpty())
 			throw new UnsolvablePuzzleException(tile);
 		else {
-			LightTileState guess = (LightTileState) remainingDirections.toArray()[0];
-			
+			LightTileState guess = (LightTileState) remainingDirections.toArray()[0];	
+			um.addMarker();
 			t.shift(guess.getTraverseDirection());
 			((LightTile) t.get()).setState(guess, true);
 			return true;
@@ -193,8 +193,7 @@ public class TryAndErrorStrategy extends AbstractStrategy<ITileState> implements
 	private class BacktrackingHook implements AbstractSolver.Hook {
 		@Override
 		public void run() {
-			while(um.canUndo())
-				um.undo();
+			um.undoToLastMarker();
 		}
 	}
 

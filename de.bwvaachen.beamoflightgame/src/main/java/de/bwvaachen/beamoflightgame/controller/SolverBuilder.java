@@ -159,7 +159,7 @@ public class SolverBuilder {
 							if(!canSolve) step(tile, stackPointer+1);
 						}
 						catch (UnsolvablePuzzleException e) {
-							if(hooks == null) throw e;
+							if(hooks.size() == 0) throw e;
 							for(Hook h : hooks) {
 								h.run();
 							}

@@ -74,6 +74,8 @@ public class GraficFactory {
 		
 		LightTile lig = (LightTile) meineKachel;
 		String url ="";
+		
+		//TODO: Refactor (switch-case in OOP ist ganz mies!)
 		switch(lig.getTileState())
 		{
 		case NORTH:
