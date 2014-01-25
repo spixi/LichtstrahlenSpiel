@@ -14,7 +14,9 @@ import java.net.URL;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import de.bwvaachen.beamoflightgame.helper.AbstractTileVisitor;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
+import de.bwvaachen.beamoflightgame.helper.Holder;
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
@@ -58,61 +60,45 @@ public class GraficFactory {
 	 */
 	public Icon getImage(ITile meineKachel)
 	{
-		ImageIcon ii = null;
-		try{
-			NumberTile num = (NumberTile) meineKachel;
+		final Holder<Icon> ii = new Holder<Icon>(null);
+			meineKachel.accept(new AbstractTileVisitor(){
+				public void visitNumberTile(NumberTile nt) {
 
-			String url = String.format("themes/moon/%d.png", num.getNumber());
-			URL u = this.getClass().getClassLoader().getResource(url);
+					String url = String.format("themes/moon/%d.png", nt.getNumber());
+					URL u = this.getClass().getClassLoader().getResource(url);
+					
+					ii.value = new ImageIcon(u);
+				}
+				
+				public void visitLightTile(LightTile lt) {
+					String url;
+					
+					//TODO: Refactor (switch-case in OOP ist ganz mies!)
+					switch(lt.getTileState())
+					{
+					case NORTH:
+					case EAST:
+					case SOUTH:
+					case WEST:
+						if(isEnd(lt))
+							url = "themes/moon/light2.png";
+						else url = "themes/moon/light1.png";
+						ii.value = rotateIcon(new ImageIcon(this.getClass().getClassLoader().getResource(url)),lt.getTileState().getRotation());
+						break;
+						
+					case EMPTY:
+						 url = "themes/moon/darkness.png";
+						 ii.value = new ImageIcon(this.getClass().getClassLoader().getResource(url));
+						 break;
+						
+					default:
+						 ii.value = null; //nicht schoen aber einfach
+					}//switch(lig.getTileState())
+					
+				}
+			});
 			
-			ii = new ImageIcon(u);
-			return ii ;
-			
-		}catch (Exception e){/*Kein Exception handling da in allen anderen Faellen ein LightTile vorhanden ist*/} 
-		//TODO: Andreas: Was machst du denn bitte, wenn ein Tile mit einer Zahl größer 14 gefunden wird, dann wird
-		//die URL nicht gefunden und eine FileNotFoundException geworfen ...
-		
-		LightTile lig = (LightTile) meineKachel;
-		String url ="";
-		
-		//TODO: Refactor (switch-case in OOP ist ganz mies!)
-		switch(lig.getTileState())
-		{
-		case NORTH:
-			if(isEnd(lig))
-				url = "themes/moon/light2.png";
-			else url = "themes/moon/light1.png";
-			return new ImageIcon(this.getClass().getClassLoader().getResource(url));
-			
-			
-		case EAST:
-			if(isEnd(lig))
-				url = "themes/moon/light2.png";
-			else url = "themes/moon/light1.png";
-			ii = new ImageIcon(this.getClass().getClassLoader().getResource(url));
-			return rotateIcon(ii, Rotate.DOWN);
-			
-		case SOUTH:
-			if(isEnd(lig))
-				url = "themes/moon/light2.png";
-			else url = "themes/moon/light1.png";
-			ii = new ImageIcon(this.getClass().getClassLoader().getResource(url));
-			return rotateIcon(ii, Rotate.UPSIDE_DOWN);
-			
-		case WEST:
-			if(isEnd(lig))
-				url = "themes/moon/light2.png";
-			else url = "themes/moon/light1.png";
-			ii = new ImageIcon(this.getClass().getClassLoader().getResource(url));
-			return rotateIcon(ii, Rotate.UP);
-			
-		case EMPTY:
-			 url = "themes/moon/darkness.png";
-			 return new ImageIcon(this.getClass().getClassLoader().getResource(url));
-			
-			default:
-				return null; //nicht schoen aber einfach
-		}//switch(lig.getTileState())
+			return ii.value;
 
 	}//public Icon getImage(ITile meineKachel)
 	
@@ -155,7 +141,7 @@ public class GraficFactory {
 	 * @param r der Wert aus dem Enum um den gedreht werden soll
 	 * @return das gedrehte Icon - als Icon
 	 */
-	private Icon rotateIcon(ImageIcon ii, Rotate r)
+	private Icon rotateIcon(Icon ii, Rotate r)
 	{
 		RotatedIcon ri = new RotatedIcon(ii, r);
 		return ri;

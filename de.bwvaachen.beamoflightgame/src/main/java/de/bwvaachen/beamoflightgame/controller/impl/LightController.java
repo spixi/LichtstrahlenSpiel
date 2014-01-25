@@ -12,9 +12,12 @@ See the COPYING file for more details.
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.swing.JOptionPane;
 
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.SolverBuilder;
@@ -180,7 +183,9 @@ public class LightController implements ILightController {
 					and(IntersectionStrategy.class).
 					//and(TryAndErrorStrategy.class).
 					forBoard(solutionBoard);
+			System.setErr(new PrintStream("/dev/null"));
 			s.solve();
+			s.getLevel();
 			
 		}
 		catch ( Exception e ) {
