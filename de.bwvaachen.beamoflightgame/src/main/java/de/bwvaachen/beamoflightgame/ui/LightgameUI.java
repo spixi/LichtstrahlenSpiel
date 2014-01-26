@@ -1,7 +1,7 @@
 package de.bwvaachen.beamoflightgame.ui;
 
 /*
-Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
+Copyright (C) 2013 - 2014 by Andreas Pauls, Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
@@ -19,7 +19,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JFileChooser;
@@ -35,25 +34,21 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 
-import de.bwvaachen.beamoflightgame.controller.CreateRandomBoard;
 import de.bwvaachen.beamoflightgame.controller.ILightController;
-import de.bwvaachen.beamoflightgame.controller.SolverBuilder;
 import de.bwvaachen.beamoflightgame.controller.impl.LightController;
 import de.bwvaachen.beamoflightgame.editor.EditorMain;
+import de.bwvaachen.beamoflightgame.helper.BoardChangeListener;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.ITileVisitor;
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
-import de.bwvaachen.beamoflightgame.logic.ISolver;
-import de.bwvaachen.beamoflightgame.logic.strategies.IntersectionStrategy;
-import de.bwvaachen.beamoflightgame.logic.strategies.LonelyFieldStrategy;
+import static de.bwvaachen.beamoflightgame.i18n.I18N.*;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
-import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 
-public class LightgameUI extends JFrame {
+public class LightgameUI extends JFrame implements BoardChangeListener {
 	
 	class ExtensionFileFilter extends FileFilter {
 		  String description;
@@ -162,6 +157,12 @@ public class LightgameUI extends JFrame {
 					
 					boolean alleGezeichnet = false ;
 					boolean firstTile = true;
+					
+					// Ermitteln was die letzte Zug-Nummer ist.
+					int currentTurnNumber = controller . getCurrentModel() . getCurrentTurnNumber() ;
+					// Diese Zug-Nummer für diesen neuen Zug erhöhen
+					controller . getCurrentModel() . setCurrentTurnNumber( currentTurnNumber + 1 ) ;
+					
 					do  {
 						if ( ( numberTileX == traverser . getX() ) && ( numberTileY == traverser . getY() ) ) {
 							break;
@@ -199,8 +200,15 @@ public class LightgameUI extends JFrame {
 						boolean significant = true ;
 						// Vom Ausgangs-Tile bis zum "Strahlende" die TileStates auf EMPTY setzen.
 						LightTile currentTile = ausgangsTile ;						
+						
+						
+						// Ermitteln was die letzte Zug-Nummer ist.
+						int currentTurnNumber = controller . getCurrentModel() . getCurrentTurnNumber() ;
+						// Diese Zug-Nummer für diesen neuen Zug erhöhen
+						controller . getCurrentModel() . setCurrentTurnNumber( currentTurnNumber + 1 ) ;
+						
 						while ( currentTile . getTileState() . getTraverseDirection() == traverseDirection ) {
-							currentTile . setState ( LightTileState . EMPTY , significant ) ;
+							currentTile . setState ( LightTileState . EMPTY , true ) ;
 							significant = false ;
 							traverser . shift ( traverseDirection ) ;
 							currentTile = (LightTile) traverser . get() ;
@@ -211,8 +219,7 @@ public class LightgameUI extends JFrame {
 				} // // if ( ( activeNumberTile != null ) && ( btn . markiert ) ) .. else				
 						
 				// Das Board neu zeichnen.
-				IBeamsOfLightPuzzleBoard currentBoard = controller.getCurrentModel() ;
-				Update( currentBoard ) ;
+				updateButtonGraphics();
 				
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
@@ -327,7 +334,7 @@ public class LightgameUI extends JFrame {
 					
 				} // if ( btn . getTile() instanceof NumberTile ) {
 				
-				Update ( controller.getCurrentModel() ) ;
+				updateButtonGraphics();
 				
 			} catch (Exception e2) {
 				
@@ -349,7 +356,10 @@ public class LightgameUI extends JFrame {
 			@Override
 			public void run() {
 				try {
-					LightgameUI frame = new LightgameUI();
+					ILightController c = new LightController();
+					c.setBoard(new PrototypModelJanko());
+					LightgameUI frame = new LightgameUI(c);
+					c.addBoardChangeListener(frame);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -363,33 +373,46 @@ public class LightgameUI extends JFrame {
 
 	
 	//private File lastSaveFile=null;
-	private ILightController controller = new LightController() ;
+	private ILightController controller;
 	
 	
-	private ArrayList<TileButton> buttons = new ArrayList<TileButton>();
+	private ArrayList<TileButton> buttons;
 	
 
-	private ITile activeNumberTile = null ;
+	private ITile activeNumberTile;
+	private JPanel rasterPanel;
+	private JPanel pnUndoRedo;
+	
+	/**
+	 *  init
+	 *  Initialisieren von bestimmten Variablen
+	 *  @author spix_mar
+	 */
+	private void initialize() {
+		buttons = new ArrayList<TileButton>();
+        activeNumberTile = null ;
+	}
 	
 	/**
 	 *  Constructor
 	 *  Initialisieren des Fensters
 	 *  @author gbraun , pauls_and	 *  
 	 */
-	public LightgameUI()
-	{
-		 this(new PrototypModelForLonelyFieldStrategy());
-	}
-	
-	public LightgameUI(IBeamsOfLightPuzzleBoard b) {
+	public LightgameUI(ILightController cntrl) {
+		controller = cntrl;
 		
-		try {	
 
 			// Setzen der initialen Fensterposition und Grï¿½ï¿½e.
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			//setBounds(100, 100, 450, 300);
 			// Verändern der Fenstergröße verhindern
 			setResizable( false ) ;
+			
+	        // Fenster in der Bildmitte anzeigen
+	        setLocationRelativeTo( null ) ;
+			
+			//Initialisierung
+			initialize();
 					
 			// Erzeugen des Menus
 			buildMenu();
@@ -400,36 +423,18 @@ public class LightgameUI extends JFrame {
 			contentPane.setLayout(new BorderLayout(0, 0));
 			setContentPane(contentPane);
 			
-			// Progressbar
+			// Progressbar ??? Wofür brauchen wir die?
 			JProgressBar progressBar = new JProgressBar();
 			contentPane.add(progressBar, BorderLayout.SOUTH);
 			
-			//  Spieleraster 
-			JPanel rasterPanel = new JPanel();
-			contentPane.add(rasterPanel, BorderLayout.CENTER);
-	
-			// Controller mit Test Prototyp fï¿½r GUI fï¿½llen.
-			controller . setBoard ( b ) ;
-			
-			// Vom Controller die Musterlösung generieren lassen.
-			controller . solve() ;
-			
-			
-			
-			javax.swing.JButton solverButton = new javax.swing.JButton("Puzzle loesen");
+			//SolverButton
+			javax.swing.JButton solverButton = new javax.swing.JButton(_("Solve"));
 			solverButton.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					//Why the f*ck has the current model changed in this place ???
 					try {
-						ISolver s =
-						SolverBuilder.buildWith(LonelyFieldStrategy.class).
-							          and(IntersectionStrategy.class).
-							          /*and(TryAndErrorStrategy.class).*/
-							          forBoard(controller.getCurrentModel());
-					    s.solve();
-					
+						controller.swapModelWithSolution();
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -438,77 +443,97 @@ public class LightgameUI extends JFrame {
 				}
 				
 			});
-						
 			contentPane.add(solverButton,BorderLayout.NORTH);
 			
-			//TODO refactor this stuff
-			JPanel pnUndoRedo = new JPanel();
-			pnUndoRedo.setLayout(new GridLayout(1,2));
-			UndoButton btUndo = new UndoButton(controller.getUndoManager());
-			pnUndoRedo.add(btUndo);
-			RedoButton btRedo = new RedoButton(controller.getUndoManager());
-			pnUndoRedo.add(btRedo);
-			getContentPane().add(pnUndoRedo, BorderLayout.SOUTH);
-			//TODO end
-			
-			// Das Spielfeld vom Controller holen:
-			
-			
-			// TODO temporï¿½r feste Werte fï¿½r Tests eingetragen.
-			int rows = b.getHeight() ;
-			int cols = b.getWidth() ;
-			
-			//IBeamsOfLightPuzzleBoard currentModel = controller . getCurrentModel();
-			rasterPanel . setLayout ( new GridLayout ( rows , cols , 0 , 0 ) ) ;
-			
-			// Fenstergröße anpassen.
-			setBounds( 100 , 100 , ( cols * 127 ) + 30 , ( rows * 127 ) + 124 ) ;
-			// Fenster in der Bildmitte anzeigen
-			setLocationRelativeTo( null ) ;
-			
-			// Schleife ï¿½ber das "Spielfeld"
-			for ( int row=0 ; row<rows ; row++ ) {
-				for ( int col=0 ;col<cols ; col++ ) {
-	
-					// Neuen Button erzeugen
-					final TileButton newTileButton = new TileButton ( b . getTileAt ( col , row ) ) ;
-					newTileButton . setPreferredSize( new Dimension (128 , 128 ) ) ;
-					// Action hinzufï¿½gen
-					
-					b . getTileAt ( col , row ) . accept( new ITileVisitor() {
-
-						@Override
-						public void visitLightTile(LightTile t) {
-							newTileButton . addActionListener ( new LightTileListener() ) ;
-							
-						}
-
-						@Override
-						public void visitNumberTile(NumberTile t) {
-							newTileButton . addActionListener ( new NumberTileButtonListener() ) ;
-							
-						}
-						
-					} );
-					
-					// Button auf das Panel setzen
-					rasterPanel . add ( newTileButton ) ;
-					
-					// Aktuelle Button dem Button-Array hinzufï¿½gen.
-					buttons . add (newTileButton);
-					
-				} // for ( int col=0 ;col<cols ; col++ )
-			} // for ( int row=0 ; row<rows ; row++ )
-			
-			
-			Update( b ) ;
-			
-		} catch (Exception e) {
-			// TODO: handle exception
-		} // try .. catch
+			buildRaster();
 		
 	} // public LightgameUI()
 	
+	public void boardHasChanged() {
+		initialize();
+		buildRaster();
+		updateButtonGraphics();
+	}
+	
+	/**
+	 *  init
+	 *  Initialisieren von bestimmten Variablen
+	 *  @author gbraun, and_pauls, Refactoring: spix_mar
+	 */
+	private void buildRaster() {
+		if(rasterPanel != null)
+			this.remove(rasterPanel);
+		if(pnUndoRedo != null) {
+			this.remove(pnUndoRedo);
+		}
+		
+		
+		//  Spieleraster 
+		rasterPanel = new JPanel();
+		contentPane.add(rasterPanel, BorderLayout.CENTER);
+
+		IBeamsOfLightPuzzleBoard b = controller.getCurrentModel();
+		
+		//TODO refactor this stuff
+		pnUndoRedo = new JPanel();
+		pnUndoRedo.setLayout(new GridLayout(1,2));
+		UndoButton btUndo = new UndoButton(controller.getUndoManager());
+		pnUndoRedo.add(btUndo);
+		RedoButton btRedo = new RedoButton(controller.getUndoManager());
+		pnUndoRedo.add(btRedo);
+		getContentPane().add(pnUndoRedo, BorderLayout.SOUTH);
+		//TODO end
+		
+		// Das Spielfeld vom Controller holen:
+		
+        // TODO temporï¿½r feste Werte fï¿½r Tests eingetragen.
+        int rows = b.getHeight() ;
+        int cols = b.getWidth() ;
+        
+        //IBeamsOfLightPuzzleBoard currentModel = controller . getCurrentModel();
+        rasterPanel . setLayout ( new GridLayout ( rows , cols , 0 , 0 ) ) ;
+        
+        // Fenstergröße anpassen.
+        setBounds( 100 , 100 , ( cols * 127 ) + 30 , ( rows * 127 ) + 124 ) ;
+        
+        // Schleife ï¿½ber das "Spielfeld"
+        for ( int row=0 ; row<rows ; row++ ) {
+                for ( int col=0 ;col<cols ; col++ ) {
+
+                        // Neuen Button erzeugen
+                        final TileButton newTileButton = new TileButton ( b . getTileAt ( col , row ) ) ;
+                        newTileButton . setPreferredSize( new Dimension (128 , 128 ) ) ;
+                        // Action hinzufï¿½gen
+                        
+                        b . getTileAt ( col , row ) . accept( new ITileVisitor() {
+
+                                @Override
+                                public void visitLightTile(LightTile t) {
+                                        newTileButton . addActionListener ( new LightTileListener() ) ;
+                                        
+                                }
+
+                                @Override
+                                public void visitNumberTile(NumberTile t) {
+                                        newTileButton . addActionListener ( new NumberTileButtonListener() ) ;
+                                        
+                                }
+                                
+                        } );
+                        
+                        // Button auf das Panel setzen
+                        rasterPanel . add ( newTileButton ) ;
+                        
+                        // Aktuelle Button dem Button-Array hinzufï¿½gen.
+                        buttons . add (newTileButton);
+                        
+                } // for ( int col=0 ;col<cols ; col++ )
+        } // for ( int row=0 ; row<rows ; row++ )
+        
+        
+        updateButtonGraphics();
+
+	}
 	
 	/**
 	 * Add Icon to Button
@@ -524,8 +549,6 @@ public class LightgameUI extends JFrame {
 	} // private TileButton addIcon(TileButton btn, Icon ico)
 	
 	
-	
-	
 	/**
 	 * Builds the Menubar
 	 */
@@ -533,85 +556,52 @@ public class LightgameUI extends JFrame {
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
-		JMenu mnFile = new JMenu("File");
+		JMenu mnFile = new JMenu(_("File"));
 		menuBar.add(mnFile);
 		
-		JMenuItem mntmNew = new JMenuItem("New");
+		JMenuItem mntmNew = new JMenuItem(_("New"));
 		mnFile.add(mntmNew);
 		
 		mntmNew.addActionListener(new ActionListener() {
-			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				//JOptionPane.showMessageDialog(null,"Dieses Feature ist nur in der Vollversion verfügbar","Fehler", JOptionPane.ERROR_MESSAGE);      
-				IBeamsOfLightPuzzleBoard board = new BeamsOfLightPuzzleBoard();
-				boolean boardOk = false;
-				while(!boardOk)
-				{
-					boardOk = true;
-					board.init(5, 5);
-					CreateRandomBoard.createRandom(board);
-					for(int x =0;x < board.getWidth() && boardOk;x++)
-					{
-						for(int y =0;y < board.getHeight() && boardOk;y++)
-						{
-							ITile t = board.getTileAt(x, y);
-							if(! (t instanceof ITile))
-							{
-								boardOk = false;
-							}
-							else if (t instanceof NumberTile)
-								if(((NumberTile)t).getNumber() == 0)
-									boardOk = false;
-						}
-					}//Iteration over Tiles
-					
-					
-				}//while Board not Ok
-				try {
-					controller.setBoard(board);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				LightgameUI frame = new LightgameUI(board);
-				frame.setVisible(true);
-			
+
+				NewGamePropertyDialog newGameDialog = new NewGamePropertyDialog(controller);
+				newGameDialog.setVisible(true);
 			}
 		});
 		
 		JSeparator separator_2 = new JSeparator();
 		mnFile.add(separator_2);
 		
-		JMenuItem mntmSave = new JMenuItem("Save");
+		JMenuItem mntmSave = new JMenuItem(_("Save"));
 		mnFile.add(mntmSave);
 		
-		JMenuItem mntmSaveAs = new JMenuItem("Save As");
+		JMenuItem mntmSaveAs = new JMenuItem(_("SaveAs"));
 		mnFile.add(mntmSaveAs);
 		
 		JSeparator separator_1 = new JSeparator();
 		mnFile.add(separator_1);
 		
-		JMenuItem mntmLoad = new JMenuItem("Load");
+		JMenuItem mntmLoad = new JMenuItem(_("Load"));
 		mnFile.add(mntmLoad);
 		
-		JMenu mnGame = new JMenu("Game");
+		JMenu mnGame = new JMenu(_("Game"));
 		menuBar.add(mnGame);
 		
 		
 		
-		
-		JMenuItem mntmCheckGame = new JMenuItem ( "Check Game" ) ;
+		JMenuItem mntmCheckGame = new JMenuItem ( _("Check") ) ;
 		mnGame . add ( mntmCheckGame ) . addActionListener( new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				String message = new String() ;
 				if ( controller . GameIsCorrect() ) {
-					message = "Nice turn! It's correct." ;					
+					message = _("GameIsCorrect") ;					
 				} 
 				else {
-					message = "Wrong track dude ;)" ;
+					message = _("GameIsNotCorrect") ;
 				}
 				JOptionPane . showMessageDialog( null , message , "" ,  JOptionPane . PLAIN_MESSAGE ) ;
 				
@@ -622,7 +612,7 @@ public class LightgameUI extends JFrame {
 		
 		mnGame.add ( new JSeparator() );
 		
-		JMenuItem mntmbacktoFailure = new JMenuItem("Back to failure");
+		JMenuItem mntmbacktoFailure = new JMenuItem(_("BackToFailure"));
 		mnGame.add(mntmbacktoFailure);
 		
 		mntmbacktoFailure . addActionListener(new ActionListener() {
@@ -636,7 +626,7 @@ public class LightgameUI extends JFrame {
 		JSeparator separator_3 = new JSeparator();
 		mnGame.add(separator_3);
 		
-		JMenuItem mntmsetMarker = new JMenuItem("Set mark");
+		JMenuItem mntmsetMarker = new JMenuItem(_("SetMarker"));
 		mnGame.add(mntmsetMarker);
 		
 		mntmsetMarker . addActionListener(new ActionListener() {
@@ -652,7 +642,7 @@ public class LightgameUI extends JFrame {
 		JSeparator separator_4 = new JSeparator();
 		mnGame.add(separator_4);
 		
-		JMenuItem mntmDeleteMarker = new JMenuItem("Delete mark");
+		JMenuItem mntmDeleteMarker = new JMenuItem(_p("DeleteMarker",1));
 		mnGame.add(mntmDeleteMarker);
 		mntmDeleteMarker . addActionListener(new ActionListener() {
 			
@@ -665,7 +655,7 @@ public class LightgameUI extends JFrame {
 		
 		// Delete all marks
 		mnGame . add ( new JSeparator() ) ;
-		JMenuItem mntmDeleteAllMarker = new JMenuItem( "Delete all marks" ) ;
+		JMenuItem mntmDeleteAllMarker = new JMenuItem(_p("DeleteMarker",2)) ;
 		mnGame . add ( mntmDeleteAllMarker )  ;
 		mntmDeleteAllMarker . addActionListener( new ActionListener () {
 			
@@ -682,23 +672,22 @@ public class LightgameUI extends JFrame {
 		JSeparator separator_5 = new JSeparator();
 		mnGame.add(separator_5);
 		
-		JMenuItem mntmBackToMark = new JMenuItem("Back to mark");
+		JMenuItem mntmBackToMark = new JMenuItem(_("BackToMarker"));
 		mntmBackToMark . addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				controller.getUndoManager().undoToLastMarker();
-				
+				controller.getUndoManager().undoToLastMarker();				
 			}
 		});
 				
 		
 		mnGame.add(mntmBackToMark);
 		
-		JMenu mnEditor = new JMenu("Editor");
+		JMenu mnEditor = new JMenu(_("Editor"));
 		menuBar.add(mnEditor);
 		
-		JMenuItem mntmStartEditor = new JMenuItem("Start Editor");
+		JMenuItem mntmStartEditor = new JMenuItem(_("UIStartEditor"));
 		mntmStartEditor.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent ae){
@@ -750,23 +739,20 @@ public class LightgameUI extends JFrame {
 				//Dialog zum ermitteln des Dateipfades einbinden
 				
 				JFileChooser fileChooser=new JFileChooser();
-				FileFilter filter = new ExtensionFileFilter("Beam of light puzzle saves", new String[] { "BOL" });
+				FileFilter filter = new ExtensionFileFilter(_p("SaveGameType",2), new String[] { "BOL" });
 				fileChooser.setFileFilter(filter);
 				if(fileChooser.showOpenDialog(LightgameUI.this)!=JFileChooser.CANCEL_OPTION){
 					File selectedFile = fileChooser.getSelectedFile();
 					if(selectedFile!=null&& selectedFile.exists()){
-							//oeffnen
-					}
-					
-				}
-				try {
-					//im Design ist das hier nicht void sondern gibt ein Puzzle zurueck, das sollten wir dann aufbauen
-					//Update(controller.loadGame(new File("")));
-					//TODO obrigen Code einbinden sobald der Controller implementiert ist
-					controller.loadGame(new File(""));
+						try {
+					controller.loadGame(selectedFile);
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
+					}
+					
+				}
+				
 			}
 		});
 		
@@ -777,7 +763,9 @@ public class LightgameUI extends JFrame {
 				JFrame parentFrame = new JFrame();
 				 
 				JFileChooser fileChooser = new JFileChooser();
-				fileChooser.setDialogTitle("Save As");   
+				FileFilter filter = new ExtensionFileFilter(_p("SaveGameType",2), new String[] { "BOL" });
+				fileChooser.setFileFilter(filter);
+				fileChooser.setDialogTitle(_("SaveAs"));   
 				 
 				int userSelection = fileChooser.showSaveDialog(parentFrame);
 				 
@@ -797,7 +785,7 @@ public class LightgameUI extends JFrame {
 		JSeparator separator = new JSeparator();
 		mnFile.add(separator);
 		
-		JMenuItem mntmExit = new JMenuItem("Exit");
+		JMenuItem mntmExit = new JMenuItem(_("Exit"));
 		mnFile.add(mntmExit);
 		mntmExit.addActionListener(new ActionListener() {
 			@Override
@@ -815,10 +803,10 @@ public class LightgameUI extends JFrame {
 	 * @author pauls , gbraun
 	 * @param model
 	 */
-	private void Update(IBeamsOfLightPuzzleBoard model)
+	private void updateButtonGraphics()
 	{
 		// Erzeugen der Factory
-		GraficFactory gf = new GraficFactory(model);
+		GraficFactory gf = new GraficFactory(controller.getCurrentModel());
 		// Über alle Buttons iterieren
 		for(TileButton btn : buttons)
 		{

@@ -1,5 +1,4 @@
 package de.bwvaachen.beamoflightgame.controller;
-import static de.bwvaachen.beamoflightgame.i18n.I18N.*;
 
 /*
 Copyright (C) 2013 - 2014 by Andreas Pauls, Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
@@ -8,14 +7,11 @@ This program is free software; you can redistribute it and/or modify it under th
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
 
 See the COPYING file for more details.
-*/
+ */
 
-public class IllegalPlacementException extends RuntimeException {
-	IllegalPlacementException() {
-		super(_("TurnNotPossible"));
+public class CouldNotCreatePuzzleException extends Exception {
+	public CouldNotCreatePuzzleException(String reason) {
+		super(reason);
 	}
-	
-	IllegalPlacementException(String message) {
-		super(message);
-	}
+
 }

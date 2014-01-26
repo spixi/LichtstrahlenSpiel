@@ -1,7 +1,7 @@
 package de.bwvaachen.beamoflightgame.editor;
 
 /*
-Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
+Copyright (C) 2013 - 2014 by Andreas Pauls, Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
@@ -9,6 +9,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 See the COPYING file for more details.
 */
 
+import static de.bwvaachen.beamoflightgame.i18n.I18N.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -60,42 +61,42 @@ public class EditorMenu extends JMenuBar
 		this.editor = editor;
 		this.className = editor.getClass().getSimpleName();
 				
-		fileMenu = new JMenu("File");
+		fileMenu = new JMenu(_("File"));
 		this.add(fileMenu);
 		
-		menuItemNew = new JMenuItem("New");
+		menuItemNew = new JMenuItem(_("New"));
 		menuItemNew.addActionListener(this);
 		fileMenu.add(menuItemNew);
 		
 		JSeparator separator = new JSeparator();
 		fileMenu.add(separator);
 		
-		menuItemSave = new JMenuItem("Save");
+		menuItemSave = new JMenuItem(_("Save"));
 		menuItemSave.addActionListener(this);
 		fileMenu.add(menuItemSave);
 		
-		menuItemSaveAs = new JMenuItem("Save As");
+		menuItemSaveAs = new JMenuItem(_("SaveAs"));
 		menuItemSaveAs.addActionListener(this);
 		fileMenu.add(menuItemSaveAs);
 		
 		JSeparator separator2 = new JSeparator();
 		fileMenu.add(separator2);
 		
-		menuItemLoad = new JMenuItem("Load");
+		menuItemLoad = new JMenuItem(_("Load"));
 		menuItemLoad.addActionListener(this);
 		fileMenu.add(menuItemLoad);
 		
 		JSeparator separator3 = new JSeparator();
 		fileMenu.add(separator3);
 		
-		menuItemExit = new JMenuItem("Exit");
+		menuItemExit = new JMenuItem(_("Exit"));
 		menuItemExit.addActionListener(this);
 		fileMenu.add(menuItemExit);
 		
-		editMenu = new JMenu("Edit");
+		editMenu = new JMenu(_("Edit"));
 		this.add(editMenu);
 		
-		menuItemResize = new JMenuItem("Change Board Size");
+		menuItemResize = new JMenuItem(_("EditorChangeBoardSize"));
 		menuItemResize.addActionListener(this);
 		editMenu.add(menuItemResize);
 		
@@ -104,41 +105,41 @@ public class EditorMenu extends JMenuBar
 		
 		buttonGroupDisplay = new ButtonGroup();
 		
-		jrbMenuItemAllTiles = new JRadioButtonMenuItem("Display All Tiles",editor.getDisplayAllTiles());
+		jrbMenuItemAllTiles = new JRadioButtonMenuItem(_("EditorDisplayAllTiles"),editor.getDisplayAllTiles());
 		jrbMenuItemAllTiles.addActionListener(this);
 		jrbMenuItemAllTiles.setEnabled(false);
-		jrbMenuItemAllTiles.setToolTipText("Only available on solved boards");
+		jrbMenuItemAllTiles.setToolTipText(_("EditorToolTipEditorTypeSwitch"));
 		buttonGroupDisplay.add(jrbMenuItemAllTiles);
 		editMenu.add(jrbMenuItemAllTiles);
 		
 		jrbMenuItemNumberTiles = new JRadioButtonMenuItem("Display Number Tiles Only",!editor.getDisplayAllTiles());
 		jrbMenuItemNumberTiles.addActionListener(this);
 		jrbMenuItemNumberTiles.setEnabled(false);
-		jrbMenuItemNumberTiles.setToolTipText("Only available on solved boards");
+		jrbMenuItemNumberTiles.setToolTipText(_("EditorToolTipEditorTypeSwitch"));
 		buttonGroupDisplay.add(jrbMenuItemNumberTiles);
 		editMenu.add(jrbMenuItemNumberTiles);
 		
 		JSeparator separator5 = new JSeparator();
 		editMenu.add(separator5);
 		
-		menuItemSolve = new JMenuItem("Solve");
+		menuItemSolve = new JMenuItem(_("Solve"));
 		menuItemSolve.addActionListener(this);
 		menuItemSolve.setEnabled(false);
-		menuItemSolve.setToolTipText("Only available when remaining fields = 0");
+		menuItemSolve.setToolTipText(_("EditorToolTipSolveButton"));
 		editMenu.add(menuItemSolve);
 		
-		menuItemReset = new JMenuItem("Reset");
+		menuItemReset = new JMenuItem(_("Reset"));
 		menuItemReset.addActionListener(this);
 		editMenu.add(menuItemReset);
 		
-		helpMenu = new JMenu("Help");
+		helpMenu = new JMenu(_("Help"));
 		this.add(helpMenu);
 		
 		menuItemInstructions = new JMenuItem("Instructions");
 		menuItemInstructions.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent ae){
 				try {
-					new HelpFrame("resources/strings/"+className+"Instructions.txt");
+					new HelpFrame(_f("EditorInstructionsFile", className));
 				} catch (IOException ioe) {
 					// TODO 
 					ioe.printStackTrace();
@@ -154,7 +155,7 @@ public class EditorMenu extends JMenuBar
 		menuItemAbout.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent ae){
 				try {
-					new HelpFrame("resources/strings/Copyright.txt");
+					new HelpFrame(_("CopyrightNotice"));
 				} catch (IOException ioe) {
 					// TODO 
 					ioe.printStackTrace();
@@ -171,8 +172,8 @@ public class EditorMenu extends JMenuBar
 		if(ae.getSource() == menuItemNew){
 			userSelection = JOptionPane.showConfirmDialog(
 			    				editor,
-			    				"Do you really want to restart the editor?\nThe current board will be lost.",
-			    				"Neustart",
+			    				_("EditorRestartWarning"),
+			    				_("Restart"),
 			    				JOptionPane.YES_NO_OPTION);
 			if(userSelection == JOptionPane.YES_OPTION){
 				editor.dispose();
@@ -197,7 +198,7 @@ public class EditorMenu extends JMenuBar
 				
 			if(ae.getSource() == menuItemSave){
 				fileChooser = new JFileChooser();
-				fileChooser.setDialogTitle("Save");   
+				fileChooser.setDialogTitle(_("Save"));   
 			 
 				userSelection = fileChooser.showSaveDialog(editor);
 				 
@@ -207,7 +208,7 @@ public class EditorMenu extends JMenuBar
 				}
 			}else if(ae.getSource() == menuItemSaveAs){
 				fileChooser = new JFileChooser();
-				fileChooser.setDialogTitle("Save As...");   
+				fileChooser.setDialogTitle(_("SaveAs"));   
 			 
 				userSelection = fileChooser.showSaveDialog(editor);
 				 
@@ -217,7 +218,7 @@ public class EditorMenu extends JMenuBar
 				}
 			}else if(ae.getSource() == menuItemLoad){
 				fileChooser = new JFileChooser();
-				fileChooser.setDialogTitle("Load");   
+				fileChooser.setDialogTitle(_("Load"));   
 			
 				userSelection = fileChooser.showOpenDialog(editor);
 				 

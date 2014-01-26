@@ -1,7 +1,7 @@
 package de.bwvaachen.beamoflightgame.ui;
 
 /*
-Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
+Copyright (C) 2013 - 2014 by Andreas Pauls, Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
@@ -37,7 +37,8 @@ public class RotatedIcon implements Icon
 		DOWN,
 		UP,
 		UPSIDE_DOWN,
-		ABOUT_CENTER;
+		ABOUT_CENTER,
+		NONE;
 	}
 
 	private Icon icon;
@@ -119,7 +120,7 @@ public class RotatedIcon implements Icon
 			int height = (int)Math.floor(icon.getIconHeight() * cos + icon.getIconWidth() * sin);
 			return height;
 		}
-		else if (rotate == Rotate.UPSIDE_DOWN)
+		else if (rotate == Rotate.UPSIDE_DOWN || rotate == Rotate.NONE)
 			return icon.getIconHeight();
 		else
 			return icon.getIconWidth();
@@ -145,7 +146,7 @@ public class RotatedIcon implements Icon
 			int width = (int)Math.floor(icon.getIconWidth() * cos + icon.getIconHeight() * sin);
 			return width;
 		}
-		else if (rotate == Rotate.UPSIDE_DOWN)
+		else if (rotate == Rotate.UPSIDE_DOWN || rotate == Rotate.NONE)
 			return icon.getIconWidth();
 		else
 			return icon.getIconHeight();
@@ -208,6 +209,10 @@ public class RotatedIcon implements Icon
 			g2.setTransform(at);
 			icon.paintIcon(c, g2, x, y);
 			g2.setTransform(original);
+		}
+		else if (rotate == Rotate.NONE) {
+			g2.translate(x + cWidth, y + cHeight);
+			icon.paintIcon(c, g2, xAdjustment - cWidth, yAdjustment - cHeight);
 		}
 	}
 }

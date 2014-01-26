@@ -1,5 +1,4 @@
-package de.bwvaachen.beamoflightgame.controller;
-import static de.bwvaachen.beamoflightgame.i18n.I18N.*;
+package de.bwvaachen.beamoflightgame.helper;
 
 /*
 Copyright (C) 2013 - 2014 by Andreas Pauls, Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
@@ -10,12 +9,6 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 See the COPYING file for more details.
 */
 
-public class IllegalPlacementException extends RuntimeException {
-	IllegalPlacementException() {
-		super(_("TurnNotPossible"));
-	}
-	
-	IllegalPlacementException(String message) {
-		super(message);
-	}
+public interface BoardChangeListener {
+	public void boardHasChanged();
 }

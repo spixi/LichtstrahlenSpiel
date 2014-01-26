@@ -1,7 +1,7 @@
 package de.bwvaachen.beamoflightgame.helper;
 
 /*
-Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
+Copyright (C) 2013 - 2014 by Andreas Pauls, Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
@@ -15,9 +15,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
-public class IndexedSet<T> extends AbstractCollection<T> implements Set<T> {
+public class IndexedSet<T> extends AbstractCollection<T> implements Set<T>, List<T> {
     private final List<T> list = new ArrayList<T>();
     private final Set<T>   set = new HashSet<T>();
     
@@ -126,4 +127,123 @@ public class IndexedSet<T> extends AbstractCollection<T> implements Set<T> {
     public <T> T[] toArray(T[] a) {
         return list.toArray(a);
     }
+
+	@Override
+	public void add(int index, T o) {
+        boolean added = set.add(o);
+        if (added) {
+            list.add(index,o);
+        }
+	}
+
+	@Override
+	public boolean addAll(int index, Collection<? extends T> c) {
+        Iterator<T> it = list.iterator();
+        boolean listHasChanged = false;
+        
+        while (it.hasNext()) {
+            T next = it.next();
+            boolean added = set.add(next);
+            if (added) {
+                list.add(index,next);
+                listHasChanged = true;
+            }
+        }
+		return listHasChanged;
+	}
+
+	@Override
+	public int indexOf(Object o) {
+		return list.indexOf(o);
+	}
+
+	@Override
+	public int lastIndexOf(Object o) {
+		return list.lastIndexOf(o);
+	}
+
+	@Override
+	public ListIterator<T> listIterator() {
+		return listIterator(0);
+	}
+
+	@Override
+	public ListIterator<T> listIterator(final int index) {
+		// TODO Auto-generated method stub
+		return new ListIterator<T>() {
+			ListIterator<T> realIterator = list.listIterator(index);
+			T current = null;
+
+			@Override
+			public void add(Object e) {
+				if(set.add((T) e)) {
+					realIterator.add((T) e);
+				}
+			}
+
+			@Override
+			public boolean hasNext() {
+				return realIterator.hasNext();
+			}
+
+			@Override
+			public boolean hasPrevious() {
+				return realIterator.hasPrevious();
+			}
+
+			@Override
+			public T next() {
+                T next = realIterator.next();
+                current = next;
+                return next;
+			}
+
+			@Override
+			public int nextIndex() {
+				return realIterator.nextIndex();
+			}
+
+			@Override
+			public T previous() {
+                T previous = realIterator.previous();
+                current = previous;
+                return previous;
+			}
+
+			@Override
+			public int previousIndex() {
+				return realIterator.previousIndex();
+			}
+
+			@Override
+			public void remove() {
+                realIterator.remove();
+                set.remove(current);
+                current = null;
+			}
+
+			@Override
+			public void set(Object e) {
+				set.remove(current);
+				set.add((T) e);
+				realIterator.set((T) e);
+			}
+			
+		};
+	}
+
+	@Override
+	public T set(int index, T element) {
+		T oldElement;
+		oldElement = list.set(index, element);
+		
+		set.remove(oldElement);
+		set.add(element);
+		return oldElement;
+	}
+
+	@Override
+	public List<T> subList(int fromIndex, int toIndex) {
+		return list.subList(fromIndex, toIndex);
+	}
 }

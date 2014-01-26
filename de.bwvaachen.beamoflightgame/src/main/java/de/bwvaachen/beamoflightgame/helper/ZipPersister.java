@@ -1,7 +1,7 @@
 package de.bwvaachen.beamoflightgame.helper;
 
 /*
-Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
+Copyright (C) 2013 - 2014 by Andreas Pauls, Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
@@ -27,8 +27,8 @@ import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 
 
 /**
- * Speichert unser Spiel als ZipDatei
- * @author Basti - Andi
+ * Saves the game as a ZIP-file
+ * @author bWinzen, aPauls
  *
  */
 public class ZipPersister implements IPersistenceHelper {
@@ -39,8 +39,9 @@ public class ZipPersister implements IPersistenceHelper {
 		this.codec = saveCodec;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
-	public Pair<IBeamsOfLightPuzzleBoard,List<Turn>> load(File path) throws IOException, WrongCodecException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+	public Pair<IBeamsOfLightPuzzleBoard[],List<Turn>> load(File path) throws IOException, WrongCodecException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
 		    ICodec codec = null;
 			FileInputStream fileInputStream = new FileInputStream(path);
@@ -75,11 +76,11 @@ public class ZipPersister implements IPersistenceHelper {
 			solution 	= codec.boardFromInputstream(new StringBufferInputStream(sections.get("solution")));
 			turns 		= codec.turnsFromInputstream(new StringBufferInputStream(sections.get("turns")),board);
 			
-			return new Pair<IBeamsOfLightPuzzleBoard, List<Turn>>(board,turns);
+			return new Pair<IBeamsOfLightPuzzleBoard[], List<Turn>>(new IBeamsOfLightPuzzleBoard[]{board,solution},turns);
 	}
 
 	@Override
-	public void save(File path, IBeamsOfLightPuzzleBoard board, List<Turn> turns)
+	public void save(File path, IBeamsOfLightPuzzleBoard board, List<Turn> turns, IBeamsOfLightPuzzleBoard solution)
 			throws IOException {
 
 		FileOutputStream fileOutputStream = new FileOutputStream(path);
@@ -96,6 +97,10 @@ public class ZipPersister implements IPersistenceHelper {
 
 			zipOut.putNextEntry(new ZipEntry("turns"));
 			codec.turnsToOutputstream(zipOut, turns);
+			zipOut.closeEntry();
+			
+			zipOut.putNextEntry(new ZipEntry("solution"));
+			codec.boardToOutputstream(zipOut, solution);
 			zipOut.closeEntry();
 			
 			zipOut.finish();

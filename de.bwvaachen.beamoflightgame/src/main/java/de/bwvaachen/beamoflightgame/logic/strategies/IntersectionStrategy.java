@@ -1,7 +1,7 @@
 package de.bwvaachen.beamoflightgame.logic.strategies;
 
 /*
-Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
+Copyright (C) 2013 - 2014 by Andreas Pauls, Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
@@ -9,8 +9,16 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 See the COPYING file for more details.
 */
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.swing.JOptionPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import de.bwvaachen.beamoflightgame.helper.AbstractTileVisitor;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
@@ -46,11 +54,10 @@ public class IntersectionStrategy extends AbstractStrategy<NumberTileState> {
 	}
 
 	@Override
-
 	public boolean tryToSolve() throws UnsolvablePuzzleException {
 		//Overshadow the tile
 		NumberTile tile = (NumberTile) super.tile;
-		
+
 		int remainingLightRange = tile.getRemainingLightRange();
 		
 		final int maxRange[] = new int[states.length];
@@ -120,11 +127,18 @@ public class IntersectionStrategy extends AbstractStrategy<NumberTileState> {
 					for(int i=0; i<otherDirections.length; i++) {
 						final LightTileState currentState = states[i];
 						
+						//Too few tiles to distribute
 						final int tilesToDistribute = remainingLightRange - sum - distributedTiles.get();
 						if(tilesToDistribute <= 0)
-							break loopOverSearchPaths;
+							throw new UnsolvablePuzzleException(tile);
 						
-						if(otherDirections[i] <= 0) continue;
+						//More than one possibility?
+						if(tilesToDistribute > remainingLightRange)
+							continue;
+
+						//Only for the other directions
+						if(otherDirections[i] == 0) continue;
+						
 						final TraverseDirection currentDirection = currentState.getTraverseDirection();
 						final int range = Math.min(tilesToDistribute, maxRange[i]);
 						
@@ -135,7 +149,9 @@ public class IntersectionStrategy extends AbstractStrategy<NumberTileState> {
 							traverser.get().accept(new AbstractTileVisitor() {
 								public void visitLightTile(LightTile lt) {
 									int filledTiles =
-								    utils.fillBoard(lt, range-1, currentDirection, currentState);
+								    utils.fillBoard(lt, range, currentDirection, currentState);
+									System.out.printf("Tile: (%d, %d):\n", lt.getX(), lt.getY());
+									System.out.printf("utils.fillBoard(%s, %d, %s, %s);\n", lt, range, currentDirection, currentState);
 									distributedTiles.addAndGet(filledTiles);
 								}
 							});
@@ -179,12 +195,13 @@ public class IntersectionStrategy extends AbstractStrategy<NumberTileState> {
 		searchPaths = new int[14][4];
 		
 		int i = -1;
-		
+		/*Erst einmal rausgenommen!
 		//three directions
 		searchPaths[++i]=vectorSum(E,S,W);
 		searchPaths[++i]=vectorSum(N,S,W);
 		searchPaths[++i]=vectorSum(N,E,W);
 		searchPaths[++i]=vectorSum(N,E,S);
+		*/
 		
 		//two directions
 		searchPaths[++i]=vectorSum(N,E);
@@ -199,6 +216,7 @@ public class IntersectionStrategy extends AbstractStrategy<NumberTileState> {
 		searchPaths[++i]=E;
 		searchPaths[++i]=S;
 		searchPaths[++i]=W;
+		
 	}
 
 

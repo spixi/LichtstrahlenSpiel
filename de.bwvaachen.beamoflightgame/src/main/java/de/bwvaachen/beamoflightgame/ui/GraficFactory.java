@@ -1,7 +1,7 @@
 package de.bwvaachen.beamoflightgame.ui;
 
 /*
-Copyright (C) 2013 - 2014 by Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
+Copyright (C) 2013 - 2014 by Andreas Pauls, Georg Braun, Christian Frühholz, Marius Spix, Christopher Müller and Bastian Winzen Part of the Beam Of Lights Puzzle Project
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
@@ -14,7 +14,9 @@ import java.net.URL;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import de.bwvaachen.beamoflightgame.helper.AbstractTileVisitor;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
+import de.bwvaachen.beamoflightgame.helper.Holder;
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
@@ -24,9 +26,8 @@ import de.bwvaachen.beamoflightgame.ui.RotatedIcon.Rotate;
 
 
 /**
- * 
+ * SimpleFactory to create images
  * @author Andreas
- * SimpleFactory um die Images zu erstellen
  */
 public class GraficFactory {
 	
@@ -53,64 +54,51 @@ public class GraficFactory {
 	
 	
 	/**
-	 * Liefert das passende Picture fuer die Kachel  zurueck
+	 * Return the correct picture for the given ITile
 	 * @param meineKachel Das ITile welches gesetzt werdem soll
-	 * @return Das passende Image :D
+	 * @return The needed picture
 	 */
 	public Icon getImage(ITile meineKachel)
 	{
-		ImageIcon ii = null;
-		try{
-			NumberTile num = (NumberTile) meineKachel;
+		final Holder<Icon> ii = new Holder<Icon>(null);
+			meineKachel.accept(new AbstractTileVisitor(){
+				public void visitNumberTile(NumberTile nt) {
 
-			String url = "themes/moon/"+ num.getNumber() + ".png";
-			URL u = this.getClass().getClassLoader().getResource(url);
+					String url = String.format("themes/moon/%d.png", nt.getNumber());
+					URL u = this.getClass().getClassLoader().getResource(url);
+					
+					ii.value = new ImageIcon(u);
+				}
+				
+				public void visitLightTile(LightTile lt) {
+					String url;
+					
+					//TODO: Refactor (switch-case in OOP ist ganz mies!)
+					switch(lt.getTileState())
+					{
+					case NORTH:
+					case EAST:
+					case SOUTH:
+					case WEST:
+						if(isEnd(lt))
+							url = "themes/moon/light2.png";
+						else url = "themes/moon/light1.png";
+						ii.value = rotateIcon(new ImageIcon(this.getClass().getClassLoader().getResource(url)),lt.getTileState().getRotation());
+						break;
+						
+					case EMPTY:
+						 url = "themes/moon/darkness.png";
+						 ii.value = new ImageIcon(this.getClass().getClassLoader().getResource(url));
+						 break;
+						
+					default:
+						 ii.value = null; //nicht schoen aber einfach
+					}//switch(lig.getTileState())
+					
+				}
+			});
 			
-			ii = new ImageIcon(u);
-			return ii ;
-			
-		}catch (Exception e){/*Kein Exception handling da in allen anderen Faellen ein LightTile vorhanden ist*/} 
-			
-		
-		LightTile lig = (LightTile) meineKachel;
-		String url ="";
-		switch(lig.getTileState())
-		{
-		case NORTH:
-			if(isEnd(lig))
-				url = "themes/moon/light2.png";
-			else url = "themes/moon/light1.png";
-			return new ImageIcon(this.getClass().getClassLoader().getResource(url));
-			
-			
-		case EAST:
-			if(isEnd(lig))
-				url = "themes/moon/light2.png";
-			else url = "themes/moon/light1.png";
-			ii = new ImageIcon(this.getClass().getClassLoader().getResource(url));
-			return rotateIcon(ii, Rotate.DOWN);
-			
-		case SOUTH:
-			if(isEnd(lig))
-				url = "themes/moon/light2.png";
-			else url = "themes/moon/light1.png";
-			ii = new ImageIcon(this.getClass().getClassLoader().getResource(url));
-			return rotateIcon(ii, Rotate.UPSIDE_DOWN);
-			
-		case WEST:
-			if(isEnd(lig))
-				url = "themes/moon/light2.png";
-			else url = "themes/moon/light1.png";
-			ii = new ImageIcon(this.getClass().getClassLoader().getResource(url));
-			return rotateIcon(ii, Rotate.UP);
-			
-		case EMPTY:
-			 url = "themes/moon/darkness.png";
-			 return new ImageIcon(this.getClass().getClassLoader().getResource(url));
-			
-			default:
-				return null; //nicht schoen aber einfach
-		}//switch(lig.getTileState())
+			return ii.value;
 
 	}//public Icon getImage(ITile meineKachel)
 	
@@ -153,7 +141,7 @@ public class GraficFactory {
 	 * @param r der Wert aus dem Enum um den gedreht werden soll
 	 * @return das gedrehte Icon - als Icon
 	 */
-	private Icon rotateIcon(ImageIcon ii, Rotate r)
+	private Icon rotateIcon(Icon ii, Rotate r)
 	{
 		RotatedIcon ri = new RotatedIcon(ii, r);
 		return ri;
