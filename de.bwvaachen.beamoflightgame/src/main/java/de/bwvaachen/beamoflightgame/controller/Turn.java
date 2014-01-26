@@ -30,6 +30,14 @@ public class Turn implements UndoableEdit
 	private int flags;
 	private IBeamsOfLightPuzzleBoard board;
 	private int x, y;
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
 	private ITileState oldTileState, newTileState;
 	private int turnNumber = 0 ;
 	
@@ -159,6 +167,10 @@ public class Turn implements UndoableEdit
 		else
 			unsetFlag(FLAG_SIGNIFICANT);
 		
+	}
+	
+	public IBeamsOfLightPuzzleBoard getBoard() {
+		return board ;
 	}
 
 
