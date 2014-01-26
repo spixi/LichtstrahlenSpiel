@@ -156,10 +156,17 @@ public class SolverBuilder {
 						currentStrategy.init(tile);
 						try {
 							boolean canSolve = currentStrategy.tryToSolve();
-							if(!canSolve) step(tile, stackPointer+1);
+							if(canSolve) {
+								addComplexity(currentStrategy.getComplexity());
+							}
+							else
+							{
+								//recursion
+								step(tile, stackPointer+1);
+							}
 						}
 						catch (UnsolvablePuzzleException e) {
-							if(hooks == null) throw e;
+							if(hooks.size() == 0) throw e;
 							for(Hook h : hooks) {
 								h.run();
 							}

@@ -115,7 +115,7 @@ public class LineEditor extends BeamsOfLightEditor
 			throws NumberFormatException, IIOException, IOException{
 		
 		GraficFactory 	gf = new GraficFactory(source);
-		ITile 			currentTile ;
+		ITile			currentTile ;
 		ITileState 		currentTileState;
 		TilePanel 		tile;
 		char 			c;
