@@ -11,14 +11,20 @@ See the COPYING file for more details.
 
 import java.awt.BorderLayout;
 import static de.bwvaachen.beamoflightgame.i18n.I18N.*;
+
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dialog;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.concurrent.Executors;
+
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -26,9 +32,15 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JSlider;
+import javax.swing.OverlayLayout;
+import javax.swing.ProgressMonitor;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -36,7 +48,10 @@ import de.bwvaachen.beamoflightgame.controller.CouldNotCreatePuzzleException;
 import de.bwvaachen.beamoflightgame.controller.CreateRandomBoard;
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.helper.GameProperties;
+import de.bwvaachen.beamoflightgame.helper.Holder;
+import de.bwvaachen.beamoflightgame.helper.Timer;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 
 public final class NewGamePropertyDialog extends JDialog {
@@ -46,6 +61,7 @@ public final class NewGamePropertyDialog extends JDialog {
 	private static final long serialVersionUID = 4944433339944945768L;
 	private static GameProperties properties = GameProperties.INSTANCE;
 	final ILightController controller;
+	private JButton okButton;
 	
 	private class CreateRandomMediator implements ActionListener {
 
@@ -53,32 +69,70 @@ public final class NewGamePropertyDialog extends JDialog {
 		public void actionPerformed(ActionEvent ev) {     
 			IBeamsOfLightPuzzleBoard board = new BeamsOfLightPuzzleBoard();
 			
-			boolean boardOk = false;
+			final Holder<Boolean> boardOk = new Holder<Boolean>(false);
 
 			final double density = (double) properties.get("newgame:density");
 			final int height     = (int) properties.get("newgame:height");
 			final int width      = (int) properties.get("newgame:width");
 			final boolean zerotiles = (boolean)properties.get("newgame:zerotiles");
 			
+			  class CreateRandomWorker extends SwingWorker<Void, Void> {
+					private final Cursor waitCursor = new Cursor(Cursor.WAIT_CURSOR);
+					private final Cursor defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+					private IBeamsOfLightPuzzleBoard board;
+				  
+				    @Override
+				    public Void doInBackground() {
+				    okButton.setEnabled(false);
+				    setCursor(waitCursor);
+				    
+						boardOk.value = false;
+						final Timer timer = new Timer(150000000);
+						CreateRandomBoard crb = new CreateRandomBoard();
+
+						while(! boardOk.value && ! timer.timeOver()) {
+							setProgress(timer.pastTimePercentage());
+							try {
+								board = crb.createRandom(height, width, density, zerotiles);
+								boardOk.value = true;
+							}
+							catch (CouldNotCreatePuzzleException e) {
+								// TODO Auto-generated catch block
+								boardOk.value = false;
+							}
+						}
+						return null;
+				    }
+
+				    @Override
+				    public void done() {
+				      okButton.setEnabled(true);
+				      setCursor(defaultCursor);
+				      try {
+						controller.setBoard(board);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				      setProgress(0);
+				    }
+			}
+			
 			int repeat = JOptionPane.NO_OPTION;
 			
 			do {
-				try {
-					board = CreateRandomBoard.createRandom(height, width, density, zerotiles);
-					boardOk = true;
-				}
-				catch(CouldNotCreatePuzzleException ex) {
-					Object[] options = {_("Repeat"), _("Cancel")};
-					repeat = JOptionPane.showOptionDialog((Component)NewGamePropertyDialog.this, (Object)ex.getMessage(), _("Error"), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, (Icon) null, options, options[0]);
-				}
-			} while(!boardOk && (repeat == JOptionPane.YES_OPTION));
+				SwingWorker w = new CreateRandomWorker();
+				//w.addPropertyChangeListener(this); //TODO!!!
+				w.run();
+			} while(!boardOk.value && (repeat == JOptionPane.YES_OPTION));
 			
-			if(boardOk) {
+			if(boardOk.value) {
 				try {
 					controller.setBoard(board);
 					controller.solve();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
+					System.out.println(e.getClass());
 					e.printStackTrace();
 				}
 			}
@@ -86,8 +140,6 @@ public final class NewGamePropertyDialog extends JDialog {
 		}
 		
 	}
-	
-	//private class propertyListener implements 
 	
 	public NewGamePropertyDialog(final ILightController cntrl) {
 		super();
@@ -102,7 +154,6 @@ public final class NewGamePropertyDialog extends JDialog {
 		JPanel  mainPanel, densityPanel, widthPanel, heightPanel, noZeroPanel;
 		JSlider densitySlider, widthSlider, heightSlider;
 		JCheckBox noZeroCheckBox;
-		JButton okButton;
 		
 		setLayout(new BorderLayout());
 		
@@ -200,7 +251,6 @@ public final class NewGamePropertyDialog extends JDialog {
 		add(okButton, BorderLayout.SOUTH);
 		
 		pack();
-		
 	}
 	
 

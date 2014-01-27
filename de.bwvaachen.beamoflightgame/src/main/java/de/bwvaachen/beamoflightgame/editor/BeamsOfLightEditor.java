@@ -30,9 +30,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.SolverBuilder;
-import de.bwvaachen.beamoflightgame.controller.impl.LightController;
 import de.bwvaachen.beamoflightgame.logic.AmbiguousPuzzleException;
 import de.bwvaachen.beamoflightgame.logic.ISolver;
 import de.bwvaachen.beamoflightgame.logic.MaximumIterationsExceededException;
