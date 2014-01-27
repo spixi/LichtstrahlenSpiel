@@ -133,6 +133,7 @@ public final class NewGamePropertyDialog extends JDialog {
 								CreateRandomWorker newInstance = new CreateRandomWorker();
 								PropertyChangeListener pclArray[] = this.getPropertyChangeSupport().getPropertyChangeListeners();
 								for(PropertyChangeListener pcl: pclArray) {
+									this.getPropertyChangeSupport().removePropertyChangeListener(pcl);
 									newInstance.getPropertyChangeSupport().addPropertyChangeListener(pcl);
 								}
 								newInstance.execute();
@@ -153,16 +154,11 @@ public final class NewGamePropertyDialog extends JDialog {
 				    }
 			}
 			
-			int repeat = JOptionPane.NO_OPTION;
 			
-			do {
-				SwingWorker<IBeamsOfLightPuzzleBoard, Void> w = new CreateRandomWorker();
+			SwingWorker<IBeamsOfLightPuzzleBoard, Void> w = new CreateRandomWorker();
 				
-				w.addPropertyChangeListener(this);
-				w.execute();
-				
-			} while(!boardOk.value && (repeat == JOptionPane.YES_OPTION));
-			
+			w.addPropertyChangeListener(this);
+			w.execute();
 		}
 
 		@Override
