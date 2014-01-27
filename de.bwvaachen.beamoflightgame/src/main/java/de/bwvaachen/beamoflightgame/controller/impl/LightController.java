@@ -60,6 +60,10 @@ public class LightController implements ILightController {
 	} // public IBeamsOfLightPuzzleBoard getCurrentModel()
 
 	@Override
+	/**
+	 * @author Andreas
+	 * 
+	 */
 	public void loadGame(File f) throws FileNotFoundException, IOException {
 		ZipPersister persister = new ZipPersister(new SimpleASCIICodec());
 		try {
@@ -78,6 +82,10 @@ public class LightController implements ILightController {
 	
 
 	@Override
+	/*
+	 * (non-Javadoc)
+	 * @see de.bwvaachen.beamoflightgame.controller.ILightController#newGame(int, int)
+	 */
 	public void newGame(int width, int height) throws Exception 
 	{
 		solutionBoard = null;
@@ -87,6 +95,9 @@ public class LightController implements ILightController {
 	
 
 	@Override
+	/**
+	 * @author Andreas
+	 */
 	public void saveGame(File f) throws IOException {
 				
 		ZipPersister persister = new ZipPersister(new SimpleASCIICodec());
@@ -150,7 +161,7 @@ public class LightController implements ILightController {
 		}
 		
 		puzzleBoard = _board ;
-		if(solutionBoard == null)
+		if(solutionBoard == null) 
 		{	
 			solve();
 		}
