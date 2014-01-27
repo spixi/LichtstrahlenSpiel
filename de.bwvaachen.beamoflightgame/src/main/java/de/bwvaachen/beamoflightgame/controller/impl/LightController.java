@@ -80,7 +80,6 @@ public class LightController implements ILightController {
 		
 	} // public void loadGame(File f)
 	
-
 	@Override
 	/*
 	 * (non-Javadoc)

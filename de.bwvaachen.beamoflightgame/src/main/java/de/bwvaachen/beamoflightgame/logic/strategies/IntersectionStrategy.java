@@ -146,7 +146,6 @@ public class IntersectionStrategy extends AbstractStrategy<NumberTileState> {
 							}
 						}
 						
-						
 						final TraverseDirection currentDirection = currentState.getTraverseDirection();
 						final int range = Math.min(tilesToDistribute, maxRange[i]);
 						

@@ -25,11 +25,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
 
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.impl.LightController;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
-
 
 @SuppressWarnings("serial")
 public class EditorMenu extends JMenuBar 
@@ -56,6 +56,7 @@ public class EditorMenu extends JMenuBar
 	private BeamsOfLightPuzzleBoard board;
 	private ILightController 		controller;
 	private JFileChooser 			fileChooser;
+	private FileFilter 				filter;
 	private File 					file;
 	private final String 			className;
 	
@@ -184,8 +185,6 @@ public class EditorMenu extends JMenuBar
 		}else if(ae.getSource() == menuItemExit){
 			editor.dispose();
 		}else if(ae.getSource() == menuItemResize){
-			
-			BeamsOfLightEditor temp ;
 			JTextField 	jtfHeight = new JTextField();
 			JTextField 	jtfWidth  = new JTextField();
 			Object[] 	message = {	_("EditorWidthPrompt"), jtfWidth,
@@ -200,12 +199,10 @@ public class EditorMenu extends JMenuBar
 			if(userSelection == JOptionPane.OK_OPTION){
 				
 				switch(className){
-					case "LineEditor": 		temp = new LineEditor(Integer.valueOf(jtfWidth.getText()),Integer.valueOf(jtfHeight.getText()));
-											((LineEditor) temp).importValues(((LineEditor) editor).getTileList());
+					case "LineEditor": 		new LineEditor(Integer.valueOf(jtfWidth.getText()),Integer.valueOf(jtfHeight.getText()));
 											editor.dispose();
 											break;
-					case "NumberEditor": 	temp = new NumberEditor(Integer.valueOf(jtfWidth.getText()),Integer.valueOf(jtfHeight.getText()));
-											((NumberEditor) temp).importValues(((NumberEditor) editor).getTileList());
+					case "NumberEditor": 	new NumberEditor(Integer.valueOf(jtfWidth.getText()),Integer.valueOf(jtfHeight.getText()));
 											editor.dispose();
 											break;
 					default: //TODO 
@@ -228,6 +225,8 @@ public class EditorMenu extends JMenuBar
 				
 			if(ae.getSource() == menuItemSave){
 				fileChooser = new JFileChooser();
+				filter = new ExtensionFileFilter(_p("SaveGameType",2), new String[] { "BOL" });
+				fileChooser.setFileFilter(filter);
 				fileChooser.setDialogTitle(_("Save"));   
 			 
 				userSelection = fileChooser.showSaveDialog(editor);
@@ -238,16 +237,20 @@ public class EditorMenu extends JMenuBar
 				}
 			}else if(ae.getSource() == menuItemSaveAs){
 				fileChooser = new JFileChooser();
+				filter = new ExtensionFileFilter(_p("SaveGameType",2), new String[] { "BOL" });
+				fileChooser.setFileFilter(filter);
 				fileChooser.setDialogTitle(_("SaveAs"));   
-			 
-				userSelection = fileChooser.showSaveDialog(editor);
 				 
+				userSelection = fileChooser.showSaveDialog(editor);
+				
 				if(userSelection == JFileChooser.APPROVE_OPTION){
 					file = fileChooser.getSelectedFile();
 			    	controller.saveGame(file);
 				}
 			}else if(ae.getSource() == menuItemLoad){
 				fileChooser = new JFileChooser();
+				filter = new ExtensionFileFilter(_p("SaveGameType",2), new String[] { "BOL" });
+				fileChooser.setFileFilter(filter);
 				fileChooser.setDialogTitle(_("Load"));   
 			
 				userSelection = fileChooser.showOpenDialog(editor);
@@ -278,4 +281,51 @@ public class EditorMenu extends JMenuBar
 	public JMenuItem getMenuItemSolve(){
 		return menuItemSolve;
 	}
+	
+	class ExtensionFileFilter extends FileFilter {
+		  String description;
+
+		  String extensions[];
+
+		  public ExtensionFileFilter(String description, String extension) {
+		    this(description, new String[] { extension });
+		  }
+
+		  public ExtensionFileFilter(String description, String extensions[]) {
+		    if (description == null) {
+		      this.description = extensions[0];
+		    } else {
+		      this.description = description;
+		    }
+		    this.extensions = extensions.clone();
+		    toLower(this.extensions);
+		  }
+
+		  @Override
+		public boolean accept(File file) {
+		    if (file.isDirectory()) {
+		      return true;
+		    } else {
+		      String path = file.getAbsolutePath().toLowerCase();
+		      for (int i = 0, n = extensions.length; i < n; i++) {
+		        String extension = extensions[i];
+		        if ((path.endsWith(extension) && (path.charAt(path.length() - extension.length() - 1)) == '.')) {
+		          return true;
+		        }
+		      }
+		    }
+		    return false;
+		  }
+
+		  @Override
+		public String getDescription() {
+		    return description;
+		  }
+
+		  private void toLower(String array[]) {
+		    for (int i = 0, n = array.length; i < n; i++) {
+		      array[i] = array[i].toLowerCase();
+		    }
+		  }
+		}
 }
