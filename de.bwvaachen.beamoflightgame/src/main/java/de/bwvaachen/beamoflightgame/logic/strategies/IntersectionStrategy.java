@@ -77,7 +77,6 @@ public class IntersectionStrategy extends AbstractStrategy<NumberTileState> {
 				counter ++;
 			}
 			
-			
 			//maxRange[state.ordinal()] = counter
 			//This is not save because a bad guy could change the order of the LightTileState enum
 			
@@ -116,28 +115,43 @@ public class IntersectionStrategy extends AbstractStrategy<NumberTileState> {
 			loopOverSearchPaths:
 			for(int[] searchPath: searchPaths) {
 				
-				int sum = multiplicateVector(searchPath, maxRange);
+ 				int sum = multiplicateVector(searchPath, maxRange);
 
-				if(sum < remainingLightRange) {
+				if(sum < remainingLightRange-distributedTiles.get()) {
 					//Only sum light tiles can be distributed to the given searchPath
 					//Therefore some tiles are forced to the other directions
 					int[] otherDirections =
 							subtractVector(V(1,1,1,1),searchPath);
-				
+					
+					//Too few tiles to distribute
+					final int tilesToDistribute = remainingLightRange - sum - distributedTiles.get();
+					
 					for(int i=0; i<otherDirections.length; i++) {
 						final LightTileState currentState = states[i];
 						
-						//Too few tiles to distribute
-						final int tilesToDistribute = remainingLightRange - sum - distributedTiles.get();
 						if(tilesToDistribute <= 0)
 							throw new UnsolvablePuzzleException(tile);
 						
 						//More than one possibility?
-						if(tilesToDistribute > remainingLightRange)
-							continue;
+						//if(tilesToDistribute > remainingLightRange)
+						//	continue;
 
 						//Only for the other directions
-						if(otherDirections[i] == 0) continue;
+						if(otherDirections[i] == 0){ continue; }
+						else {
+							for(int j=0; j<otherDirections.length;j++){
+								
+								int temp = multiplicateVector(otherDirections, maxRange);
+								
+								if(getValue(otherDirections) != 1){
+									if(i!=j && maxRange[i] >= tilesToDistribute && maxRange[j] >= tilesToDistribute)
+										continue loopOverSearchPaths;
+									
+									if(temp > tilesToDistribute)
+										continue loopOverSearchPaths;
+								}
+							}
+						}
 						
 						final TraverseDirection currentDirection = currentState.getTraverseDirection();
 						final int range = Math.min(tilesToDistribute, maxRange[i]);
@@ -146,6 +160,7 @@ public class IntersectionStrategy extends AbstractStrategy<NumberTileState> {
 						if(!traverser.shift(currentDirection)) continue;
 						
 						if(range > 0) {
+							maxRange[i] -= range;
 							traverser.get().accept(new AbstractTileVisitor() {
 								public void visitLightTile(LightTile lt) {
 									int filledTiles =
@@ -195,13 +210,13 @@ public class IntersectionStrategy extends AbstractStrategy<NumberTileState> {
 		searchPaths = new int[14][4];
 		
 		int i = -1;
-		/*Erst einmal rausgenommen!
+		//Erst einmal rausgenommen!
 		//three directions
 		searchPaths[++i]=vectorSum(E,S,W);
 		searchPaths[++i]=vectorSum(N,S,W);
 		searchPaths[++i]=vectorSum(N,E,W);
 		searchPaths[++i]=vectorSum(N,E,S);
-		*/
+		
 		
 		//two directions
 		searchPaths[++i]=vectorSum(N,E);

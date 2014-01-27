@@ -99,7 +99,7 @@ public class NumberEditor extends BeamsOfLightEditor
 	@Override
 	public void importPuzzleBoard(IBeamsOfLightPuzzleBoard source) 
 			throws NumberFormatException, IIOException, IOException{
-		ITile currentTile ;
+		ITile<?> currentTile ;
 		TileButton tile;
 		
 		col = source.getWidth();
