@@ -167,7 +167,7 @@ public class SolverBuilder {
 						}
 						catch (UnsolvablePuzzleException e) {
 							if(hooks.size() == 0) throw e;
-							for(Hook h : hooks) {
+							for(ISolver.Hook h : hooks) {
 								h.run();
 							}
 						}
