@@ -19,6 +19,9 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 import javax.swing.undo.UndoableEdit;
+
+import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 import static de.bwvaachen.beamoflightgame.controller.Turn.*;
 
 public class TurnUndoManager extends UndoManager
@@ -52,6 +55,7 @@ public class TurnUndoManager extends UndoManager
 			stable = false;
 		}
 	}
+		
 	
 	public final void undoToLastMarker() throws CannotUndoException
 	{
@@ -129,13 +133,68 @@ public class TurnUndoManager extends UndoManager
 	
 	@Override
 	public void undo() throws CannotUndoException {
-		super.undo();
+		
+		boolean undoGeschehen = false ;
+		
+		// Den Turn holen, der von einem Undo betroffen wäre.
+		Turn currentTurn = (Turn) editToBeUndone() ;
+				
+		// Merken des Boards, da man später noch die Turn Nummer ändern muss.
+		IBeamsOfLightPuzzleBoard board = currentTurn . getBoard() ;
+		
+		
+		// Die Nummer des momentan angezeigten Turns holen
+		int boardTurnNumber = currentTurn . getBoard() . getCurrentTurnNumber() ;
+			
+		// Solange undo() machen, wie es noch Züge mit der gleichen Turn-Nummer gibt.
+		while ( (currentTurn != null ) && ( currentTurn . getTurnNumber() == boardTurnNumber ) ) {
+			
+			super.undo() ;
+			currentTurn = (Turn)  editToBeUndone() ;
+			undoGeschehen = true ;
+		}
+		
+		// Im Board setzen, an welchem Zug man sich momentan befindet
+		if ( undoGeschehen )
+			board . setCurrentTurnNumber(boardTurnNumber-1) ;
+		
 		notifyChangeListeners();
+		
 	}
 	
+	/*
+	 * @author Georg Braun
+	 */
 	@Override
 	public void redo() throws CannotRedoException {
-		super.redo();
+		
+		boolean redoGeschehen = false ;
+		
+		// Den nächsten Redone-Eintrag holen
+		Turn nextRedoneTurn = (Turn) editToBeRedone() ;
+		
+		// Die Nummer des zu wiederherstellenden Turns
+		int turnNumberToBeRedone = nextRedoneTurn . getBoard() . getCurrentTurnNumber() + 1 ;
+		
+		// Durch die Liste der Edits laufen und entsprechend redo(s) aufrufen. Bemerkung: Es geht bestimmt auch eleganter.
+		int anzahlRedo = 0 ;
+		for(UndoableEdit e : edits)
+		{
+			if (e instanceof Turn) {
+								
+				Turn currentTurn = (Turn) e ;
+				if ( currentTurn . getTurnNumber() == turnNumberToBeRedone ) {
+					super.redo() ;
+					redoGeschehen = true ;
+				} // if ( currentTurn . getTurnNumber() == turnNumberToBeRedone ) 
+			} // if (e instanceof Turn) 
+			
+		} // for(UndoableEdit e : edits)
+
+		// Die Nummer des Turns im Board anpassen
+		if ( redoGeschehen ) 
+			nextRedoneTurn . getBoard() . setCurrentTurnNumber ( turnNumberToBeRedone ) ;
+		
 		notifyChangeListeners();
 	}
 	
@@ -151,6 +210,27 @@ public class TurnUndoManager extends UndoManager
 	
 	public void removeChangeListener(ChangeListener l) {
 		changeListeners.remove(l);
+	}
+	
+	
+	/*
+	 * @author Georg Braun
+	 * Diese Methode löscht alle Turns, die eine höhere Turn Nummer als die übergebene haben.
+	 */
+	public void deleteTurns ( int newLastTurn ) {
+		
+		for (UndoableEdit e : edits)
+		{
+			if (e instanceof Turn) {			
+				
+				Turn currentTurn = (Turn) e ;
+				
+				if ( currentTurn . getTurnNumber() > newLastTurn )
+					currentTurn . die() ;
+				
+			} // if (e instanceof Turn)
+		} // for (UndoableEdit e : edits)
+		
 	}
 	
 	//TODO ZipPersister anpassen so dass die Turns sofort in den Writer geschrieben werden können 
@@ -181,6 +261,34 @@ public class TurnUndoManager extends UndoManager
 				
 		}
 		return turns;
+	}
+	
+	/*
+	 * @author Georg Braun
+	 * Diese Methode gibt ein paar Informationen über die Turns aus.
+	 */
+	public void getTurnsInfo()
+	{
+		
+		System . out . println ( "--- Turns Info Anfang ---" ) ;
+		LinkedList<Turn> turns = new LinkedList<Turn>();
+		for(UndoableEdit e : edits)
+		{
+			if (e instanceof Turn) {
+				turns.add((Turn)e);
+				
+				Turn currentTurn = (Turn) e ;
+				
+				String activeTurn = "" ;
+				if ( currentTurn . getBoard() . getCurrentTurnNumber() == currentTurn . getTurnNumber() )
+					activeTurn = "-> " ;
+				
+				System . out . println ( activeTurn + "TurnNumber: "  + currentTurn . getTurnNumber() + "(" + currentTurn . getX() + "/" + currentTurn . getY() + ") " +  "\t Marker: " + Boolean.toString(currentTurn . hasFlag(FLAG_MARKER)) + "\t Error: " + Boolean.toString(currentTurn . hasFlag(FLAG_ERROR)) +  "\t Signifikant: " + Boolean.toString(currentTurn . isSignificant()) ) ;
+			}
+				
+		}
+		System . out . println ( "--- Turns Info Ende ---" ) ;
+	
 	}
 	
 	//TODO Testing! :D

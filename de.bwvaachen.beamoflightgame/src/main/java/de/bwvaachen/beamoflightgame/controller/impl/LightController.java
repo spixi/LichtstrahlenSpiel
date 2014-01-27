@@ -12,9 +12,12 @@ See the COPYING file for more details.
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.swing.JOptionPane;
 
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.SolverBuilder;
@@ -177,16 +180,17 @@ public class LightController implements ILightController {
 			// Den Solver für die Musterlösung erzeugen
 			ISolver s =
 					SolverBuilder.buildWith(LonelyFieldStrategy.class).
-					//and(IntersectionStrategy.class).
-					and(TryAndErrorStrategy.class).
+					and(IntersectionStrategy.class).
+					//and(TryAndErrorStrategy.class).
 					forBoard(solutionBoard);
-			
-			
+			System.setErr(new PrintStream("/dev/null"));
 			s.solve();
+			s.getLevel();
 			
 		}
 		catch ( Exception e ) {
 			System . out . println ( e.getMessage() ) ;
+			solutionBoard = null ;
 		} // try .. catch
 		
 	} // public void solve () 
@@ -229,7 +233,34 @@ public class LightController implements ILightController {
 		
 		
 		return gameIsCorrect ;
-	}
+	} // public boolean GameIsCorrect () 
+	
+	
+	/*
+	 * @author Georg Braun
+	 * @Prüfen ob das übergeben Feld richtig ist (Vergleich mit der Musterlösung)
+	 */
+	public boolean IsTileCorrect ( int _x , int _y ) {
+		
+		if ( ( puzzleBoard != null ) && ( solutionBoard != null ) ) {
+			ITile puzzleTile   = puzzleBoard . getTileAt( _x , _y) ;
+			ITile solutionTile = solutionBoard . getTileAt( _x , _y) ;
+			
+			// Prüfung ob es LightTiles sind
+			if ( ( puzzleTile instanceof LightTile ) && ( solutionTile instanceof LightTile ) ) {
+				
+				LightTile puzzleLightTile = (LightTile) puzzleTile ;
+				LightTile solutionLightTile = (LightTile) solutionTile ;
+				
+				if (  puzzleLightTile . getTileState() .equals( solutionLightTile . getTileState() )  ) {
+					return true ;
+				}
+				
+			}
+		}
+		return false ;
+		
+	} // public boolean IsTileCorrect ( int _x , int _y ) 
 
 	@Override
 	public void swapModelWithSolution() {

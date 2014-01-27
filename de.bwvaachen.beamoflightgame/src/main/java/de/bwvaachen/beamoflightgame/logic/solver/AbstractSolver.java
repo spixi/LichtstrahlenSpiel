@@ -16,15 +16,24 @@ public abstract class AbstractSolver implements ISolver {
 	private IBeamsOfLightPuzzleBoard board;
 	private double complexity;
 	
+	public static interface Hook {
+	   void run();
+	}
+	
 	protected AbstractSolver(IBeamsOfLightPuzzleBoard b) {
 		board = b;
 	}
 	
+	protected void addComplexity(double c) {
+		complexity+=c;
+	}
+	
 	@Override
 	public double getLevel() {
-		int numofturns = board.getHeight() * board.getWidth(); //TODO - board.countNumberTiles()
+		int numberOfLightTiles = board.getHeight() * board.getWidth()-
+		board.getNumOfNumberTiles();
 		
-		return Math.log10(complexity/numofturns); //level = complexity / number of turns
+		return Math.log10(complexity/numberOfLightTiles); //level = complexity / number of light tiles
 	}
 
 }

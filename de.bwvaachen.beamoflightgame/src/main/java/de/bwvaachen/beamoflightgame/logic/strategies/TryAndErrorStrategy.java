@@ -13,14 +13,21 @@ import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Set;
+import java.util.Stack;
+
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
+import javax.swing.undo.CompoundEdit;
+import javax.swing.undo.UndoableEdit;
+
 import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
 import de.bwvaachen.beamoflightgame.helper.AbstractTileVisitor;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.Holder;
 import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
 import de.bwvaachen.beamoflightgame.logic.solver.AbstractSolver;
+import de.bwvaachen.beamoflightgame.logic.solver.AbstractSolver.Hook;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.ITileState;
@@ -137,8 +144,6 @@ public class TryAndErrorStrategy extends AbstractStrategy<ITileState> implements
 		//with this for now.
 		
 		//Check whether the neighbour is an empty field
-		
-		
 		for(LightTileState direction: remainingDirections) {
 			if(!t.shift(direction.getTraverseDirection())) {
 				//We reached the border of the board
@@ -160,6 +165,8 @@ public class TryAndErrorStrategy extends AbstractStrategy<ITileState> implements
 				});
 			}
 			
+			//TODO: How can we remember which directions are remaining for each tile
+			//when this depends on the way we are going through the backtracking tree?
 			if(error.value) {
 				remainingDirections.remove(direction);
 			}
@@ -170,16 +177,22 @@ public class TryAndErrorStrategy extends AbstractStrategy<ITileState> implements
 		}
 		
 		//no remainingDirections ...
-		if(remainingDirections.isEmpty())
+		if(remainingDirections.isEmpty()) {
+			hook = null;
 			throw new UnsolvablePuzzleException(tile);
+		}
 		else {
-			LightTileState guess = (LightTileState) remainingDirections.toArray()[0];
+			LightTileState guess = (LightTileState) remainingDirections.toArray()[0];	
 			
+			//Set a marker. We can undo to the last marker in the hook
+			//which is called in case of an UnsolvablePuzzleException
+			um.addMarker();
 			t.shift(guess.getTraverseDirection());
 			((LightTile) t.get()).setState(guess, true);
 			return true;
 		}
 	}
+	
 	public Collection<BacktrackingHook> getHooks() {
 		return Collections.singleton(new BacktrackingHook());
 	}
@@ -187,8 +200,7 @@ public class TryAndErrorStrategy extends AbstractStrategy<ITileState> implements
 	private class BacktrackingHook implements AbstractSolver.Hook {
 		@Override
 		public void run() {
-			//while(um.canUndo())
-			//	um.undo();
+			um.undoToLastMarker();
 		}
 	}
 
