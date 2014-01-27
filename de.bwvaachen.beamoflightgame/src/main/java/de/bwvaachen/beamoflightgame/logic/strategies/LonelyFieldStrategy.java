@@ -37,7 +37,7 @@ public class LonelyFieldStrategy extends AbstractStrategy<LightTileState> {
                 TraverseDirection traverseDirection = direction.getTraverseDirection();
                 
                 traverser.reset();
-                ITile next = traverser.get();
+                ITile<?> next = traverser.get();
                 for (int i = neighbour.getRemainingLightRange(); i>0; --i) {
                         if(next == neighbour) break; //We already reached the neighbour: then break
                         traverser.shift(traverseDirection);
@@ -48,7 +48,7 @@ public class LonelyFieldStrategy extends AbstractStrategy<LightTileState> {
         }
         
         private NumberTile findNeighbour(LightTileState lts) {
-            ITile currentTile = null;
+            ITile<?> currentTile = null;
 
             traverser.reset();
             
@@ -77,7 +77,7 @@ public class LonelyFieldStrategy extends AbstractStrategy<LightTileState> {
         }
     
     
-    private int getDistance(ITile neighbour, LightTileState lts) {
+    private int getDistance(ITile<?> neighbour, LightTileState lts) {
                 int distance = 0;
                 traverser.reset();
                 while (traverser.shift(lts.reverse().getTraverseDirection())) {
@@ -90,7 +90,7 @@ public class LonelyFieldStrategy extends AbstractStrategy<LightTileState> {
 
 
         @Override
-        public boolean isAppliableForTile(ITile t) {
+        public boolean isApplicableForTile(ITile<?> t) {
                 return (t instanceof LightTile) && (t.getTileState() == LightTileState.EMPTY);
         }
         

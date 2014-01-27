@@ -10,6 +10,7 @@ See the COPYING file for more details.
 */
 
 import static de.bwvaachen.beamoflightgame.i18n.I18N.*;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -23,6 +24,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
+import javax.swing.JTextField;
 
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.impl.LightController;
@@ -181,6 +183,34 @@ public class EditorMenu extends JMenuBar
 			}
 		}else if(ae.getSource() == menuItemExit){
 			editor.dispose();
+		}else if(ae.getSource() == menuItemResize){
+			
+			BeamsOfLightEditor temp ;
+			JTextField 	jtfHeight = new JTextField();
+			JTextField 	jtfWidth  = new JTextField();
+			Object[] 	message = {	_("EditorWidthPrompt"), jtfWidth,
+									_("EditorHeightPrompt"), jtfHeight
+									};
+
+			
+			userSelection = JOptionPane.showConfirmDialog(	null, 
+															message, 
+															_("EditorDimensionsPrompt"), 
+															JOptionPane.OK_CANCEL_OPTION);
+			if(userSelection == JOptionPane.OK_OPTION){
+				
+				switch(className){
+					case "LineEditor": 		temp = new LineEditor(Integer.valueOf(jtfWidth.getText()),Integer.valueOf(jtfHeight.getText()));
+											((LineEditor) temp).importValues(((LineEditor) editor).getTileList());
+											editor.dispose();
+											break;
+					case "NumberEditor": 	temp = new NumberEditor(Integer.valueOf(jtfWidth.getText()),Integer.valueOf(jtfHeight.getText()));
+											((NumberEditor) temp).importValues(((NumberEditor) editor).getTileList());
+											editor.dispose();
+											break;
+					default: //TODO 
+				}
+			}
 		}else if(ae.getSource() == jrbMenuItemAllTiles){
 			editor.setDisplayAllTiles(true);
 		}else if(ae.getSource() == jrbMenuItemNumberTiles){

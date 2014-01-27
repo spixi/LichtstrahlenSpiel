@@ -114,7 +114,7 @@ public class TryAndErrorStrategy extends AbstractStrategy<ITileState> implements
 	}
 
 	@Override
-	public boolean isAppliableForTile(ITile t) {
+	public boolean isApplicableForTile(ITile<?> t) {
 		final Holder<Boolean> isAppliable = new Holder<Boolean>(false);
 		
 		t.accept(new AbstractTileVisitor() {

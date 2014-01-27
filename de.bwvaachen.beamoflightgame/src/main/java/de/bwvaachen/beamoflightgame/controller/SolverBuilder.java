@@ -149,7 +149,7 @@ public class SolverBuilder {
 					
 					IStrategy currentStrategy = strategies.get(stackPointer);
 					
-					if ( !currentStrategy.isAppliableForTile(tile) ) {
+					if ( !currentStrategy.isApplicableForTile(tile) ) {
 						step(tile, stackPointer+1);
 					}
 					else {

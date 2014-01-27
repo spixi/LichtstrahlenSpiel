@@ -174,6 +174,27 @@ public class NumberEditor extends BeamsOfLightEditor
 		tiles.add(onlyNumberTilesPanel,"2");
 	}
 	
+	public void importValues(ArrayList<TileButton> source){
+		
+		onlyNumberTilesPanel = new TilesPanel();
+		tileList.clear();
+		
+		for(int i=0; i<row; i++){
+			for(int j=0; j<col; j++){
+				for(TileButton tile : source){
+					if(tile.getX() == col && tile.getY() == row){
+						onlyNumberTilesPanel.add(tile);
+						tileList.add(tile);
+					}else{
+						tile = createTileButton(i,j);
+						onlyNumberTilesPanel.add(tile);
+						tileList.add(tile);
+					}
+				}
+			}
+		}
+	}
+	
 	public TileButton createTileButton(TileButton tile){
 		TileButton temp = new TileButton(tile.getCol(),tile.getRow());
 		temp.setImage(tile.getImage());
@@ -188,6 +209,10 @@ public class NumberEditor extends BeamsOfLightEditor
 		temp.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
 		return temp ;
+	}
+	
+	public ArrayList<TileButton> getTileList(){
+		return tileList;
 	}
 
 	@Override

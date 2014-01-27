@@ -189,6 +189,27 @@ public class LineEditor extends BeamsOfLightEditor
 		tiles.add(onlyNumberTilesPanel,"2");
 	}
 	
+	public void importValues(ArrayList<TilePanel> source){
+	
+		tilesPanel = new TilesPanel();
+		tileList.clear();
+		
+		for(int i=0; i<row; i++){
+			for(int j=0; j<col; j++){
+				for(TilePanel tile : source){
+					if(tile.getX() == col && tile.getY() == row){
+						tilesPanel.add(tile);
+						tileList.add(tile);
+					}else{
+						tile = createTilePanel(i,j);
+						tilesPanel.add(tile);
+						tileList.add(tile);
+					}
+				}
+			}
+		}
+	}
+	
 	private double checkLine(TilePanel startTile, TilePanel endTile) throws Exception{
 		
 		int deltaXabs = Math.abs(startTile.getCol() - endTile.getCol());
@@ -361,6 +382,10 @@ public class LineEditor extends BeamsOfLightEditor
 		temp.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
 		return temp ;
+	}
+	
+	public ArrayList<TilePanel> getTileList(){
+		return tileList;
 	}
 	
 	public void mouseMoved(MouseEvent me) {}

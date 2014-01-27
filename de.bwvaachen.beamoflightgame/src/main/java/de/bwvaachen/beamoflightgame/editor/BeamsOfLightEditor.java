@@ -10,6 +10,7 @@ See the COPYING file for more details.
 */
 
 import static de.bwvaachen.beamoflightgame.i18n.I18N.*;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -22,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.IIOException;
 import javax.swing.JButton;

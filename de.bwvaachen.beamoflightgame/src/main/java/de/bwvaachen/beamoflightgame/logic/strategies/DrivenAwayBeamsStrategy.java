@@ -21,7 +21,7 @@ public class DrivenAwayBeamsStrategy extends AbstractStrategy<NumberTileState> {
 	}
 
 	@Override
-	public boolean isAppliableForTile(ITile t) {
+	public boolean isApplicableForTile(ITile<?> t) {
 		return (t instanceof NumberTile) && ((NumberTile) t).getRemainingLightRange() > 0;
 	}
 	
