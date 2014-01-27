@@ -10,7 +10,6 @@ See the COPYING file for more details.
  */
 
 
-import java.awt.Toolkit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -18,7 +17,6 @@ import java.util.Random;
 
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.IndexedSet;
-import de.bwvaachen.beamoflightgame.helper.Timer;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
@@ -64,6 +62,7 @@ public class CreateRandomBoard
 	public IBeamsOfLightPuzzleBoard createRandom(final int width, final int height, double density, boolean allowZeroTiles) throws CouldNotCreatePuzzleException
 	{
 		oBoard = new BeamsOfLightPuzzleBoard();
+		oBoard.init(width, height);
 
 			double randomHelper;
 
