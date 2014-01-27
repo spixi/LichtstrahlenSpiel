@@ -14,6 +14,7 @@ import java.util.Hashtable;
 import javax.swing.JButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.metal.MetalButtonUI;
 
 import de.bwvaachen.beamoflightgame.helper.Pair;
 import de.bwvaachen.beamoflightgame.model.IChangeableTile;
@@ -75,23 +76,8 @@ public class TileButton extends JButton implements ChangeListener {
 
 	@Override
 	public void stateChanged(ChangeEvent e) {
-		// TODO Auto-generated method stub
-		Hashtable<Object,Object> foo = new Hashtable<Object,Object>();
-		IChangeableTile tile = ( (Pair<?,IChangeableTile>) e.getSource() ).right;
-		tile.storeState(foo);
-		//tile.getPresentation()
-		
-		//TODO
-		try {
-			Thread.sleep(8);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		//TODO
 		this.setIcon(graphicFactory.getImage(tile));
-		this.ui.update(this.getGraphics(), this);
+	    repaint();
 	}
 
 }

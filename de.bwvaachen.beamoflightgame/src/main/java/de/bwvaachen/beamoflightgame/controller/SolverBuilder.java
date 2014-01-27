@@ -23,7 +23,7 @@ import de.bwvaachen.beamoflightgame.logic.IStrategy;
 import de.bwvaachen.beamoflightgame.logic.MaximumIterationsExceededException;
 import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
 import de.bwvaachen.beamoflightgame.logic.solver.AbstractSolver;
-import de.bwvaachen.beamoflightgame.logic.solver.AbstractSolver.Hook;
+import de.bwvaachen.beamoflightgame.logic.ISolver.Hook;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.LightTile;
@@ -45,7 +45,7 @@ public class SolverBuilder {
 		public ISolverBuilderContext and(Class<? extends IStrategy> s)
 				throws InstantiationException, IllegalAccessException {
 			IStrategy theStrategy = s.newInstance();
-		    strategies.add(s.newInstance());
+		    strategies.add(theStrategy);
 		    
 		    if(theStrategy.hasHooks()) {
 		    	hooks.addAll(theStrategy.getHooks());
@@ -159,7 +159,7 @@ public class SolverBuilder {
 							if(!canSolve) step(tile, stackPointer+1);
 						}
 						catch (UnsolvablePuzzleException e) {
-							if(hooks == null) throw e;
+							if(hooks.size() == 0) throw e;
 							for(Hook h : hooks) {
 								h.run();
 							}
@@ -172,7 +172,6 @@ public class SolverBuilder {
 		
 	}
 	
-
 	
 	private static SolverBuilder instance = new SolverBuilder();
 

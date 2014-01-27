@@ -13,21 +13,14 @@ import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.Set;
-import java.util.Stack;
-
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
-import javax.swing.undo.CompoundEdit;
-import javax.swing.undo.UndoableEdit;
-
 import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
 import de.bwvaachen.beamoflightgame.helper.AbstractTileVisitor;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.Holder;
 import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
 import de.bwvaachen.beamoflightgame.logic.solver.AbstractSolver;
-import de.bwvaachen.beamoflightgame.logic.solver.AbstractSolver.Hook;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.ITileState;
@@ -144,6 +137,8 @@ public class TryAndErrorStrategy extends AbstractStrategy<ITileState> implements
 		//with this for now.
 		
 		//Check whether the neighbour is an empty field
+		
+		
 		for(LightTileState direction: remainingDirections) {
 			if(!t.shift(direction.getTraverseDirection())) {
 				//We reached the border of the board
@@ -185,7 +180,6 @@ public class TryAndErrorStrategy extends AbstractStrategy<ITileState> implements
 			return true;
 		}
 	}
-	
 	public Collection<BacktrackingHook> getHooks() {
 		return Collections.singleton(new BacktrackingHook());
 	}
@@ -193,8 +187,8 @@ public class TryAndErrorStrategy extends AbstractStrategy<ITileState> implements
 	private class BacktrackingHook implements AbstractSolver.Hook {
 		@Override
 		public void run() {
-			while(um.canUndo())
-				um.undo();
+			//while(um.canUndo())
+			//	um.undo();
 		}
 	}
 

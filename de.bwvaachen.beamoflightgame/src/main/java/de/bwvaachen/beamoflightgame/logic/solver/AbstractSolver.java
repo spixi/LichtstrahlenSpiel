@@ -16,10 +16,6 @@ public abstract class AbstractSolver implements ISolver {
 	private IBeamsOfLightPuzzleBoard board;
 	private double complexity;
 	
-	public static interface Hook {
-	   void run();
-	}
-	
 	protected AbstractSolver(IBeamsOfLightPuzzleBoard b) {
 		board = b;
 	}
