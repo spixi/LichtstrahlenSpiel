@@ -634,7 +634,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		mnGame.add( new JSeparator() );
 		
 		// Prüfen des Spiels
-				JMenuItem mntmShowTurns = new JMenuItem ( "Show Turns" ) ;
+				JMenuItem mntmShowTurns = new JMenuItem (_("ShowTurns")) ;
 				mnGame . add ( mntmShowTurns ) . addActionListener( new ActionListener() {
 
 					@Override
@@ -690,7 +690,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				controller.getUndoManager().deleteLastMarker();
+				controller.getUndoManager().deleteMarker();
 				
 			}
 		});
@@ -711,23 +711,36 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		}) ; // mntmDeleteAllMarker
 		
 		
-		// Zurück zur letzten Markierung
-		JSeparator separator_5 = new JSeparator();
-		mnGame.add(separator_5);
+		// Zurück zur vorherigen Markierung
+		mnGame.add(new JSeparator());
 		
-		JMenuItem mntmBackToMark = new JMenuItem(_("BackToMarker"));
-		mntmBackToMark . addActionListener(new ActionListener() {
+		JMenuItem mntmGoToLastMark = new JMenuItem(_("GoToLastMarker")); 
+		mntmGoToLastMark . addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				controller.getUndoManager().undoToLastMarker();
+				controller.getUndoManager().goToLastMark();
+				
 				
 			}
 		});
 				
-		mnGame.add(mntmBackToMark);
+		mnGame.add(mntmGoToLastMark);
+
 		
+		// Zur nächsten Markierung
+		mnGame.add(new JSeparator());
 		
+		JMenuItem mntmGoToNextMark = new JMenuItem(_("GoToNextMarker"));
+		mntmGoToNextMark . addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.getUndoManager().goToNextMark();				
+			}
+		});
+		mnGame.add(mntmGoToNextMark);
+	
 		// -----------------------------------------------
 		// Erzeugen des Editor Menus
 		

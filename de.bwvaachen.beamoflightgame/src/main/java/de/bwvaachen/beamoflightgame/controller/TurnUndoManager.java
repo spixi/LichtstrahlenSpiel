@@ -35,17 +35,43 @@ public class TurnUndoManager extends UndoManager
 	private boolean stable       = true;
 	private HashSet<ChangeListener> changeListeners = new HashSet<ChangeListener>();
 	
+	/*
+	 * @author Georg Braun
+	 * Setzen eines Markers.
+	 */
 	public void addMarker()
 	{
-		UndoableEdit editToBeUndone = editToBeUndone();
 		
-		if (editToBeUndone instanceof Turn) {
-			//Does the last turn already have the flag?
-			if(((Turn) editToBeUndone).hasFlag(FLAG_MARKER)) return;
-			((Turn) editToBeUndone).setFlag(FLAG_MARKER);
-		}
+		// Prüfen ob es überhaupt Züge gibt.
+		if ( this.edits.isEmpty() == false ) {
+			
+			// Einen Turn holen, damit man an das Board ran kommt.
+			Turn firstTurn = (Turn) this.edits.firstElement() ;
+			
+			// Nummer des aktuell angezeigten Turns im Board
+			int currentBoardTurnNumber = firstTurn . getBoard() . getCurrentTurnNumber() ;
+			
+			// Durch die Liste der Edits laufen und Marker beim currentBoardTurn setzen.
+			for(UndoableEdit e : edits)
+			{
+				if (e instanceof Turn) {
+									
+					Turn currentTurn = (Turn) e ;
+					if ( currentTurn . getTurnNumber() == currentBoardTurnNumber ) {
+						currentTurn . setFlag(FLAG_MARKER) ;
+
+					} // if ( currentTurn . getTurnNumber() == turnNumberToBeRedone ) 
+				} // if (e instanceof Turn) 
+				
+			} // for(UndoableEdit e : edits)
+			
+		} // if ( this.edits.isEmpty() != false )	
+
+
 		//TODO: Wir können keinen Marker vor dem ersten Zug setzen ...
-	}
+		 
+	} // public void addMarker()
+	
 	
 	public void setError()
 	{
@@ -57,15 +83,103 @@ public class TurnUndoManager extends UndoManager
 	}
 		
 	
-	public final void undoToLastMarker() throws CannotUndoException
+	public final void goToLastMark() throws CannotUndoException
 	{
-		Turn lastMarker = findLastMarker();
-		if(lastMarker == null) return;
-		while (editToBeUndone() != lastMarker) {
-			System.out.println(editToBeUndone() );
-			undo();
-		}
-	}
+		if ( this.edits.isEmpty() == false ) {
+			
+			// Einen Turn holen, damit man an das Board ran kommt.
+			Turn firstTurn = (Turn) this.edits.firstElement() ;			
+			IBeamsOfLightPuzzleBoard board = firstTurn . getBoard() ;
+			
+			// Nummer des aktuell angezeigten Turns im Board
+			int currentBoardTurnNumber = firstTurn . getBoard() . getCurrentTurnNumber() ;
+			
+			// Suchen nach dem Turn mit dem Marker-Flag und der nächst niedrigeren Turn-Nummer
+			int nextLowerTurnWithFlag = 0 ;
+			for(UndoableEdit e : edits)
+			{
+				if (e instanceof Turn) {									
+					Turn currentTurn = (Turn) e ;
+					if ( ( currentTurn . hasFlag(FLAG_MARKER)) && ( currentTurn . getTurnNumber() > nextLowerTurnWithFlag ) && ( currentTurn . getTurnNumber() < currentBoardTurnNumber)) {
+						nextLowerTurnWithFlag = currentTurn . getTurnNumber() ;
+					} // if ( currentTurn . getTurnNumber() == turnNumberToBeRedone ) 
+				} // if (e instanceof Turn) 				
+			} // for(UndoableEdit e : edits)
+			
+						
+			
+			if ( nextLowerTurnWithFlag > 0 ) {		
+	
+				// Schleife für die Turns bis zum Turn mit der gewünschten Nummer
+				Turn turnToBeUndone = (Turn) editToBeUndone() ;
+				while ( turnToBeUndone . getTurnNumber() != nextLowerTurnWithFlag ) {					
+					super.undo() ;		
+					turnToBeUndone = (Turn) editToBeUndone() ;
+				}					
+				
+				board . setCurrentTurnNumber( nextLowerTurnWithFlag ) ;
+				
+			} // if ( nextLowerTurnWithFlag > 0 )
+					
+		} // if ( this.edits.isEmpty() == false )
+		
+	} // public final void goToLastMark()
+	
+	
+	public final void goToNextMark() throws CannotUndoException
+	{
+		if ( this.edits.isEmpty() == false ) {
+			
+			// Einen Turn holen, damit man an das Board ran kommt.
+			Turn firstTurn = (Turn) this.edits.firstElement() ;			
+			IBeamsOfLightPuzzleBoard board = firstTurn . getBoard() ;
+			
+			// Nummer des aktuell angezeigten Turns im Board
+			int currentBoardTurnNumber = firstTurn . getBoard() . getCurrentTurnNumber() ;
+			
+			// Suchen nach einem späteren Turn mit dem Marker-Flag
+			int nextTurnNumberWithFlag = 0 ;
+			boolean foundTurnWithMarkFlag = false ;
+			for(UndoableEdit e : edits)
+			{
+				if (e instanceof Turn) {									
+					Turn currentTurn = (Turn) e ;
+					if ( ( currentTurn . hasFlag(FLAG_MARKER)) && ( currentTurn . getTurnNumber() > currentBoardTurnNumber ) && ( foundTurnWithMarkFlag == false ) ) {
+						nextTurnNumberWithFlag = currentTurn . getTurnNumber() ;
+						foundTurnWithMarkFlag = true ;
+					} // if ( currentTurn . getTurnNumber() == turnNumberToBeRedone ) 
+				} // if (e instanceof Turn) 				
+			} // for(UndoableEdit e : edits)
+			
+			if ( nextTurnNumberWithFlag > 0 ) {				
+				
+				Turn turnToBeRedone = (Turn) editToBeRedone() ;
+				while ( turnToBeRedone . getTurnNumber() != nextTurnNumberWithFlag ) {					
+					super.redo() ;		
+					turnToBeRedone = (Turn) editToBeRedone() ;
+				}
+				
+				// Schleife für die Turns mit der gleichen Turn Number
+				for(UndoableEdit e : edits)
+				{
+					if (e instanceof Turn) {
+										
+						Turn currentTurn = (Turn) e ;
+						if ( currentTurn . getTurnNumber() == nextTurnNumberWithFlag ) {
+							super.redo() ;
+						} // if ( currentTurn . getTurnNumber() == turnNumberToBeRedone ) 
+					} // if (e instanceof Turn) 
+					
+				} // for(UndoableEdit e : edits)
+				
+				board . setCurrentTurnNumber( nextTurnNumberWithFlag ) ;				
+				
+			} // if ( nextTurnNumberWithFlag > 0 ) 
+			
+		} // if ( this.edits.isEmpty() == false ) 
+		
+	} // public final void RestoreToMark()
+	
 	
 	private Turn findLastMarker() {
 		UndoableEdit editToBeUndone;
@@ -96,16 +210,63 @@ public class TurnUndoManager extends UndoManager
 		return null;
 	}
 	
-	public final void deleteLastMarker() throws CannotUndoException {
-		Turn lastMarker = findLastMarker();
-		if(lastMarker != null) lastMarker.unsetFlag(FLAG_MARKER);
-	}
+	/*
+	 * @author Georg Braun
+	 * Entfernen der Markierung auf dem aktuellen Turn
+	 */
+	public final void deleteMarker() throws CannotUndoException {
+
+		// Prüfen ob es überhaupt Züge gibt.
+		if ( this.edits.isEmpty() == false ) {
+			
+			// Einen Turn holen, damit man an das Board ran kommt.
+			Turn firstTurn = (Turn) this.edits.firstElement() ;
+			
+			// Nummer des aktuell angezeigten Turns im Board
+			int currentBoardTurnNumber = firstTurn . getBoard() . getCurrentTurnNumber() ;
+			
+			// Durch die Liste der Edits laufen und Marker beim currentBoardTurn entfernen.
+			for(UndoableEdit e : edits)
+			{
+				if (e instanceof Turn) {
+									
+					Turn currentTurn = (Turn) e ;
+					if ( currentTurn . getTurnNumber() == currentBoardTurnNumber ) {
+						currentTurn . unsetFlag(FLAG_MARKER) ;
+
+					} // if ( currentTurn . getTurnNumber() == turnNumberToBeRedone ) 
+				} // if (e instanceof Turn) 
+				
+			} // for(UndoableEdit e : edits)
+			
+		} // if ( this.edits.isEmpty() != false )	
+
+	} // public final void deleteMarker()
 	
+	
+	/*
+	 * @author Georg Braun
+	 * Entfernen aller Marker
+	 */
 	public void deleteAllMarker () throws CannotUndoException {
-		LinkedList<Turn> turns = (LinkedList<Turn>) getTurns() ;
-		for ( Turn currentTurn : turns ) {
-			currentTurn . unsetFlag ( FLAG_MARKER ) ;
-		} // for ( Turn currentTurn : turns )
+
+		// Prüfen ob es überhaupt Züge gibt.
+		if ( this.edits.isEmpty() == false ) {
+			
+						
+			// Durch die Liste der Edits laufen und Marker entfernen.
+			for(UndoableEdit e : edits)
+			{
+				if (e instanceof Turn) {
+									
+					Turn currentTurn = (Turn) e ;
+					currentTurn . unsetFlag(FLAG_MARKER) ;
+					
+				} // if (e instanceof Turn) 
+				
+			} // for(UndoableEdit e : edits)
+			
+		} // if ( this.edits.isEmpty() != false )	
 		
 	} // public void deleteAllMarker ()
 	
@@ -177,7 +338,6 @@ public class TurnUndoManager extends UndoManager
 		int turnNumberToBeRedone = nextRedoneTurn . getBoard() . getCurrentTurnNumber() + 1 ;
 		
 		// Durch die Liste der Edits laufen und entsprechend redo(s) aufrufen. Bemerkung: Es geht bestimmt auch eleganter.
-		int anzahlRedo = 0 ;
 		for(UndoableEdit e : edits)
 		{
 			if (e instanceof Turn) {

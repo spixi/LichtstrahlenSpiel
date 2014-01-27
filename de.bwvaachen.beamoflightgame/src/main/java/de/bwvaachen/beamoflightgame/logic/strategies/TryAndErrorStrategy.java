@@ -193,7 +193,7 @@ public class TryAndErrorStrategy extends AbstractStrategy<ITileState> implements
 	private class BacktrackingHook implements AbstractSolver.Hook {
 		@Override
 		public void run() {
-			um.undoToLastMarker();
+			um.goToLastMark();
 		}
 	}
 
