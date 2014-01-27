@@ -20,9 +20,12 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
 import javax.swing.Icon;
@@ -41,6 +44,7 @@ import javax.swing.OverlayLayout;
 import javax.swing.ProgressMonitor;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.SwingWorker.StateValue;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -63,80 +67,119 @@ public final class NewGamePropertyDialog extends JDialog {
 	final ILightController controller;
 	private JButton okButton;
 	
-	private class CreateRandomMediator implements ActionListener {
-
+	private class CreateRandomMediator implements ActionListener, PropertyChangeListener {
+		private ProgressMonitor progressMonitor = new ProgressMonitor(NewGamePropertyDialog.this, null, "", 1, 100);
+		
+		final Holder<Boolean> boardOk = new Holder<Boolean>(false);
+		
 		@Override
 		public void actionPerformed(ActionEvent ev) {     
 			IBeamsOfLightPuzzleBoard board = new BeamsOfLightPuzzleBoard();
-			
-			final Holder<Boolean> boardOk = new Holder<Boolean>(false);
 
 			final double density = (double) properties.get("newgame:density");
 			final int height     = (int) properties.get("newgame:height");
 			final int width      = (int) properties.get("newgame:width");
 			final boolean zerotiles = (boolean)properties.get("newgame:zerotiles");
 			
-			  class CreateRandomWorker extends SwingWorker<Void, Void> {
+			  class CreateRandomWorker extends SwingWorker<IBeamsOfLightPuzzleBoard, Void> {
 					private final Cursor waitCursor = new Cursor(Cursor.WAIT_CURSOR);
 					private final Cursor defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
 					private IBeamsOfLightPuzzleBoard board;
 				  
 				    @Override
-				    public Void doInBackground() {
-				    okButton.setEnabled(false);
-				    setCursor(waitCursor);
+				    public IBeamsOfLightPuzzleBoard doInBackground() {
+				    	okButton.setEnabled(false);
+				    	setCursor(waitCursor);
 				    
 						boardOk.value = false;
-						final Timer timer = new Timer(150000000);
+						final Timer timer = new Timer(15000L);
 						CreateRandomBoard crb = new CreateRandomBoard();
 
-						while(! boardOk.value && ! timer.timeOver()) {
+						while(!isCancelled() && !progressMonitor.isCanceled() && !boardOk.value && !timer.timeOver()) {
 							setProgress(timer.pastTimePercentage());
 							try {
 								board = crb.createRandom(height, width, density, zerotiles);
 								boardOk.value = true;
 							}
 							catch (CouldNotCreatePuzzleException e) {
-								// TODO Auto-generated catch block
-								boardOk.value = false;
+								//boardOk.value = false;
 							}
 						}
-						return null;
+
+						if(boardOk.value) {
+							try {
+								controller.setBoard(board);
+								controller.solve();
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						return board;
 				    }
 
 				    @Override
 				    public void done() {
-				      okButton.setEnabled(true);
-				      setCursor(defaultCursor);
-				      try {
-						controller.setBoard(board);
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				      setProgress(0);
+				     if(isCancelled() || progressMonitor.isCanceled()) {
+				    	 
+				     }
+				     else if(!boardOk.value) {
+							Object[] options = { _("Repeat"), _("Cancel") };
+							int repeat =
+							JOptionPane.showOptionDialog(NewGamePropertyDialog.this, _("TimeOut"), _("Error"),
+							        JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+							        null, options, options[0]);
+							if (repeat == JOptionPane.YES_OPTION) {
+								CreateRandomWorker newInstance = new CreateRandomWorker();
+								PropertyChangeListener pclArray[] = this.getPropertyChangeSupport().getPropertyChangeListeners();
+								for(PropertyChangeListener pcl: pclArray) {
+									newInstance.getPropertyChangeSupport().addPropertyChangeListener(pcl);
+								}
+								newInstance.execute();
+							}
+					  }
+					  else {
+					  
+						  try {
+							  controller.setBoard(get());
+						  }
+						  catch (Exception e) {
+							  // TODO Auto-generated catch block
+							  e.printStackTrace();
+						  }
+					  }
+					  okButton.setEnabled(true);
+					  setCursor(defaultCursor);
 				    }
 			}
 			
 			int repeat = JOptionPane.NO_OPTION;
 			
 			do {
-				SwingWorker w = new CreateRandomWorker();
-				//w.addPropertyChangeListener(this); //TODO!!!
-				w.run();
+				SwingWorker<IBeamsOfLightPuzzleBoard, Void> w = new CreateRandomWorker();
+				
+				w.addPropertyChangeListener(this);
+				w.execute();
+				
 			} while(!boardOk.value && (repeat == JOptionPane.YES_OPTION));
 			
-			if(boardOk.value) {
-				try {
-					controller.setBoard(board);
-					controller.solve();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					System.out.println(e.getClass());
-					e.printStackTrace();
+		}
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			switch(evt.getPropertyName()) {
+				case "state": {
+					SwingWorker.StateValue state = (StateValue) evt.getNewValue();
+					if(state == SwingWorker.StateValue.DONE) {
+						progressMonitor.close();
+					}
+				}
+				case "progress": {
+					int progress = (Integer)evt.getNewValue();
+					progressMonitor.setProgress(progress);
+					break;
 				}
 			}
-			
 		}
 		
 	}
