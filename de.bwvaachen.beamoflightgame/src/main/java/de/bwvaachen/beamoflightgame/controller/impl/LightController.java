@@ -245,6 +245,35 @@ public class LightController implements ILightController {
 	} // public boolean GameIsCorrect () 
 	
 	
+	public boolean gameIsFinished () {
+		
+		int puzzleBoardWidth    = puzzleBoard . getWidth() ;
+		int puzzleBoardHeight   = puzzleBoard . getHeight() ;
+		boolean gameIsFinished = true ;
+		
+		for ( int currentRow = 0 ; currentRow < puzzleBoardHeight ; currentRow++ ) {
+			for ( int currentCol = 0 ; currentCol < puzzleBoardWidth ; currentCol++ ) {
+				
+				ITile currentBoardTile = puzzleBoard . getTileAt( currentCol , currentRow) ;				
+				if ( currentBoardTile instanceof LightTile ) {
+					LightTile currentBoardLightTile = (LightTile) currentBoardTile ;
+					LightTileState currentBoardLightTileState = currentBoardLightTile . getTileState() ;
+					
+										
+					if ( currentBoardLightTileState == LightTileState . EMPTY ) {					
+						gameIsFinished = false ;
+					} // if ( currentBoardLightTileState == LightTileState . EMPTY )	
+						
+				} // if ( currentBoardTile instanceof LightTile )
+				
+			} // for ( int currentCol = 0 ; currentCol < puzzleBoardWidth ; currentCol++ )			
+		} // for ( int currentRow = 0 ; currentRow < puzzleBoardHeight ; currentRow++ )
+		
+		return gameIsFinished ;
+					
+	}
+	
+	
 	/*
 	 * @author Georg Braun
 	 * @Prüfen ob das übergeben Feld richtig ist (Vergleich mit der Musterlösung)

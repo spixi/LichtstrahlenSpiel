@@ -247,6 +247,13 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 				// Das Board neu zeichnen.
 				updateButtonGraphics();
 				
+				
+				if ( controller . gameIsFinished() ) {
+					int anzahlZuege = controller . getCurrentModel() . getCurrentTurnNumber() ;
+					JOptionPane . showMessageDialog( null , (_("FinishedGame")) + "\n"  + (_("TurnCount")) + anzahlZuege , (_("FinishedGameTitle")) ,  JOptionPane . PLAIN_MESSAGE ) ;
+				} // if ( controller . gameIsFinished() )				
+				
+				
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -654,9 +661,8 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 				mnGame . add ( mntmShowTurns ) . addActionListener( new ActionListener() {
 
 					@Override
-					public void actionPerformed(ActionEvent arg0) {
-						controller . getUndoManager() . getTurnsInfo() ;
-						
+					public void actionPerformed(ActionEvent arg0) {						
+						JOptionPane . showMessageDialog( null , controller . getUndoManager() . getTurnsInfo() , "" ,  JOptionPane . PLAIN_MESSAGE ) ;
 					} // public void actionPerformed(ActionEvent arg0)
 					
 				}) ; // .. new ActionListener() 
