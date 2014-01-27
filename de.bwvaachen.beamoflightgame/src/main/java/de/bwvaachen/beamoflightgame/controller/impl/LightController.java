@@ -151,7 +151,7 @@ public class LightController implements ILightController {
 		
 		puzzleBoard = _board ;
 		if(solutionBoard == null)
-		{		
+		{	
 			solve();
 		}
 		turnManager = new TurnUndoManager();
@@ -183,14 +183,23 @@ public class LightController implements ILightController {
 					and(IntersectionStrategy.class).
 					//and(TryAndErrorStrategy.class).
 					forBoard(solutionBoard);
-			System.setErr(new PrintStream("/dev/null"));
+			if(System.getProperty("os.name", "generic").toLowerCase().startsWith("win")) {
+				System.setErr(new PrintStream("nul"));
+			}
+			else {
+				System.setErr(new PrintStream("/dev/null"));
+			}
 			s.solve();
 			s.getLevel();
 			
 		}
+		//Was soll das hier? Es kam eine MaximumIterationsExceededException
+		//Niemals einfach nur Exception oder Throwable abfangen,
+		//sonst weiß nachher niemand mehr, welche Exception überhaupt aufgetreten ist!!!
 		catch ( Exception e ) {
-			System . out . println ( e.getMessage() ) ;
-			solutionBoard = null ;
+			System . out . println ( e.getMessage() ) ; //ebenso schwachsinnig, da nicht jede Exception eine Message hat
+			                                            //Dafür hat die Exception doch ihren Klassennamen, damit man sie unterscheiden kann!
+			//solutionBoard = null ;                    //Erstmal auskommentiert!
 		} // try .. catch
 		
 	} // public void solve () 

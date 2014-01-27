@@ -496,7 +496,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		
 		// Das Spielfeld vom Controller holen:
 		
-        // TODO temporï¿½r feste Werte fï¿½r Tests eingetragen.
+        // TODO temporaer feste Werte fuer Tests eingetragen.
         int rows = b.getHeight() ;
         int cols = b.getWidth() ;
         
@@ -506,14 +506,14 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
         // Fenstergröße anpassen.
         setBounds( 100 , 100 , ( cols * 127 ) + 30 , ( rows * 127 ) + 124 ) ;
         
-        // Schleife ï¿½ber das "Spielfeld"
+        // Schleife ueber das "Spielfeld"
         for ( int row=0 ; row<rows ; row++ ) {
                 for ( int col=0 ;col<cols ; col++ ) {
 
                         // Neuen Button erzeugen
                         final TileButton newTileButton = new TileButton ( b . getTileAt ( col , row ) ) ;
                         newTileButton . setPreferredSize( new Dimension (128 , 128 ) ) ;
-                        // Action hinzufï¿½gen
+                        // Action hinzufuegen
                         
                         b . getTileAt ( col , row ) . accept( new ITileVisitor() {
 

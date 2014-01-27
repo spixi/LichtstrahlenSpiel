@@ -79,7 +79,6 @@ public class CreateRandomBoard
 						nt.put();
 						oNumTiles.add(nt);
 					}
-
 				}
 			}
 
@@ -89,6 +88,7 @@ public class CreateRandomBoard
 
 			boardOK = setNumbers(oNumTiles, allowZeroTiles);
 		}
+
 
 
 		return oBoard;
@@ -111,8 +111,6 @@ public class CreateRandomBoard
 		boolean boardOk;
 		List<LightTileState> allDirections = LightTileState.allDirections();
 
-		Collections.shuffle(oNumTiles);
-
 		for (int i = 0; i < oNumTiles.size(); i++)
 		{
 			BoardTraverser oTraverser = new BoardTraverser(oNumTiles.get(i));
@@ -124,7 +122,7 @@ public class CreateRandomBoard
 				{
 					if(oTraverser.get() == null)
 					{
-						oBoard.putTile(new LightTile(oBoard, oTraverser.getX(), oTraverser.getY()));
+						new LightTile(oBoard, oTraverser.getX(), oTraverser.getY()).put();
 						iNumber++;
 						iPutTiles++;
 						iCountOfLightTiles--;
