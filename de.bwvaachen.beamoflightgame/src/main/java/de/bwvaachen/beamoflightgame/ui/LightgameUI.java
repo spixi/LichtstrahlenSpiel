@@ -174,8 +174,16 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 						}
 						LightTile currentTile = (LightTile) traverser.get() ; 
 						currentTile . setState( lichtRichtung, true) ;						
-						firstTile = false;
 						traverser . shift ( traverseDirection ) ;
+						
+						if ( controller . GameIsCorrect() ) {              
+							controller . getUndoManager() . setStable() ;              
+						 } 
+						else
+						{
+							controller . getUndoManager() . setError() ;
+						}
+						
 					} while(true);
 					
 					activeNumberTile = null ;					
@@ -218,10 +226,18 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 						controller . getCurrentModel() . setCurrentTurnNumber( currentTurnNumber + 1 ) ;
 						
 						while ( currentTile . getTileState() . getTraverseDirection() == traverseDirection ) {
-							currentTile . setState ( LightTileState . EMPTY , true ) ;
-							significant = false ;
+							currentTile . setState ( LightTileState . EMPTY , true ) ;							
 							traverser . shift ( traverseDirection ) ;
 							currentTile = (LightTile) traverser . get() ;
+							
+							if ( controller . GameIsCorrect() ) {              
+								controller . getUndoManager() . setStable() ;              
+							 } 
+							else
+							{
+								controller . getUndoManager() . setError() ;
+							}
+							
 						} // while ( currentTile . getTileState() . getTraverseDirection() == traverseDirection ) 
 						
 					} // if ( lichtRichtung != LightTileState . EMPTY ) 

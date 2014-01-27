@@ -79,8 +79,13 @@ public class TurnUndoManager extends UndoManager
 		if (editToBeUndone instanceof Turn) {
 			((Turn) editToBeUndone).setFlag(FLAG_ERROR);
 			stable = false;
-		}
+		}	
 	}
+	
+	public void setStable() {
+		stable = true ;
+	}
+
 		
 	
 	public final void goToLastMark() throws CannotUndoException
@@ -122,6 +127,8 @@ public class TurnUndoManager extends UndoManager
 			} // if ( nextLowerTurnWithFlag > 0 )
 					
 		} // if ( this.edits.isEmpty() == false )
+		
+		notifyChangeListeners();
 		
 	} // public final void goToLastMark()
 	
@@ -177,6 +184,8 @@ public class TurnUndoManager extends UndoManager
 			} // if ( nextTurnNumberWithFlag > 0 ) 
 			
 		} // if ( this.edits.isEmpty() == false ) 
+		
+		notifyChangeListeners();
 		
 	} // public final void RestoreToMark()
 	
@@ -463,6 +472,8 @@ public class TurnUndoManager extends UndoManager
 			addEdit(t);
 		}
 	}
+
+
 
 	
 	/*
