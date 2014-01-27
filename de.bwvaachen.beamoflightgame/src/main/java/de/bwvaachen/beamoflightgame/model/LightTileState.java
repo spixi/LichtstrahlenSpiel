@@ -15,33 +15,34 @@ import java.util.List;
 import java.util.Map;
 
 import de.bwvaachen.beamoflightgame.helper.TraverseDirection;
+import de.bwvaachen.beamoflightgame.ui.RotatedIcon.Rotate;
 
 public enum LightTileState implements ITileState {
-	SOUTH('s', new TraverseDirection(0,1)) {
+	SOUTH('s', new TraverseDirection(0,1), Rotate.UPSIDE_DOWN) {
 		@Override
 		public LightTileState reverse() {
 			return NORTH;
 		}
 	},
-	WEST('w', new TraverseDirection(-1,0)) {
+	WEST('w', new TraverseDirection(-1,0), Rotate.UP) {
 		@Override
 		public LightTileState reverse() {
 			return EAST;
 		}
 	},
-	NORTH('n', new TraverseDirection(0,-1)) {
+	NORTH('n', new TraverseDirection(0,-1), Rotate.NONE) {
 		@Override
 		public LightTileState reverse() {
 			return SOUTH;
 		}
 	},
-	EAST('e', new TraverseDirection(1,0)) {
+	EAST('e', new TraverseDirection(1,0), Rotate.DOWN) {
 		@Override
 		public LightTileState reverse() {
 			return WEST;
 		}
 	},
-	EMPTY('-', null);
+	EMPTY('-', null, Rotate.NONE);
 	
 	private final static Map<Character,LightTileState> map;
 	private final static LightTileState allDirections[];
@@ -64,12 +65,17 @@ public enum LightTileState implements ITileState {
 	private char sign;
 	
 	private TraverseDirection traverseDirection;
+	private Rotate rotation;
 
-	private LightTileState(char c, TraverseDirection d) {
+	private LightTileState(char c, TraverseDirection d, Rotate r) {
 		sign              = c;
 		traverseDirection = d;
+		rotation          = r;
 	}
 	
+	public Rotate getRotation() {
+		return rotation;
+	}
 	
 	public boolean equals(ITileState tileState)
 	{

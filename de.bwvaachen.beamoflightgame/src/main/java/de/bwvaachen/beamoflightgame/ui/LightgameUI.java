@@ -158,8 +158,13 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 					boolean alleGezeichnet = false ;
 					boolean firstTile = true;
 					
-					// Ermitteln was die letzte Zug-Nummer ist.
+					// Ermitteln was die letzte Turn-Nummer ist.
 					int currentTurnNumber = controller . getCurrentModel() . getCurrentTurnNumber() ;
+					
+					// Falls es noch Turns gibt die eine höhere Turn-Nummer haben, müssen diese gelöscht werden (z.B. wenn Züge rückgängig gemacht werden und dann ein Strahl gezogen wird.. dann gibt es immer noch die alten
+					// Turns in der Liste).
+					controller . getUndoManager() . deleteTurns( currentTurnNumber ) ;
+					
 					// Diese Zug-Nummer für diesen neuen Zug erhöhen
 					controller . getCurrentModel() . setCurrentTurnNumber( currentTurnNumber + 1 ) ;
 					
@@ -168,7 +173,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 							break;
 						}
 						LightTile currentTile = (LightTile) traverser.get() ; 
-						currentTile . setState( lichtRichtung, firstTile) ;
+						currentTile . setState( lichtRichtung, true) ;						
 						firstTile = false;
 						traverser . shift ( traverseDirection ) ;
 					} while(true);
@@ -204,6 +209,11 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 						
 						// Ermitteln was die letzte Zug-Nummer ist.
 						int currentTurnNumber = controller . getCurrentModel() . getCurrentTurnNumber() ;
+
+						// Falls es noch Turns gibt die eine höhere Turn-Nummer haben, müssen diese gelöscht werden (z.B. wenn Züge rückgängig gemacht werden und dann ein Strahl gezogen wird.. dann gibt es immer noch die alten
+						// Turns in der Liste).
+						controller . getUndoManager() . deleteTurns( currentTurnNumber ) ;
+						
 						// Diese Zug-Nummer für diesen neuen Zug erhöhen
 						controller . getCurrentModel() . setCurrentTurnNumber( currentTurnNumber + 1 ) ;
 						
@@ -401,7 +411,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 	public LightgameUI(ILightController cntrl) {
 		controller = cntrl;
 		
-
+		
 			// Setzen der initialen Fensterposition und Grï¿½ï¿½e.
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			//setBounds(100, 100, 450, 300);
@@ -555,6 +565,10 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 	private void buildMenu() {
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
+
+		
+		// -----------------------------------------------
+		// Erzeugen des File Menus
 		
 		JMenu mnFile = new JMenu(_("File"));
 		menuBar.add(mnFile);
@@ -571,8 +585,8 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 			}
 		});
 		
-		JSeparator separator_2 = new JSeparator();
-		mnFile.add(separator_2);
+		// Trennlinie - File
+		mnFile.add( new JSeparator() );
 		
 		JMenuItem mntmSave = new JMenuItem(_("Save"));
 		mnFile.add(mntmSave);
@@ -580,17 +594,22 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		JMenuItem mntmSaveAs = new JMenuItem(_("SaveAs"));
 		mnFile.add(mntmSaveAs);
 		
-		JSeparator separator_1 = new JSeparator();
-		mnFile.add(separator_1);
+		// Trennlinie - File
+		mnFile.add( new JSeparator() );
 		
 		JMenuItem mntmLoad = new JMenuItem(_("Load"));
 		mnFile.add(mntmLoad);
+		
+		
+		
+		// -----------------------------------------------
+		// Erzeugen des Game Menus
 		
 		JMenu mnGame = new JMenu(_("Game"));
 		menuBar.add(mnGame);
 		
 		
-		
+		// Prüfen des Spiels
 		JMenuItem mntmCheckGame = new JMenuItem ( _("Check") ) ;
 		mnGame . add ( mntmCheckGame ) . addActionListener( new ActionListener() {
 
@@ -610,8 +629,28 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		}) ; // .. new ActionListener() 
 		
 		
-		mnGame.add ( new JSeparator() );
+		// Trennlinie - Game
 		
+		mnGame.add( new JSeparator() );
+		
+		// Prüfen des Spiels
+				JMenuItem mntmShowTurns = new JMenuItem ( "Show Turns" ) ;
+				mnGame . add ( mntmShowTurns ) . addActionListener( new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						controller . getUndoManager() . getTurnsInfo() ;
+						
+					} // public void actionPerformed(ActionEvent arg0)
+					
+				}) ; // .. new ActionListener() 
+				
+				
+		// Trennlinie - Game
+		mnGame.add( new JSeparator() );
+
+				
+		// Zurück zum Fehler
 		JMenuItem mntmbacktoFailure = new JMenuItem(_("BackToFailure"));
 		mnGame.add(mntmbacktoFailure);
 		
@@ -623,9 +662,11 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 			}
 		});
 		
-		JSeparator separator_3 = new JSeparator();
-		mnGame.add(separator_3);
+		// Trennlinie - Game
+		mnGame.add( new JSeparator() ); 
 		
+		
+		// Markierung setzen
 		JMenuItem mntmsetMarker = new JMenuItem(_("SetMarker"));
 		mnGame.add(mntmsetMarker);
 		
@@ -638,7 +679,8 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 			}
 		});
 		
-		// Delete a mark
+		
+		// Markierung löschen
 		JSeparator separator_4 = new JSeparator();
 		mnGame.add(separator_4);
 		
@@ -653,7 +695,8 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 			}
 		});
 		
-		// Delete all marks
+		
+		// Alle Markierungen löschen
 		mnGame . add ( new JSeparator() ) ;
 		JMenuItem mntmDeleteAllMarker = new JMenuItem(_p("DeleteMarker",2)) ;
 		mnGame . add ( mntmDeleteAllMarker )  ;
@@ -668,7 +711,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		}) ; // mntmDeleteAllMarker
 		
 		
-		// Go back to a mark
+		// Zurück zur letzten Markierung
 		JSeparator separator_5 = new JSeparator();
 		mnGame.add(separator_5);
 		
@@ -677,12 +720,16 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				controller.getUndoManager().undoToLastMarker();				
+				controller.getUndoManager().undoToLastMarker();
+				
 			}
 		});
 				
-		
 		mnGame.add(mntmBackToMark);
+		
+		
+		// -----------------------------------------------
+		// Erzeugen des Editor Menus
 		
 		JMenu mnEditor = new JMenu(_("Editor"));
 		menuBar.add(mnEditor);

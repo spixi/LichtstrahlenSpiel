@@ -13,21 +13,14 @@ import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.Set;
-import java.util.Stack;
-
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
-import javax.swing.undo.CompoundEdit;
-import javax.swing.undo.UndoableEdit;
-
 import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
 import de.bwvaachen.beamoflightgame.helper.AbstractTileVisitor;
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.Holder;
 import de.bwvaachen.beamoflightgame.logic.UnsolvablePuzzleException;
 import de.bwvaachen.beamoflightgame.logic.solver.AbstractSolver;
-import de.bwvaachen.beamoflightgame.logic.solver.AbstractSolver.Hook;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
 import de.bwvaachen.beamoflightgame.model.ITile;
 import de.bwvaachen.beamoflightgame.model.ITileState;
