@@ -112,148 +112,153 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		public void actionPerformed(ActionEvent e) {
 
 			try {
-				// Den auslï¿½senden Button holen
-				TileButton btn = (TileButton) e.getSource();
-				// Den Traverser initialisieren.
-				BoardTraverser traverser = new BoardTraverser ( btn.getTile() ) ;
+				
+					// Prüfen ob es sich nicht um ein Solution Board handelt
+					if ( controller . getCurrentModel() . isSolution() == false ) {
+					
+						// Den auslï¿½senden Button holen
+						TileButton btn = (TileButton) e.getSource();
+						// Den Traverser initialisieren.
+						BoardTraverser traverser = new BoardTraverser ( btn.getTile() ) ;
+									
+						// Lichtstrahl ziehen
+						if ( ( activeNumberTile != null ) && ( btn . markiert ) )  {
 							
-				// Lichtstrahl ziehen
-				if ( ( activeNumberTile != null ) && ( btn . markiert ) )  {
-					
-					// *** Setzten von Lichtstrahlen ***
-					
-					int lightTileX = btn . getCol() ;
-					int lightTileY = btn . getRow () ;
-					int numberTileX = activeNumberTile . getX() ;
-					int numberTileY = activeNumberTile . getY() ;
-					
-					// Ermitteln in welche Richtung gezogen wurde
-					LightTileState lichtRichtung ;
-										
-					if ( lightTileY == numberTileY ) {
-						if ( lightTileX < numberTileX ) {
-							lichtRichtung = LightTileState.WEST ;
-						} 
-						else
-						{
-							lichtRichtung = LightTileState.EAST ;
-						}
+							// *** Setzten von Lichtstrahlen ***
 							
-					} 
-					else
-					{
-						if ( lightTileY < numberTileY ) {
-							lichtRichtung = LightTileState.NORTH ;
-						}
-						else {
-							lichtRichtung = LightTileState.SOUTH ;
-						}
-							 
-					} // if ( lightTileY == numberTileY ) 
-										
-					// Den Traverser auf den Button Zielbutton (LightTile) setzen.
-					traverser . moveTo ( lightTileX , lightTileY ) ;
-					TraverseDirection traverseDirection = lichtRichtung . reverse() . getTraverseDirection() ;
-					
-					boolean alleGezeichnet = false ;
-					boolean firstTile = true;
-					
-					// Ermitteln was die letzte Turn-Nummer ist.
-					int currentTurnNumber = controller . getCurrentModel() . getCurrentTurnNumber() ;
-					
-					// Falls es noch Turns gibt die eine höhere Turn-Nummer haben, müssen diese gelöscht werden (z.B. wenn Züge rückgängig gemacht werden und dann ein Strahl gezogen wird.. dann gibt es immer noch die alten
-					// Turns in der Liste).
-					controller . getUndoManager() . deleteTurns( currentTurnNumber ) ;
-					
-					// Diese Zug-Nummer für diesen neuen Zug erhöhen
-					controller . getCurrentModel() . setCurrentTurnNumber( currentTurnNumber + 1 ) ;
-					
-					do  {
-						if ( ( numberTileX == traverser . getX() ) && ( numberTileY == traverser . getY() ) ) {
-							break;
-						}
-						LightTile currentTile = (LightTile) traverser.get() ; 
-						currentTile . setState( lichtRichtung, true) ;						
-						traverser . shift ( traverseDirection ) ;
-						
-						if ( controller . GameIsCorrect() ) {              
-							controller . getUndoManager() . setStable() ;              
-						 } 
-						else
-						{
-							controller . getUndoManager() . setError() ;
-						}
-						
-					} while(true);
-					
-					activeNumberTile = null ;					
-					
-					// Entfernen aller Markierungen, da der Zug gemacht wurde.
-					for ( TileButton aktButton : buttons ) {
-						aktButton . markiert = false ;						
-					} // for ( TileButton aktButton : buttons ) 					
-					
-				} // if ( ( activeNumberTile != null ) && ( btn . markiert ) )
-				else {
-					
-					// *** Entfernen von Lichstrahlen ***				
-					
-					// Das ausgewählte Tile holen
-					LightTile ausgangsTile 	     = (LightTile) btn . getTile() ;
-					// Ermitteln der Richtung
-					LightTileState lichtRichtung = (LightTileState) ausgangsTile . getTileState() ;
-					
-					if ( lichtRichtung != LightTileState . EMPTY ) {
-						
-						// Traverser setzen
-						traverser . moveTo ( ausgangsTile . getX() , ausgangsTile . getY() ) ;
-						// Ermitteln der Traverse-Richtung
-						TraverseDirection traverseDirection = lichtRichtung . getTraverseDirection() ; 
-						
-						boolean significant = true ;
-						// Vom Ausgangs-Tile bis zum "Strahlende" die TileStates auf EMPTY setzen.
-						LightTile currentTile = ausgangsTile ;						
-						
-						
-						// Ermitteln was die letzte Zug-Nummer ist.
-						int currentTurnNumber = controller . getCurrentModel() . getCurrentTurnNumber() ;
-
-						// Falls es noch Turns gibt die eine höhere Turn-Nummer haben, müssen diese gelöscht werden (z.B. wenn Züge rückgängig gemacht werden und dann ein Strahl gezogen wird.. dann gibt es immer noch die alten
-						// Turns in der Liste).
-						controller . getUndoManager() . deleteTurns( currentTurnNumber ) ;
-						
-						// Diese Zug-Nummer für diesen neuen Zug erhöhen
-						controller . getCurrentModel() . setCurrentTurnNumber( currentTurnNumber + 1 ) ;
-						
-						while ( currentTile . getTileState() . getTraverseDirection() == traverseDirection ) {
-							currentTile . setState ( LightTileState . EMPTY , true ) ;							
-							traverser . shift ( traverseDirection ) ;
-							currentTile = (LightTile) traverser . get() ;
+							int lightTileX = btn . getCol() ;
+							int lightTileY = btn . getRow () ;
+							int numberTileX = activeNumberTile . getX() ;
+							int numberTileY = activeNumberTile . getY() ;
 							
-							if ( controller . GameIsCorrect() ) {              
-								controller . getUndoManager() . setStable() ;              
-							 } 
+							// Ermitteln in welche Richtung gezogen wurde
+							LightTileState lichtRichtung ;
+												
+							if ( lightTileY == numberTileY ) {
+								if ( lightTileX < numberTileX ) {
+									lichtRichtung = LightTileState.WEST ;
+								} 
+								else
+								{
+									lichtRichtung = LightTileState.EAST ;
+								}
+									
+							} 
 							else
 							{
-								controller . getUndoManager() . setError() ;
-							}
+								if ( lightTileY < numberTileY ) {
+									lichtRichtung = LightTileState.NORTH ;
+								}
+								else {
+									lichtRichtung = LightTileState.SOUTH ;
+								}
+									 
+							} // if ( lightTileY == numberTileY ) 
+												
+							// Den Traverser auf den Button Zielbutton (LightTile) setzen.
+							traverser . moveTo ( lightTileX , lightTileY ) ;
+							TraverseDirection traverseDirection = lichtRichtung . reverse() . getTraverseDirection() ;
 							
-						} // while ( currentTile . getTileState() . getTraverseDirection() == traverseDirection ) 
+							boolean alleGezeichnet = false ;
+							boolean firstTile = true;
+							
+							// Ermitteln was die letzte Turn-Nummer ist.
+							int currentTurnNumber = controller . getCurrentModel() . getCurrentTurnNumber() ;
+							
+							// Falls es noch Turns gibt die eine höhere Turn-Nummer haben, müssen diese gelöscht werden (z.B. wenn Züge rückgängig gemacht werden und dann ein Strahl gezogen wird.. dann gibt es immer noch die alten
+							// Turns in der Liste).
+							controller . getUndoManager() . deleteTurns( currentTurnNumber ) ;
+							
+							// Diese Zug-Nummer für diesen neuen Zug erhöhen
+							controller . getCurrentModel() . setCurrentTurnNumber( currentTurnNumber + 1 ) ;
+							
+							do  {
+								if ( ( numberTileX == traverser . getX() ) && ( numberTileY == traverser . getY() ) ) {
+									break;
+								}
+								LightTile currentTile = (LightTile) traverser.get() ; 
+								currentTile . setState( lichtRichtung, true) ;						
+								traverser . shift ( traverseDirection ) ;
+								
+								if ( controller . GameIsCorrect() ) {              
+									controller . getUndoManager() . setStable() ;              
+								 } 
+								else
+								{
+									controller . getUndoManager() . setError() ;
+								}
+								
+							} while(true);
+							
+							activeNumberTile = null ;					
+							
+							// Entfernen aller Markierungen, da der Zug gemacht wurde.
+							for ( TileButton aktButton : buttons ) {
+								aktButton . markiert = false ;						
+							} // for ( TileButton aktButton : buttons ) 					
+							
+						} // if ( ( activeNumberTile != null ) && ( btn . markiert ) )
+						else {
+							
+							// *** Entfernen von Lichstrahlen ***				
+							
+							// Das ausgewählte Tile holen
+							LightTile ausgangsTile 	     = (LightTile) btn . getTile() ;
+							// Ermitteln der Richtung
+							LightTileState lichtRichtung = (LightTileState) ausgangsTile . getTileState() ;
+							
+							if ( lichtRichtung != LightTileState . EMPTY ) {
+								
+								// Traverser setzen
+								traverser . moveTo ( ausgangsTile . getX() , ausgangsTile . getY() ) ;
+								// Ermitteln der Traverse-Richtung
+								TraverseDirection traverseDirection = lichtRichtung . getTraverseDirection() ; 
+								
+								boolean significant = true ;
+								// Vom Ausgangs-Tile bis zum "Strahlende" die TileStates auf EMPTY setzen.
+								LightTile currentTile = ausgangsTile ;						
+								
+								
+								// Ermitteln was die letzte Zug-Nummer ist.
+								int currentTurnNumber = controller . getCurrentModel() . getCurrentTurnNumber() ;
+		
+								// Falls es noch Turns gibt die eine höhere Turn-Nummer haben, müssen diese gelöscht werden (z.B. wenn Züge rückgängig gemacht werden und dann ein Strahl gezogen wird.. dann gibt es immer noch die alten
+								// Turns in der Liste).
+								controller . getUndoManager() . deleteTurns( currentTurnNumber ) ;
+								
+								// Diese Zug-Nummer für diesen neuen Zug erhöhen
+								controller . getCurrentModel() . setCurrentTurnNumber( currentTurnNumber + 1 ) ;
+								
+								while ( currentTile . getTileState() . getTraverseDirection() == traverseDirection ) {
+									currentTile . setState ( LightTileState . EMPTY , true ) ;							
+									traverser . shift ( traverseDirection ) ;
+									currentTile = (LightTile) traverser . get() ;
+									
+									if ( controller . GameIsCorrect() ) {              
+										controller . getUndoManager() . setStable() ;              
+									 } 
+									else
+									{
+										controller . getUndoManager() . setError() ;
+									}
+									
+								} // while ( currentTile . getTileState() . getTraverseDirection() == traverseDirection ) 
+								
+							} // if ( lichtRichtung != LightTileState . EMPTY ) 
+							
+						} // // if ( ( activeNumberTile != null ) && ( btn . markiert ) ) .. else				
+								
+						// Das Board neu zeichnen.
+						updateButtonGraphics();
 						
-					} // if ( lichtRichtung != LightTileState . EMPTY ) 
+						
+						if ( controller . gameIsFinished() ) {
+							int anzahlZuege = controller . getCurrentModel() . getCurrentTurnNumber() ;
+							JOptionPane . showMessageDialog( null , (_("FinishedGame")) + "\n"  + (_("TurnCount")) + anzahlZuege , (_("FinishedGameTitle")) ,  JOptionPane . PLAIN_MESSAGE ) ;
+						} // if ( controller . gameIsFinished() )				
+				
+					} // if ( controller . getCurrentModel() . isSolution() == false )
 					
-				} // // if ( ( activeNumberTile != null ) && ( btn . markiert ) ) .. else				
-						
-				// Das Board neu zeichnen.
-				updateButtonGraphics();
-				
-				
-				if ( controller . gameIsFinished() ) {
-					int anzahlZuege = controller . getCurrentModel() . getCurrentTurnNumber() ;
-					JOptionPane . showMessageDialog( null , (_("FinishedGame")) + "\n"  + (_("TurnCount")) + anzahlZuege , (_("FinishedGameTitle")) ,  JOptionPane . PLAIN_MESSAGE ) ;
-				} // if ( controller . gameIsFinished() )				
-				
-				
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -280,94 +285,98 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		public void actionPerformed(ActionEvent e) {
 		
 			try {	
-				
-				activeNumberTile = null ;
-				for ( TileButton aktButton : buttons ) {
-					aktButton . markiert = false ;				
-				} // for ( TileButton aktButton : buttons ) 
-				
-				// Den auslï¿½senden Button holen
-				TileButton btn = (TileButton) e.getSource();
-
-				// Prï¿½fen ob es sich um ein NumberTile handelt.
-				if ( btn . getTile() instanceof NumberTile ) {
-				
-					// Variable deklarieren, die bei der Anzeige der mï¿½glichen Felder hilft.
-					boolean CurrentTileIsLightTile ;
-	
-					// Die verbleibende Strahlstärke holen										
-					NumberTile currentTile = (NumberTile) btn . getTile () ;
-					int strahlStaerke = currentTile . getRemainingLightRange() ;
-					
-					// Den Traverser initialisieren.
-					BoardTraverser traverser = new BoardTraverser ( btn.getTile() ) ;
-					// Das Modell vom Controller holen.
-					IBeamsOfLightPuzzleBoard currentModel = controller . getCurrentModel() ;
-					
-					
-					// Schleife ï¿½ber alle "Himmelsrichtungen" (West, Ost, Sï¿½d, Nord). Dafï¿½r nehm ich den Aufzï¿½hlungstyp LightTileState.
-					for ( LightTileState aktState : LightTileState . values() ) {
+					// Prüfen ob es sich nicht um ein Solution Board handelt
+					if ( controller . getCurrentModel() . isSolution() == false ) {
 						
-						// Zu dem LightTileState zï¿½hlt auch das Element "Empty", welches ich aber nicht fï¿½r die "Zug-ï¿½berprï¿½fung" brauche.
-						if ( aktState != LightTileState . EMPTY ) {
+						activeNumberTile = null ;
+						for ( TileButton aktButton : buttons ) {
+							aktButton . markiert = false ;				
+						} // for ( TileButton aktButton : buttons ) 
+						
+						// Den auslï¿½senden Button holen
+						TileButton btn = (TileButton) e.getSource();
+		
+						// Prï¿½fen ob es sich um ein NumberTile handelt.
+						if ( btn . getTile() instanceof NumberTile ) {
+						
+							// Variable deklarieren, die bei der Anzeige der mï¿½glichen Felder hilft.
+							boolean CurrentTileIsLightTile ;
+			
+							// Die verbleibende Strahlstärke holen										
+							NumberTile currentTile = (NumberTile) btn . getTile () ;
+							int strahlStaerke = currentTile . getRemainingLightRange() ;
 							
-	
-							// Den Traverser auf den Button Ausgangsbutton (NumberTile) setzen.
-							traverser . moveTo ( btn . getCol() , btn . getRow() ) ;
-							TraverseDirection traverseDirection = aktState . getTraverseDirection() ;
-													
-							// Initial ist diese Aussage falsch, da man den Traverser auf das Ausgangs-Numbertile setzt. Ich setz das trotzdem auf true, 
-							// da man sich so ein paar Abfragen spart. Der Status wird direkt als erstes in der Schleife geupdatet und ist ab dort "richtig".
-							CurrentTileIsLightTile = true ;
+							// Den Traverser initialisieren.
+							BoardTraverser traverser = new BoardTraverser ( btn.getTile() ) ;
+							// Das Modell vom Controller holen.
+							IBeamsOfLightPuzzleBoard currentModel = controller . getCurrentModel() ;
 							
-							int verbrauchteStaerke = 0 ;
-							boolean conflictWithBeam = false ;
 							
-							// Wandern in die aktuelle Himmelsrichtung unter folgenden Bedinungen:
-							// 1. Es ist noch mï¿½glich weiter in die Richtung zu gehen
-							// 2. Es handelt sich um ein LightTile Feld
-							// 3. Die Anzahl der Felder (aus dem NumberTile) wird nicht ï¿½berschritten.
-							while ( ( traverser . shift ( traverseDirection ) ) && ( CurrentTileIsLightTile ) && ( verbrauchteStaerke < strahlStaerke ) && ( conflictWithBeam == false ) ) {							
+							// Schleife ï¿½ber alle "Himmelsrichtungen" (West, Ost, Sï¿½d, Nord). Dafï¿½r nehm ich den Aufzï¿½hlungstyp LightTileState.
+							for ( LightTileState aktState : LightTileState . values() ) {
 								
-								conflictWithBeam = false ;
-								
-								// Prï¿½fen auf was fï¿½r einem Feld der Traverser aktuell steht.
-								CurrentTileIsLightTile = ( currentModel . getTileAt( traverser . getX(), traverser . getY() ) instanceof LightTile );
-								
-								if ( CurrentTileIsLightTile ) {
-									// Den Button holen, der das aktuelle Tile reprï¿½sentiert.
-									int buttonArrayPos = ( ( traverser . getY() * currentModel . getWidth() ) + traverser . getX() )  ;
-									TileButton aktButton = buttons . get ( buttonArrayPos ) ;
-
-									LightTile aktTile = (LightTile) traverser . get() ;
+								// Zu dem LightTileState zï¿½hlt auch das Element "Empty", welches ich aber nicht fï¿½r die "Zug-ï¿½berprï¿½fung" brauche.
+								if ( aktState != LightTileState . EMPTY ) {
 									
+			
+									// Den Traverser auf den Button Ausgangsbutton (NumberTile) setzen.
+									traverser . moveTo ( btn . getCol() , btn . getRow() ) ;
+									TraverseDirection traverseDirection = aktState . getTraverseDirection() ;
+															
+									// Initial ist diese Aussage falsch, da man den Traverser auf das Ausgangs-Numbertile setzt. Ich setz das trotzdem auf true, 
+									// da man sich so ein paar Abfragen spart. Der Status wird direkt als erstes in der Schleife geupdatet und ist ab dort "richtig".
+									CurrentTileIsLightTile = true ;
 									
-									if ( aktTile . getTileState() == LightTileState.EMPTY ) {
-										// Einfï¿½rben des Buttons
-										aktButton . markiert = true ;
-										// Die "verbrauchte Stï¿½rke" erhï¿½hen.
-										verbrauchteStaerke += 1 ;
-										// Es wurde mindestens ein mögliches Feld markiert. Deshalb wird dieses NumberTile gespeichert, damit man später beim Klick auf ein markiertes LightTile weiß
-										// von wo der Strahl kommt.
-										activeNumberTile = btn . getTile() ;
-									}
-									else
-									{
-										if ( aktTile . getTileState () != aktState ) {
-											conflictWithBeam = true ;
-										}
-									}
-								} // if ( CurrentTileIsLightTile ) 
-												
-							} // while ( .. ) 
+									int verbrauchteStaerke = 0 ;
+									boolean conflictWithBeam = false ;
+									
+									// Wandern in die aktuelle Himmelsrichtung unter folgenden Bedinungen:
+									// 1. Es ist noch mï¿½glich weiter in die Richtung zu gehen
+									// 2. Es handelt sich um ein LightTile Feld
+									// 3. Die Anzahl der Felder (aus dem NumberTile) wird nicht ï¿½berschritten.
+									while ( ( traverser . shift ( traverseDirection ) ) && ( CurrentTileIsLightTile ) && ( verbrauchteStaerke < strahlStaerke ) && ( conflictWithBeam == false ) ) {							
+										
+										conflictWithBeam = false ;
+										
+										// Prï¿½fen auf was fï¿½r einem Feld der Traverser aktuell steht.
+										CurrentTileIsLightTile = ( currentModel . getTileAt( traverser . getX(), traverser . getY() ) instanceof LightTile );
+										
+										if ( CurrentTileIsLightTile ) {
+											// Den Button holen, der das aktuelle Tile reprï¿½sentiert.
+											int buttonArrayPos = ( ( traverser . getY() * currentModel . getWidth() ) + traverser . getX() )  ;
+											TileButton aktButton = buttons . get ( buttonArrayPos ) ;
+		
+											LightTile aktTile = (LightTile) traverser . get() ;
+											
+											
+											if ( aktTile . getTileState() == LightTileState.EMPTY ) {
+												// Einfï¿½rben des Buttons
+												aktButton . markiert = true ;
+												// Die "verbrauchte Stï¿½rke" erhï¿½hen.
+												verbrauchteStaerke += 1 ;
+												// Es wurde mindestens ein mögliches Feld markiert. Deshalb wird dieses NumberTile gespeichert, damit man später beim Klick auf ein markiertes LightTile weiß
+												// von wo der Strahl kommt.
+												activeNumberTile = btn . getTile() ;
+											}
+											else
+											{
+												if ( aktTile . getTileState () != aktState ) {
+													conflictWithBeam = true ;
+												}
+											}
+										} // if ( CurrentTileIsLightTile ) 
+														
+									} // while ( .. ) 
+									
+								} // if ( aktState != LightTileState . EMPTY )
+									
+							} // for ( LightTileState aktState : LightTileState . values() )
 							
-						} // if ( aktState != LightTileState . EMPTY )
-							
-					} // for ( LightTileState aktState : LightTileState . values() )
-					
-				} // if ( btn . getTile() instanceof NumberTile ) {
-				
-				updateButtonGraphics();
+						} // if ( btn . getTile() instanceof NumberTile ) {
+						
+						updateButtonGraphics();
+						
+					} // if ( controller . getCurrentModel() . isSolution() == false )
 				
 			} catch (Exception e2) {
 				

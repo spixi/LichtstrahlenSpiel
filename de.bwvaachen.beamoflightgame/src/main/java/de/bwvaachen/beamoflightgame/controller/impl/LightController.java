@@ -72,6 +72,7 @@ public class LightController implements ILightController {
 			
 			this.setBoard(pair.left[0]);
 			this.solutionBoard = pair.left[1];
+			this.solutionBoard . setSolution( true ) ;
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -185,7 +186,8 @@ public class LightController implements ILightController {
 		
 		try {
 			// Das "Spielboard" kopieren
-			solutionBoard = puzzleBoard . clone () ;			
+			solutionBoard = puzzleBoard . clone () ;	
+			solutionBoard . setSolution( true ) ;
 		
 			// Den Solver für die Musterlösung erzeugen
 			ISolver s =
