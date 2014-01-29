@@ -166,6 +166,7 @@ public class SolverBuilder {
 							}
 						}
 						catch (UnsolvablePuzzleException e) {
+							//Hooks will allow post-mortem intervention to the strategies
 							if(hooks.size() == 0) throw e;
 							for(ISolver.Hook h : hooks) {
 								h.run();
