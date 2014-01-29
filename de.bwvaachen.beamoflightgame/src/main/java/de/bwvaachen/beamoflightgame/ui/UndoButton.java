@@ -16,6 +16,10 @@ import javax.swing.JOptionPane;
 import javax.swing.undo.CannotUndoException;
 import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
 
+/**
+ * 
+ * A class that capsules the Undo-Button.
+ */
 public class UndoButton extends AbstractUndoRedoButton {
 	/**
 	 * 
@@ -26,6 +30,9 @@ public class UndoButton extends AbstractUndoRedoButton {
 		super(um);
 	}
 	
+	/**
+	 * The action
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		try {
@@ -36,6 +43,9 @@ public class UndoButton extends AbstractUndoRedoButton {
 		}
 	}
 	
+	/**
+	 * Enables or disables the Button and update the caption.
+	 */	
 	@Override
 	protected void update() {
 		this.setEnabled(undoManager.canUndo());

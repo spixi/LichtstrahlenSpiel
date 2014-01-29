@@ -17,6 +17,9 @@ import javax.swing.JOptionPane;
 import javax.swing.undo.CannotRedoException;
 import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
 
+/**
+ * A class that capsules the Redo-Button.
+ */
 public class RedoButton extends AbstractUndoRedoButton {
 	/**
 	 * 
@@ -27,6 +30,9 @@ public class RedoButton extends AbstractUndoRedoButton {
 		super(um);
 	}
 	
+	/**
+	 * The action.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		try {
@@ -37,6 +43,9 @@ public class RedoButton extends AbstractUndoRedoButton {
 		}
 	}
 	
+	/**
+	 * Enables or disables the Button and update the caption.
+	 */		
 	@Override
 	protected void update() {
 		this.setEnabled(undoManager.canRedo());

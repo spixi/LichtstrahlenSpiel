@@ -48,6 +48,9 @@ import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
 
+/**
+ * The main-Frame of the game.
+ */
 public class LightgameUI extends JFrame implements BoardChangeListener {
 	
 	class ExtensionFileFilter extends FileFilter {
@@ -98,7 +101,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		}
 	
 	/**
-	 * Actionklasse für den Klick auf ein LightTIle
+	 * Actionclass that react to LightTile-Events
 	 * 
 	 * @author gbraun
 	 *
@@ -106,7 +109,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 	class LightTileListener implements ActionListener {
 
 		/**
-		 * Strahlen setzen und entfernen.
+		 * Set and delete beams.
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -271,7 +274,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 	
 	
 	/**
-	 * Action fï¿½r den Klick auf ein NumberTile
+	 * ActionClass that react to NumberTile-Events
 	 * 
 	 * @author gbraun, pauls_and
 	 */
@@ -279,7 +282,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 	{
 
 		/**
-		 * ï¿½ndert die Hintergrundfarbe.
+		 * Find possible turns and highlight them.
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
