@@ -1,10 +1,11 @@
 de.bwvaachen.beamoflightgame.controller
 de.bwvaachen.beamoflightgame.controller.impl
+de.bwvaachen.beamoflightgame.editor
 de.bwvaachen.beamoflightgame.helper
+de.bwvaachen.beamoflightgame.i18n
 de.bwvaachen.beamoflightgame.logic
 de.bwvaachen.beamoflightgame.logic.solver
 de.bwvaachen.beamoflightgame.logic.strategies
 de.bwvaachen.beamoflightgame.model
 de.bwvaachen.beamoflightgame.model.impl
 de.bwvaachen.beamoflightgame.ui
-de.bwvaachen.beamoflightpuzzle.test

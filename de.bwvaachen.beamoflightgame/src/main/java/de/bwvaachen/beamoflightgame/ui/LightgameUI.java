@@ -774,6 +774,25 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 			}
 		});
 		mnGame.add(mntmGoToNextMark);
+		
+		
+		// Das Spiel in Zeitraffer nachspielen
+		mnGame.add(new JSeparator());
+		
+		JMenuItem mntmFastMotion = new JMenuItem(_("TimeLapse"));
+		mntmFastMotion . addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				controller.getUndoManager().backToStart() ;				
+				ZeitrafferThread newThread = new ZeitrafferThread ( controller ) ;
+				newThread . start() ;			
+
+			}
+		});
+		mnGame.add(mntmFastMotion);
+		
 	
 		// -----------------------------------------------
 		// Erzeugen des Editor Menus
@@ -792,7 +811,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 			}
 		});
 		
-		mnEditor.add(mntmStartEditor);
+		mnEditor.add(mntmStartEditor);	
 		
 		/*
 		//TODO: J(Toggle)Button instead of JMenuItem
@@ -890,6 +909,43 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		
 	} // private void buildMenu()
 	
+	
+	/**
+	 * Diese Klasse (Thread) spielt das Puzzle in einem Zeitraffer nach.
+	 * @author gbraun
+	 *
+	 */
+	class ZeitrafferThread extends Thread {
+		
+		private ILightController aController ;
+		
+		public ZeitrafferThread ( ILightController _controller ) {
+			aController = _controller ;
+		}
+		
+		public void run() {
+			try {
+			
+				// Das hier ist leider etwas unsauber, aber denke auf die schnelle ist das ok. Wenn jemand noch genug Zeit hat, kann es gerne umbauen.
+				// Und zwar sag ich dem aktuellen Spielboard, dass es ein solutionBoard ist. Dadurch werden Klicks auf die Tiles ignoriert (aber es ist immer noch möglich mit den 
+				// Markern/rückgängig/.. etc. Optionen evtl. dazwischen zu funken.) 
+				aController . getCurrentModel() . setSolution( true ) ;
+				
+				//
+				while ( aController.getUndoManager().canRedo() ) {
+					sleep(1000) ;
+					aController.getUndoManager().redo() ;	
+				}	
+				
+				// Hier wird das Board sozusagen wieder zum Spielen "freigegeben"
+				aController . getCurrentModel() . setSolution( false ) ;
+			}
+			catch ( Exception except)
+			{			
+			}
+			
+		} // public void run()
+	} // class ZeitrafferThread extends Thread
 	
 	
 	/**

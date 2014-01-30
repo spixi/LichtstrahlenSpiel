@@ -67,13 +67,16 @@ public final class NewGamePropertyDialog extends JDialog {
 	final ILightController controller;
 	private JButton okButton;
 	
+	//Mediator class between NewGamePropertyDialog and CreateRandomBoard
+	//The latter should not even realize the existence of any UIs
 	private class CreateRandomMediator implements ActionListener, PropertyChangeListener {
 		private ProgressMonitor progressMonitor = new ProgressMonitor(NewGamePropertyDialog.this, null, "", 1, 100);
 		
 		final Holder<Boolean> boardOk = new Holder<Boolean>(false);
 		
 		@Override
-		public void actionPerformed(ActionEvent ev) {     
+		//User clicked the generate button
+		public void actionPerformed(ActionEvent ev) {
 			IBeamsOfLightPuzzleBoard board = new BeamsOfLightPuzzleBoard();
 
 			final double density = (double) properties.get("newgame:density");
@@ -81,6 +84,9 @@ public final class NewGamePropertyDialog extends JDialog {
 			final int width      = (int) properties.get("newgame:width");
 			final boolean zerotiles = (boolean)properties.get("newgame:zerotiles");
 			
+			  //This worker tries to generate puzzles and shows a ProgressManager
+			  //until a) a valid puzzle has been generated, b) the user clicks
+			  //"Abort" or c) 15 seconds are over
 			  class CreateRandomWorker extends SwingWorker<IBeamsOfLightPuzzleBoard, Void> {
 					private final Cursor waitCursor = new Cursor(Cursor.WAIT_CURSOR);
 					private final Cursor defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
@@ -121,16 +127,22 @@ public final class NewGamePropertyDialog extends JDialog {
 				    @Override
 				    public void done() {
 				     if(isCancelled() || progressMonitor.isCanceled()) {
-				    	 
+				    	 //cancel - do nothing!
 				     }
 				     else if(!boardOk.value) {
+				    	 //no valid board! Show timeout message
 							Object[] options = { _("Repeat"), _("Cancel") };
 							int repeat =
 							JOptionPane.showOptionDialog(NewGamePropertyDialog.this, _("TimeOut"), _("Error"),
 							        JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
 							        null, options, options[0]);
 							if (repeat == JOptionPane.YES_OPTION) {
+								//User pressed repeat
+								//Since doInBackground() only works for the first time
+								//we'll start a new instance
 								CreateRandomWorker newInstance = new CreateRandomWorker();
+								
+								//Pass the listeners
 								PropertyChangeListener pclArray[] = this.getPropertyChangeSupport().getPropertyChangeListeners();
 								for(PropertyChangeListener pcl: pclArray) {
 									this.getPropertyChangeSupport().removePropertyChangeListener(pcl);
@@ -140,7 +152,7 @@ public final class NewGamePropertyDialog extends JDialog {
 							}
 					  }
 					  else {
-					  
+						  //The board is ok, so update the controller
 						  try {
 							  controller.setBoard(get());
 						  }
@@ -149,19 +161,22 @@ public final class NewGamePropertyDialog extends JDialog {
 							  e.printStackTrace();
 						  }
 					  }
-					  okButton.setEnabled(true);
-					  setCursor(defaultCursor);
+				     //Free the UI
+				      okButton.setEnabled(true);
+				      setCursor(defaultCursor);
 				    }
 			}
-			
 			
 			SwingWorker<IBeamsOfLightPuzzleBoard, Void> w = new CreateRandomWorker();
 				
 			w.addPropertyChangeListener(this);
+			
+			//Execute the worker
 			w.execute();
 		}
 
 		@Override
+		//Catch the property changes of the CreateRandomWorker
 		public void propertyChange(PropertyChangeEvent evt) {
 			switch(evt.getPropertyName()) {
 				case "state": {
