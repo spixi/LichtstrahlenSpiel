@@ -367,6 +367,15 @@ public class TurnUndoManager extends UndoManager
 		notifyChangeListeners();
 	}
 	
+	public boolean backToStart () {
+		
+		while ( canUndo() ) {
+			undo() ;
+		}
+		return true ;
+	}
+		
+	
 	private void notifyChangeListeners() {
 		for(ChangeListener cl: changeListeners) {
 			cl.stateChanged(new ChangeEvent(this));
