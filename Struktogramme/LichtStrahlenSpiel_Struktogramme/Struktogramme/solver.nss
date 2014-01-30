@@ -1,4 +1,4 @@
-\begin{struktogramm}(90,160)
+\begin{struktogramm}(140,220)
 \assign
 {
 \begin{declaration}[Parameter]
@@ -7,9 +7,10 @@
 }
 \assign{
 \begin{declaration}[globale Variablen]
-\description{\(strategien\)}{Array von Strategien}
-\description{\(lichtfelder\)}{Array von Lichtfeldern}
-\description{\(zahlenfelder\)}{Array von Zahlenfeldern}
+\description{\(strategien\)}{Menge von Strategien}
+\description{\(lichtfelder\)}{Menge von Lichtfeldern}
+\description{\(zahlenfelder\)}{Menge von Zahlenfeldern}
+\description{\(hooks\)}{Menge von Hooks}
 \end{declaration}
 }
 \assign{
@@ -23,8 +24,18 @@
 \description{\(maxIterations\)}{Maximale Anzahl Iterationen}
 \end{declaration}
 }
-\ifthenelse{1}{2}{\(sum(lichtfelder) \ne sum(zahlenfelder)\)}{\sTrue}{\sFalse}
+\ifthenelse{3}{3}{\(sum(lichtfelder) \ne sum(zahlenfelder)\)}{\sTrue}{\sFalse}
+
+\ifthenelse{2}{1}{\(hooks \ne \emptyset\)}{\sTrue}{\sFalse}
+\while{\(\forall h \in hooks\)}
+\sub{\(ausf"uhren(h)\)}
+\whileend
+\change
 \return{Puzzle unl"osbar}
+\ifend
+
+
+
 \change
 \assign{\(i \gets 0\)}
 \while{\(\lnot istGel"ost(board) \wedge i \le maxIterationen\)}
