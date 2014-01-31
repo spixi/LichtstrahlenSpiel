@@ -1,4 +1,4 @@
-\begin{struktogramm}(140,220)
+\begin{struktogramm}(160,220)
 \assign
 {
 \begin{declaration}[Parameter]
