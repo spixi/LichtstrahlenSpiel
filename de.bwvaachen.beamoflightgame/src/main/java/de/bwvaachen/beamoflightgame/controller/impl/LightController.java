@@ -12,9 +12,12 @@ See the COPYING file for more details.
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.swing.JOptionPane;
 
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.controller.SolverBuilder;
@@ -57,6 +60,10 @@ public class LightController implements ILightController {
 	} // public IBeamsOfLightPuzzleBoard getCurrentModel()
 
 	@Override
+	/**
+	 * @author Andreas
+	 * 
+	 */
 	public void loadGame(File f) throws FileNotFoundException, IOException {
 		ZipPersister persister = new ZipPersister(new SimpleASCIICodec());
 		try {
@@ -65,6 +72,7 @@ public class LightController implements ILightController {
 			
 			this.setBoard(pair.left[0]);
 			this.solutionBoard = pair.left[1];
+			this.solutionBoard . setSolution( true ) ;
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -73,8 +81,11 @@ public class LightController implements ILightController {
 		
 	} // public void loadGame(File f)
 	
-
 	@Override
+	/*
+	 * (non-Javadoc)
+	 * @see de.bwvaachen.beamoflightgame.controller.ILightController#newGame(int, int)
+	 */
 	public void newGame(int width, int height) throws Exception 
 	{
 		solutionBoard = null;
@@ -84,6 +95,9 @@ public class LightController implements ILightController {
 	
 
 	@Override
+	/**
+	 * @author Andreas
+	 */
 	public void saveGame(File f) throws IOException {
 				
 		ZipPersister persister = new ZipPersister(new SimpleASCIICodec());
@@ -147,8 +161,8 @@ public class LightController implements ILightController {
 		}
 		
 		puzzleBoard = _board ;
-		if(solutionBoard == null)
-		{		
+		if(solutionBoard == null) 
+		{	
 			solve();
 		}
 		turnManager = new TurnUndoManager();
@@ -172,7 +186,8 @@ public class LightController implements ILightController {
 		
 		try {
 			// Das "Spielboard" kopieren
-			solutionBoard = puzzleBoard . clone () ;			
+			solutionBoard = puzzleBoard . clone () ;	
+			solutionBoard . setSolution( true ) ;
 		
 			// Den Solver für die Musterlösung erzeugen
 			ISolver s =
@@ -180,11 +195,23 @@ public class LightController implements ILightController {
 					and(IntersectionStrategy.class).
 					//and(TryAndErrorStrategy.class).
 					forBoard(solutionBoard);
+			if(System.getProperty("os.name", "generic").toLowerCase().startsWith("win")) {
+				System.setErr(new PrintStream("nul"));
+			}
+			else {
+				System.setErr(new PrintStream("/dev/null"));
+			}
 			s.solve();
+			s.getLevel();
 			
 		}
+		//Was soll das hier? Es kam eine MaximumIterationsExceededException
+		//Niemals einfach nur Exception oder Throwable abfangen,
+		//sonst weiß nachher niemand mehr, welche Exception überhaupt aufgetreten ist!!!
 		catch ( Exception e ) {
-			System . out . println ( e.getMessage() ) ;
+			System . out . println ( e.getMessage() ) ; //ebenso schwachsinnig, da nicht jede Exception eine Message hat
+			                                            //Dafür hat die Exception doch ihren Klassennamen, damit man sie unterscheiden kann!
+			//solutionBoard = null ;                    //Erstmal auskommentiert!
 		} // try .. catch
 		
 	} // public void solve () 
@@ -227,7 +254,63 @@ public class LightController implements ILightController {
 		
 		
 		return gameIsCorrect ;
+	} // public boolean GameIsCorrect () 
+	
+	
+	public boolean gameIsFinished () {
+		
+		int puzzleBoardWidth    = puzzleBoard . getWidth() ;
+		int puzzleBoardHeight   = puzzleBoard . getHeight() ;
+		boolean gameIsFinished = true ;
+		
+		for ( int currentRow = 0 ; currentRow < puzzleBoardHeight ; currentRow++ ) {
+			for ( int currentCol = 0 ; currentCol < puzzleBoardWidth ; currentCol++ ) {
+				
+				ITile currentBoardTile = puzzleBoard . getTileAt( currentCol , currentRow) ;				
+				if ( currentBoardTile instanceof LightTile ) {
+					LightTile currentBoardLightTile = (LightTile) currentBoardTile ;
+					LightTileState currentBoardLightTileState = currentBoardLightTile . getTileState() ;
+					
+										
+					if ( currentBoardLightTileState == LightTileState . EMPTY ) {					
+						gameIsFinished = false ;
+					} // if ( currentBoardLightTileState == LightTileState . EMPTY )	
+						
+				} // if ( currentBoardTile instanceof LightTile )
+				
+			} // for ( int currentCol = 0 ; currentCol < puzzleBoardWidth ; currentCol++ )			
+		} // for ( int currentRow = 0 ; currentRow < puzzleBoardHeight ; currentRow++ )
+		
+		return gameIsFinished ;
+					
 	}
+	
+	
+	/*
+	 * @author Georg Braun
+	 * @Prüfen ob das übergeben Feld richtig ist (Vergleich mit der Musterlösung)
+	 */
+	public boolean IsTileCorrect ( int _x , int _y ) {
+		
+		if ( ( puzzleBoard != null ) && ( solutionBoard != null ) ) {
+			ITile puzzleTile   = puzzleBoard . getTileAt( _x , _y) ;
+			ITile solutionTile = solutionBoard . getTileAt( _x , _y) ;
+			
+			// Prüfung ob es LightTiles sind
+			if ( ( puzzleTile instanceof LightTile ) && ( solutionTile instanceof LightTile ) ) {
+				
+				LightTile puzzleLightTile = (LightTile) puzzleTile ;
+				LightTile solutionLightTile = (LightTile) solutionTile ;
+				
+				if (  puzzleLightTile . getTileState() .equals( solutionLightTile . getTileState() )  ) {
+					return true ;
+				}
+				
+			}
+		}
+		return false ;
+		
+	} // public boolean IsTileCorrect ( int _x , int _y ) 
 
 	@Override
 	public void swapModelWithSolution() {
@@ -254,5 +337,7 @@ public class LightController implements ILightController {
 	public void removeBoardChangeListener(BoardChangeListener bcl) {
 		boardChangeListeners.remove(bcl);
 	}
+	
+
 	
 } // public class LightController

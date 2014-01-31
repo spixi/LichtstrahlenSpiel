@@ -9,6 +9,8 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 See the COPYING file for more details.
 */
 
+import static de.bwvaachen.beamoflightgame.i18n.I18N._;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -16,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -74,10 +77,17 @@ public class TilePanel extends JPanel{
 		repaint();
 	}
 	
-	public void setLightPower(int lightPower) throws IOException{
+	public void setLightPower(int lightPower){
 		this.lightPower += lightPower ;
 		this.state = TileState.NUMBER ;
-		this.setImage("resources/themes/moon/"+this.lightPower+".png");
+		try {
+			this.setImage("resources/themes/moon/"+this.lightPower+".png");
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(	this,
+                    _("IOError"),
+					_("Error"),
+					JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	public void setImage(BufferedImage image){

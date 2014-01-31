@@ -18,16 +18,26 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
 
+/**
+ * A class that capsules the Undo- and Redo-Button.
+ */
 public class UndoRedoButton extends AbstractUndoRedoButton {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3752060571993629986L;
 
+	/**
+	 * Constructor
+	 * @param um Referce to the UndoManager
+	 */
 	public UndoRedoButton(TurnUndoManager um) {
 		super(um);
 	}
 	
+	/**
+	 * The action
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		try {
@@ -41,9 +51,13 @@ public class UndoRedoButton extends AbstractUndoRedoButton {
 		}
 	}
 	
+	/**
+	 * Enables or disables the Button and update the caption.
+	 */
 	@Override
 	protected void update() {
 		this.setEnabled(undoManager.canUndoOrRedo());
 		this.setText(undoManager.getPresentationName());
 	}
+	
 }

@@ -53,9 +53,13 @@ public class LineEditor extends BeamsOfLightEditor
 		super(EditorType.LineEditor, width, height);
 	}
 	
+	public LineEditor(int width, int height, ArrayList<TilePanel> src){
+		super(EditorType.LineEditor, width, height);
+	}
+	
 	@Override
 	public void initComponents(){
-		TilePanel tile ;
+		TilePanel tile;
 		
 		solveButton.addActionListener(this);
 		resetButton.addActionListener(this);
@@ -66,8 +70,8 @@ public class LineEditor extends BeamsOfLightEditor
 		validLine = false ;
 		tileCount = 0;
 		displayAllTiles = true ;
-		tileList = new ArrayList<TilePanel>();
 		
+		tileList = new ArrayList<TilePanel>();
 		for(int i=0; i<row; i++){
 			for(int j=0; j<col; j++){
 				tile = createTilePanel(i,j);
@@ -115,7 +119,7 @@ public class LineEditor extends BeamsOfLightEditor
 			throws NumberFormatException, IIOException, IOException{
 		
 		GraficFactory 	gf = new GraficFactory(source);
-		ITile 			currentTile ;
+		ITile<?>		currentTile ;
 		ITileState 		currentTileState;
 		TilePanel 		tile;
 		char 			c;
@@ -189,6 +193,36 @@ public class LineEditor extends BeamsOfLightEditor
 		tiles.add(onlyNumberTilesPanel,"2");
 	}
 	
+	/*
+	public void setBoard(ArrayList<TilePanel> src){
+		TilePanel 	tile 	= src.get(src.size()-1) ;
+		int 		srcRow 	= tile.getRow();
+		int			srcCol	= tile.getCol();
+		
+		tilesPanel = new TilesPanel();
+		tilesPanel.setLayout(gl);
+		tilesPanel.addMouseMotionListener(this);
+		tilesPanel.addMouseListener(this);
+		
+		tileList = new ArrayList<TilePanel>();
+		for(int i=0; i<row; i++){
+			for(int j=0; j<col; j++){
+				if(i<=srcRow && j<=srcCol){
+					for(TilePanel temp : src){
+						if(temp.getRow() == i && temp.getCol() == j)
+							tile = createTilePanel(temp);
+					}
+				}else{
+					tile = createTilePanel(i,j);
+				}
+				tilesPanel.add(tile);
+				tileList.add(tile);
+			}
+		}
+		tiles.add(tilesPanel,"1");
+	}
+	*/
+
 	private double checkLine(TilePanel startTile, TilePanel endTile) throws Exception{
 		
 		int deltaXabs = Math.abs(startTile.getCol() - endTile.getCol());
@@ -348,8 +382,10 @@ public class LineEditor extends BeamsOfLightEditor
 	}
 	
 	public TilePanel createTilePanel(TilePanel tile){
-		TilePanel temp = new TilePanel(tile.getCol(),tile.getRow());
-		temp.setImage(tile.getImage());
+		TilePanel temp = createTilePanel(tile.getRow(),tile.getCol());
+		if(tile.getLightPower() > 0){
+			temp.setLightPower(tile.getLightPower());
+		}
 		
 		return temp;
 	}
@@ -361,6 +397,10 @@ public class LineEditor extends BeamsOfLightEditor
 		temp.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		
 		return temp ;
+	}
+	
+	public ArrayList<TilePanel> getTileList(){
+		return tileList;
 	}
 	
 	public void mouseMoved(MouseEvent me) {}

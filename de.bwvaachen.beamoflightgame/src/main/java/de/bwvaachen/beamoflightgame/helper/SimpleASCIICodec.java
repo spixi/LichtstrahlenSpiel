@@ -23,7 +23,11 @@ import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
-
+/**
+ * Wurstelt das Board als einfache Ascci Repräsentation um(und anders rum)
+ * @author Bastian, (Andreas) <- Quasi nix hier gemacht
+ *
+ */
 public class SimpleASCIICodec implements ICodec {
 
 	@Override

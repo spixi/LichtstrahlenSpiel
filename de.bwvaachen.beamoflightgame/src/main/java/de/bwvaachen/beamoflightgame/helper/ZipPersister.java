@@ -41,6 +41,10 @@ public class ZipPersister implements IPersistenceHelper {
 
 	@SuppressWarnings("deprecation")
 	@Override
+	/**
+	 * @author Andreas
+	 * @return 0. ArrayElement = Board, 1.Element = Lösung
+	 */
 	public Pair<IBeamsOfLightPuzzleBoard[],List<Turn>> load(File path) throws IOException, WrongCodecException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
 		    ICodec codec = null;

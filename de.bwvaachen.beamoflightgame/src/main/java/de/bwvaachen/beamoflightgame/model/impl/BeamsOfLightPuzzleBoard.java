@@ -37,7 +37,16 @@ public class BeamsOfLightPuzzleBoard implements IBeamsOfLightPuzzleBoard, Change
 	private HashSet<ChangeListener> changeListeners = new HashSet<ChangeListener>();
 	private HashSet<UndoableEditListener> undoableEditListeners = new HashSet<UndoableEditListener>();
 	private int currentTurnNumber = 0 ; 
+	private boolean isSolution = false ;
 	
+	public boolean isSolution() {
+		return isSolution;
+	}
+
+	public void setSolution(boolean isSolution) {
+		this.isSolution = isSolution;
+	}
+
 	public int getCurrentTurnNumber() {
 		return currentTurnNumber;
 	}

@@ -1,13 +1,27 @@
-\begin{struktogramm}(130,145)
+\begin{struktogramm}(140,220)
+\assign
+{
+\begin{declaration}[Parameter]
+\description{\(feld\)}{das von der Strategie betrachtete Lichtfeld}
+\end{declaration}
+}
+\assign
+{
+\begin{declaration}[lokale Variablen]
+\description{\(traverser\)}{Traverser}
+\description{\(aktFeld\)}{aktuelles Feld}
+\description{\(richtungen\)}{Menge von Richtungen}
+\end{declaration}
+}
 \assign{\(richtungen \gets \emptyset\)}
 \while{\(\forall richtung \in \{N, E, S, W\}\)}
 \assign{\(i \gets 0\)}
-\assign{Setze Traverser auf \(feld\)}
+\assign{Setze \(traverser\) auf \(feld\)}
 \until{\(\lnot randErreicht \wedge aktFeld \in \{richtung, EMPTY\}\)}
-\assign{\(aktFeld \gets Traverser.next(umkehren(richtung))\)}
+\assign{\(aktFeld \gets next(traverser, umkehren(richtung))\)}
 \assign{\(i \gets i+1\)}
-\ifthenelse{3}{1}{\(istZahlenfeld(aktFeld)\)}{j}{n}
-\ifthenelse{2}{1}{\(verf"ugbarerRange(akt) \ge i\)}{j}{n}
+\ifthenelse{3}{1}{\(istZahlenfeld(aktFeld)\)}{\sTrue}{\sFalse}
+\ifthenelse{2}{1}{\(verf"ugbarerRange(aktFeld) \ge i\)}{\sTrue}{\sFalse}
 \assign{\(richtungen \gets richtungen \cup richtung\)}
 \change
 \ifend

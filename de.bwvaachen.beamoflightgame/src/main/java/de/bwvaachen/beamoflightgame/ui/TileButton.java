@@ -14,31 +14,35 @@ import java.util.Hashtable;
 import javax.swing.JButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.metal.MetalButtonUI;
 
 import de.bwvaachen.beamoflightgame.helper.Pair;
 import de.bwvaachen.beamoflightgame.model.IChangeableTile;
 import de.bwvaachen.beamoflightgame.model.ITile;
 
 /**
- * This class extends JButton for properties that are needed by our GUI.
- * 
+ * This class extends JButton for properties that are needed by our GUI. 
  * @author gbraun
- *
  */
 public class TileButton extends JButton implements ChangeListener {
 	
 	private GraficFactory graphicFactory;
 	
 	/**
-	 *  Referenz auf das Tile aus dem Modell
+	 * 	Reference to tile in the model. 
 	 */
 	private final ITile tile;
 	
+	
+	/**
+	 * Indicates if the button (tile) is a possible turn.
+	 */
 	public boolean markiert = false ;
+	
 	
 	/**
 	 * Constructor
-	 * @param t Das Tile aus dem Modell
+	 * @param t The tile in the model.
 	 */
 	public TileButton(final ITile t) {
 		tile = t;
@@ -49,16 +53,18 @@ public class TileButton extends JButton implements ChangeListener {
 		//TODO: Remove this ugly stuff here:
 		graphicFactory = new GraficFactory(t.getBoard());
 	}
+	
 
 	/**
-	 * @return Die Spalte von dem Tile.
+	 * @return The column of the tile.
 	 */
 	public int getCol() {
 		return tile.getX();
 	}
 	
+	
 	/**
-	 * @return Die Zeile von dem Tile.
+	 * @return The row of the tile.
 	 */
 	public int getRow() {
 		return tile.getY();
@@ -66,32 +72,20 @@ public class TileButton extends JButton implements ChangeListener {
 
 
 	/**
-	 * Getter vom Tile
-	 * @return Das Tile aus dem Modell
+	 * Getter-Method Tile
+	 * @return The Tile.
 	 */
 	public ITile getTile() {
 		return tile;
 	}
-
+	
+	/**
+	 *  This method changes the direction of the tile and initiate the repaint.
+	 */
 	@Override
 	public void stateChanged(ChangeEvent e) {
-		// TODO Auto-generated method stub
-		Hashtable<Object,Object> foo = new Hashtable<Object,Object>();
-		IChangeableTile tile = ( (Pair<?,IChangeableTile>) e.getSource() ).right;
-		tile.storeState(foo);
-		//tile.getPresentation()
-		
-		//TODO
-		try {
-			Thread.sleep(8);
-		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		//TODO
 		this.setIcon(graphicFactory.getImage(tile));
-		this.ui.update(this.getGraphics(), this);
+	    repaint();
 	}
 
 }

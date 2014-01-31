@@ -13,6 +13,8 @@ See the COPYING file for more details.
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+
+
 import de.bwvaachen.beamoflightgame.helper.BoardTraverser;
 import de.bwvaachen.beamoflightgame.helper.IndexedSet;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
@@ -29,11 +31,25 @@ public class CreateRandomBoard
 	{
 		try {
 			IBeamsOfLightPuzzleBoard b =
-					createRandom(5,6,-0.2,false);
+					new CreateRandomBoard().createRandom(5,6,-0.2,false);
 		}
 		catch(Throwable t) {
 			t.printStackTrace();
 		}
+	}
+	
+	private boolean boardOK = false;
+	
+	private IndexedSet<NumberTile> oNumTiles = new IndexedSet<NumberTile>();
+	
+	private Random heightRandom;
+	private Random widthRandom;
+
+	private IBeamsOfLightPuzzleBoard oBoard;
+	
+	public CreateRandomBoard() {
+		heightRandom = new Random(System.nanoTime());
+		widthRandom  = new Random(System.nanoTime() ^ -1L);
 	}
 
 	/**
@@ -43,25 +59,10 @@ public class CreateRandomBoard
 	 * @return
 	 * @throws CouldNotCreatePuzzleException 
 	 */
-	public static IBeamsOfLightPuzzleBoard createRandom(final int width, final int height, double density, boolean allowZeroTiles) throws CouldNotCreatePuzzleException
+	public IBeamsOfLightPuzzleBoard createRandom(final int width, final int height, double density, boolean allowZeroTiles) throws CouldNotCreatePuzzleException
 	{
-		IndexedSet<NumberTile> oNumTiles = new IndexedSet<NumberTile>();
-		Random heightRandom = new Random(System.nanoTime());
-		Random widthRandom  = new Random(System.nanoTime() ^ -1L);
-
-		IBeamsOfLightPuzzleBoard oBoard = new BeamsOfLightPuzzleBoard();
-		boolean boardOK = false;
-
-		int iteration = 0;
-		int MAX_ITERATIONS = 250000;
-
-		while(! boardOK) {
-			oBoard.init(width,height);
-
-			if((iteration++) == MAX_ITERATIONS) {
-				throw new CouldNotCreatePuzzleException(_("MaxNoOfIterationsExceeded"));
-			}
-
+		oBoard = new BeamsOfLightPuzzleBoard();
+		oBoard.init(width, height);
 
 			double randomHelper;
 
@@ -79,18 +80,18 @@ public class CreateRandomBoard
 						nt.put();
 						oNumTiles.add(nt);
 					}
-
 				}
 			}
 
-			//the board is impossible to solve if there is not at least one tile in each row or in each line
-			if(oNumTiles.size() < Math.min(width, height))
-				continue;
+		//the board is impossible to solve if there is not at least one tile in each row or in each line
+		if(oNumTiles.size() < Math.min(width, height))
+				throw new CouldNotCreatePuzzleException("TODO!!!!!");
 
-			boardOK = setNumbers(oNumTiles, allowZeroTiles);
+		setNumbers(oNumTiles, allowZeroTiles);
+		if(! boardOK) {
+			throw new CouldNotCreatePuzzleException("TODO!!!!!");
 		}
-
-
+		
 		return oBoard;
 	}
 
@@ -100,18 +101,17 @@ public class CreateRandomBoard
 	 * @author mSpix
 	 * @param oNumTiles
 	 */
-	public static boolean setNumbers(IndexedSet<NumberTile> oNumTiles, boolean allowZeroTiles)
+	public void setNumbers(IndexedSet<NumberTile> oNumTiles, boolean allowZeroTiles)
 	{
 		//A puzzle with zero NumberTiles makes no sense
-		if(oNumTiles.size() == 0) return false;
+		if(oNumTiles.size() == 0)
+			return;
+		
 		IBeamsOfLightPuzzleBoard oBoard = oNumTiles.get(0).getBoard();
 		int iCountOfLightTiles = (oBoard.getHeight()*oBoard.getWidth())-oBoard.getNumOfNumberTiles();
 		int iNumber = 0;
 		int iPutTiles = oNumTiles.size();
-		boolean boardOk;
 		List<LightTileState> allDirections = LightTileState.allDirections();
-
-		Collections.shuffle(oNumTiles);
 
 		for (int i = 0; i < oNumTiles.size(); i++)
 		{
@@ -124,7 +124,7 @@ public class CreateRandomBoard
 				{
 					if(oTraverser.get() == null)
 					{
-						oBoard.putTile(new LightTile(oBoard, oTraverser.getX(), oTraverser.getY()));
+						new LightTile(oBoard, oTraverser.getX(), oTraverser.getY()).put();
 						iNumber++;
 						iPutTiles++;
 						iCountOfLightTiles--;
@@ -152,17 +152,15 @@ public class CreateRandomBoard
 				break;
 		}
 
-		boardOk = true;
+		boardOK = true;
 
 		if(!allowZeroTiles) {
 			for(NumberTile nt: oNumTiles) {
-				boardOk = boardOk && (nt.getNumber() != 0);
+				boardOK = boardOK && (nt.getNumber() != 0);
 			}
 		}
 
 		//Check whether all tiles have been set
-		boardOk = boardOk && (iPutTiles == (oBoard.getHeight() * oBoard.getWidth()));
-
-		return boardOk;
+		boardOK = boardOK && (iPutTiles == (oBoard.getHeight() * oBoard.getWidth()));
 	}
 }

@@ -120,4 +120,13 @@ public final class MathHelper {
 		return value;
 	}
 	
+	// Werte eines Vektors aufsummieren
+	public static int getValue(int[] v){
+		int temp = 0 ;
+		for(int i=0;i<v.length;i++){
+			temp += v[i];
+		}
+		return temp;
+	}
+	
 }

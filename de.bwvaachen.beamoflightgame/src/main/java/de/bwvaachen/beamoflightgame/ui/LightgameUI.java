@@ -28,8 +28,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
+import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
@@ -48,6 +48,9 @@ import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.LightTileState;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
 
+/**
+ * The main-Frame of the game.
+ */
 public class LightgameUI extends JFrame implements BoardChangeListener {
 	
 	class ExtensionFileFilter extends FileFilter {
@@ -98,7 +101,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		}
 	
 	/**
-	 * Actionklasse für den Klick auf ein LightTIle
+	 * Actionclass that react to LightTile-Events
 	 * 
 	 * @author gbraun
 	 *
@@ -106,121 +109,159 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 	class LightTileListener implements ActionListener {
 
 		/**
-		 * Strahlen setzen und entfernen.
+		 * Set and delete beams.
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
 			try {
-				// Den auslï¿½senden Button holen
-				TileButton btn = (TileButton) e.getSource();
-				// Den Traverser initialisieren.
-				BoardTraverser traverser = new BoardTraverser ( btn.getTile() ) ;
-							
-				// Lichtstrahl ziehen
-				if ( ( activeNumberTile != null ) && ( btn . markiert ) )  {
-					
-					// *** Setzten von Lichtstrahlen ***
-					
-					int lightTileX = btn . getCol() ;
-					int lightTileY = btn . getRow () ;
-					int numberTileX = activeNumberTile . getX() ;
-					int numberTileY = activeNumberTile . getY() ;
-					
-					// Ermitteln in welche Richtung gezogen wurde
-					LightTileState lichtRichtung ;
-										
-					if ( lightTileY == numberTileY ) {
-						if ( lightTileX < numberTileX ) {
-							lichtRichtung = LightTileState.WEST ;
-						} 
-						else
-						{
-							lichtRichtung = LightTileState.EAST ;
-						}
-							
-					} 
-					else
-					{
-						if ( lightTileY < numberTileY ) {
-							lichtRichtung = LightTileState.NORTH ;
-						}
-						else {
-							lichtRichtung = LightTileState.SOUTH ;
-						}
-							 
-					} // if ( lightTileY == numberTileY ) 
-										
-					// Den Traverser auf den Button Zielbutton (LightTile) setzen.
-					traverser . moveTo ( lightTileX , lightTileY ) ;
-					TraverseDirection traverseDirection = lichtRichtung . reverse() . getTraverseDirection() ;
-					
-					boolean alleGezeichnet = false ;
-					boolean firstTile = true;
-					
-					// Ermitteln was die letzte Zug-Nummer ist.
-					int currentTurnNumber = controller . getCurrentModel() . getCurrentTurnNumber() ;
-					// Diese Zug-Nummer für diesen neuen Zug erhöhen
-					controller . getCurrentModel() . setCurrentTurnNumber( currentTurnNumber + 1 ) ;
-					
-					do  {
-						if ( ( numberTileX == traverser . getX() ) && ( numberTileY == traverser . getY() ) ) {
-							break;
-						}
-						LightTile currentTile = (LightTile) traverser.get() ; 
-						currentTile . setState( lichtRichtung, firstTile) ;
-						firstTile = false;
-						traverser . shift ( traverseDirection ) ;
-					} while(true);
-					
-					activeNumberTile = null ;					
-					
-					// Entfernen aller Markierungen, da der Zug gemacht wurde.
-					for ( TileButton aktButton : buttons ) {
-						aktButton . markiert = false ;						
-					} // for ( TileButton aktButton : buttons ) 					
-					
-				} // if ( ( activeNumberTile != null ) && ( btn . markiert ) )
-				else {
-					
-					// *** Entfernen von Lichstrahlen ***				
-					
-					// Das ausgewählte Tile holen
-					LightTile ausgangsTile 	     = (LightTile) btn . getTile() ;
-					// Ermitteln der Richtung
-					LightTileState lichtRichtung = (LightTileState) ausgangsTile . getTileState() ;
-					
-					if ( lichtRichtung != LightTileState . EMPTY ) {
-						
-						// Traverser setzen
-						traverser . moveTo ( ausgangsTile . getX() , ausgangsTile . getY() ) ;
-						// Ermitteln der Traverse-Richtung
-						TraverseDirection traverseDirection = lichtRichtung . getTraverseDirection() ; 
-						
-						boolean significant = true ;
-						// Vom Ausgangs-Tile bis zum "Strahlende" die TileStates auf EMPTY setzen.
-						LightTile currentTile = ausgangsTile ;						
-						
-						
-						// Ermitteln was die letzte Zug-Nummer ist.
-						int currentTurnNumber = controller . getCurrentModel() . getCurrentTurnNumber() ;
-						// Diese Zug-Nummer für diesen neuen Zug erhöhen
-						controller . getCurrentModel() . setCurrentTurnNumber( currentTurnNumber + 1 ) ;
-						
-						while ( currentTile . getTileState() . getTraverseDirection() == traverseDirection ) {
-							currentTile . setState ( LightTileState . EMPTY , true ) ;
-							significant = false ;
-							traverser . shift ( traverseDirection ) ;
-							currentTile = (LightTile) traverser . get() ;
-						} // while ( currentTile . getTileState() . getTraverseDirection() == traverseDirection ) 
-						
-					} // if ( lichtRichtung != LightTileState . EMPTY ) 
-					
-				} // // if ( ( activeNumberTile != null ) && ( btn . markiert ) ) .. else				
-						
-				// Das Board neu zeichnen.
-				updateButtonGraphics();
 				
+					// Prüfen ob es sich nicht um ein Solution Board handelt
+					if ( controller . getCurrentModel() . isSolution() == false ) {
+					
+						// Den auslï¿½senden Button holen
+						TileButton btn = (TileButton) e.getSource();
+						// Den Traverser initialisieren.
+						BoardTraverser traverser = new BoardTraverser ( btn.getTile() ) ;
+									
+						// Lichtstrahl ziehen
+						if ( ( activeNumberTile != null ) && ( btn . markiert ) )  {
+							
+							// *** Setzten von Lichtstrahlen ***
+							
+							int lightTileX = btn . getCol() ;
+							int lightTileY = btn . getRow () ;
+							int numberTileX = activeNumberTile . getX() ;
+							int numberTileY = activeNumberTile . getY() ;
+							
+							// Ermitteln in welche Richtung gezogen wurde
+							LightTileState lichtRichtung ;
+												
+							if ( lightTileY == numberTileY ) {
+								if ( lightTileX < numberTileX ) {
+									lichtRichtung = LightTileState.WEST ;
+								} 
+								else
+								{
+									lichtRichtung = LightTileState.EAST ;
+								}
+									
+							} 
+							else
+							{
+								if ( lightTileY < numberTileY ) {
+									lichtRichtung = LightTileState.NORTH ;
+								}
+								else {
+									lichtRichtung = LightTileState.SOUTH ;
+								}
+									 
+							} // if ( lightTileY == numberTileY ) 
+												
+							// Den Traverser auf den Button Zielbutton (LightTile) setzen.
+							traverser . moveTo ( lightTileX , lightTileY ) ;
+							TraverseDirection traverseDirection = lichtRichtung . reverse() . getTraverseDirection() ;
+							
+							boolean alleGezeichnet = false ;
+							boolean firstTile = true;
+							
+							// Ermitteln was die letzte Turn-Nummer ist.
+							int currentTurnNumber = controller . getCurrentModel() . getCurrentTurnNumber() ;
+							
+							// Falls es noch Turns gibt die eine höhere Turn-Nummer haben, müssen diese gelöscht werden (z.B. wenn Züge rückgängig gemacht werden und dann ein Strahl gezogen wird.. dann gibt es immer noch die alten
+							// Turns in der Liste).
+							controller . getUndoManager() . deleteTurns( currentTurnNumber ) ;
+							
+							// Diese Zug-Nummer für diesen neuen Zug erhöhen
+							controller . getCurrentModel() . setCurrentTurnNumber( currentTurnNumber + 1 ) ;
+							
+							do  {
+								if ( ( numberTileX == traverser . getX() ) && ( numberTileY == traverser . getY() ) ) {
+									break;
+								}
+								LightTile currentTile = (LightTile) traverser.get() ; 
+								currentTile . setState( lichtRichtung, true) ;						
+								traverser . shift ( traverseDirection ) ;
+								
+								if ( controller . GameIsCorrect() ) {              
+									controller . getUndoManager() . setStable() ;              
+								 } 
+								else
+								{
+									controller . getUndoManager() . setError() ;
+								}
+								
+							} while(true);
+							
+							activeNumberTile = null ;					
+							
+							// Entfernen aller Markierungen, da der Zug gemacht wurde.
+							for ( TileButton aktButton : buttons ) {
+								aktButton . markiert = false ;						
+							} // for ( TileButton aktButton : buttons ) 					
+							
+						} // if ( ( activeNumberTile != null ) && ( btn . markiert ) )
+						else {
+							
+							// *** Entfernen von Lichstrahlen ***				
+							
+							// Das ausgewählte Tile holen
+							LightTile ausgangsTile 	     = (LightTile) btn . getTile() ;
+							// Ermitteln der Richtung
+							LightTileState lichtRichtung = (LightTileState) ausgangsTile . getTileState() ;
+							
+							if ( lichtRichtung != LightTileState . EMPTY ) {
+								
+								// Traverser setzen
+								traverser . moveTo ( ausgangsTile . getX() , ausgangsTile . getY() ) ;
+								// Ermitteln der Traverse-Richtung
+								TraverseDirection traverseDirection = lichtRichtung . getTraverseDirection() ; 
+								
+								boolean significant = true ;
+								// Vom Ausgangs-Tile bis zum "Strahlende" die TileStates auf EMPTY setzen.
+								LightTile currentTile = ausgangsTile ;						
+								
+								
+								// Ermitteln was die letzte Zug-Nummer ist.
+								int currentTurnNumber = controller . getCurrentModel() . getCurrentTurnNumber() ;
+		
+								// Falls es noch Turns gibt die eine höhere Turn-Nummer haben, müssen diese gelöscht werden (z.B. wenn Züge rückgängig gemacht werden und dann ein Strahl gezogen wird.. dann gibt es immer noch die alten
+								// Turns in der Liste).
+								controller . getUndoManager() . deleteTurns( currentTurnNumber ) ;
+								
+								// Diese Zug-Nummer für diesen neuen Zug erhöhen
+								controller . getCurrentModel() . setCurrentTurnNumber( currentTurnNumber + 1 ) ;
+								
+								while ( currentTile . getTileState() . getTraverseDirection() == traverseDirection ) {
+									currentTile . setState ( LightTileState . EMPTY , true ) ;							
+									traverser . shift ( traverseDirection ) ;
+									currentTile = (LightTile) traverser . get() ;
+									
+									if ( controller . GameIsCorrect() ) {              
+										controller . getUndoManager() . setStable() ;              
+									 } 
+									else
+									{
+										controller . getUndoManager() . setError() ;
+									}
+									
+								} // while ( currentTile . getTileState() . getTraverseDirection() == traverseDirection ) 
+								
+							} // if ( lichtRichtung != LightTileState . EMPTY ) 
+							
+						} // // if ( ( activeNumberTile != null ) && ( btn . markiert ) ) .. else				
+								
+						// Das Board neu zeichnen.
+						updateButtonGraphics();
+						
+						
+						if ( controller . gameIsFinished() ) {
+							int anzahlZuege = controller . getCurrentModel() . getCurrentTurnNumber() ;
+							JOptionPane . showMessageDialog( null , (_("FinishedGame")) + "\n"  + (_("TurnCount")) + anzahlZuege , (_("FinishedGameTitle")) ,  JOptionPane . PLAIN_MESSAGE ) ;
+						} // if ( controller . gameIsFinished() )				
+				
+					} // if ( controller . getCurrentModel() . isSolution() == false )
+					
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -233,7 +274,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 	
 	
 	/**
-	 * Action fï¿½r den Klick auf ein NumberTile
+	 * ActionClass that react to NumberTile-Events
 	 * 
 	 * @author gbraun, pauls_and
 	 */
@@ -241,100 +282,104 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 	{
 
 		/**
-		 * ï¿½ndert die Hintergrundfarbe.
+		 * Find possible turns and highlight them.
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
 		
 			try {	
-				
-				activeNumberTile = null ;
-				for ( TileButton aktButton : buttons ) {
-					aktButton . markiert = false ;				
-				} // for ( TileButton aktButton : buttons ) 
-				
-				// Den auslï¿½senden Button holen
-				TileButton btn = (TileButton) e.getSource();
-
-				// Prï¿½fen ob es sich um ein NumberTile handelt.
-				if ( btn . getTile() instanceof NumberTile ) {
-				
-					// Variable deklarieren, die bei der Anzeige der mï¿½glichen Felder hilft.
-					boolean CurrentTileIsLightTile ;
-	
-					// Die verbleibende Strahlstärke holen										
-					NumberTile currentTile = (NumberTile) btn . getTile () ;
-					int strahlStaerke = currentTile . getRemainingLightRange() ;
-					
-					// Den Traverser initialisieren.
-					BoardTraverser traverser = new BoardTraverser ( btn.getTile() ) ;
-					// Das Modell vom Controller holen.
-					IBeamsOfLightPuzzleBoard currentModel = controller . getCurrentModel() ;
-					
-					
-					// Schleife ï¿½ber alle "Himmelsrichtungen" (West, Ost, Sï¿½d, Nord). Dafï¿½r nehm ich den Aufzï¿½hlungstyp LightTileState.
-					for ( LightTileState aktState : LightTileState . values() ) {
+					// Prüfen ob es sich nicht um ein Solution Board handelt
+					if ( controller . getCurrentModel() . isSolution() == false ) {
 						
-						// Zu dem LightTileState zï¿½hlt auch das Element "Empty", welches ich aber nicht fï¿½r die "Zug-ï¿½berprï¿½fung" brauche.
-						if ( aktState != LightTileState . EMPTY ) {
+						activeNumberTile = null ;
+						for ( TileButton aktButton : buttons ) {
+							aktButton . markiert = false ;				
+						} // for ( TileButton aktButton : buttons ) 
+						
+						// Den auslï¿½senden Button holen
+						TileButton btn = (TileButton) e.getSource();
+		
+						// Prï¿½fen ob es sich um ein NumberTile handelt.
+						if ( btn . getTile() instanceof NumberTile ) {
+						
+							// Variable deklarieren, die bei der Anzeige der mï¿½glichen Felder hilft.
+							boolean CurrentTileIsLightTile ;
+			
+							// Die verbleibende Strahlstärke holen										
+							NumberTile currentTile = (NumberTile) btn . getTile () ;
+							int strahlStaerke = currentTile . getRemainingLightRange() ;
 							
-	
-							// Den Traverser auf den Button Ausgangsbutton (NumberTile) setzen.
-							traverser . moveTo ( btn . getCol() , btn . getRow() ) ;
-							TraverseDirection traverseDirection = aktState . getTraverseDirection() ;
-													
-							// Initial ist diese Aussage falsch, da man den Traverser auf das Ausgangs-Numbertile setzt. Ich setz das trotzdem auf true, 
-							// da man sich so ein paar Abfragen spart. Der Status wird direkt als erstes in der Schleife geupdatet und ist ab dort "richtig".
-							CurrentTileIsLightTile = true ;
+							// Den Traverser initialisieren.
+							BoardTraverser traverser = new BoardTraverser ( btn.getTile() ) ;
+							// Das Modell vom Controller holen.
+							IBeamsOfLightPuzzleBoard currentModel = controller . getCurrentModel() ;
 							
-							int verbrauchteStaerke = 0 ;
-							boolean conflictWithBeam = false ;
 							
-							// Wandern in die aktuelle Himmelsrichtung unter folgenden Bedinungen:
-							// 1. Es ist noch mï¿½glich weiter in die Richtung zu gehen
-							// 2. Es handelt sich um ein LightTile Feld
-							// 3. Die Anzahl der Felder (aus dem NumberTile) wird nicht ï¿½berschritten.
-							while ( ( traverser . shift ( traverseDirection ) ) && ( CurrentTileIsLightTile ) && ( verbrauchteStaerke < strahlStaerke ) && ( conflictWithBeam == false ) ) {							
+							// Schleife ï¿½ber alle "Himmelsrichtungen" (West, Ost, Sï¿½d, Nord). Dafï¿½r nehm ich den Aufzï¿½hlungstyp LightTileState.
+							for ( LightTileState aktState : LightTileState . values() ) {
 								
-								conflictWithBeam = false ;
-								
-								// Prï¿½fen auf was fï¿½r einem Feld der Traverser aktuell steht.
-								CurrentTileIsLightTile = ( currentModel . getTileAt( traverser . getX(), traverser . getY() ) instanceof LightTile );
-								
-								if ( CurrentTileIsLightTile ) {
-									// Den Button holen, der das aktuelle Tile reprï¿½sentiert.
-									int buttonArrayPos = ( ( traverser . getY() * currentModel . getWidth() ) + traverser . getX() )  ;
-									TileButton aktButton = buttons . get ( buttonArrayPos ) ;
-
-									LightTile aktTile = (LightTile) traverser . get() ;
+								// Zu dem LightTileState zï¿½hlt auch das Element "Empty", welches ich aber nicht fï¿½r die "Zug-ï¿½berprï¿½fung" brauche.
+								if ( aktState != LightTileState . EMPTY ) {
 									
+			
+									// Den Traverser auf den Button Ausgangsbutton (NumberTile) setzen.
+									traverser . moveTo ( btn . getCol() , btn . getRow() ) ;
+									TraverseDirection traverseDirection = aktState . getTraverseDirection() ;
+															
+									// Initial ist diese Aussage falsch, da man den Traverser auf das Ausgangs-Numbertile setzt. Ich setz das trotzdem auf true, 
+									// da man sich so ein paar Abfragen spart. Der Status wird direkt als erstes in der Schleife geupdatet und ist ab dort "richtig".
+									CurrentTileIsLightTile = true ;
 									
-									if ( aktTile . getTileState() == LightTileState.EMPTY ) {
-										// Einfï¿½rben des Buttons
-										aktButton . markiert = true ;
-										// Die "verbrauchte Stï¿½rke" erhï¿½hen.
-										verbrauchteStaerke += 1 ;
-										// Es wurde mindestens ein mögliches Feld markiert. Deshalb wird dieses NumberTile gespeichert, damit man später beim Klick auf ein markiertes LightTile weiß
-										// von wo der Strahl kommt.
-										activeNumberTile = btn . getTile() ;
-									}
-									else
-									{
-										if ( aktTile . getTileState () != aktState ) {
-											conflictWithBeam = true ;
-										}
-									}
-								} // if ( CurrentTileIsLightTile ) 
-												
-							} // while ( .. ) 
+									int verbrauchteStaerke = 0 ;
+									boolean conflictWithBeam = false ;
+									
+									// Wandern in die aktuelle Himmelsrichtung unter folgenden Bedinungen:
+									// 1. Es ist noch mï¿½glich weiter in die Richtung zu gehen
+									// 2. Es handelt sich um ein LightTile Feld
+									// 3. Die Anzahl der Felder (aus dem NumberTile) wird nicht ï¿½berschritten.
+									while ( ( traverser . shift ( traverseDirection ) ) && ( CurrentTileIsLightTile ) && ( verbrauchteStaerke < strahlStaerke ) && ( conflictWithBeam == false ) ) {							
+										
+										conflictWithBeam = false ;
+										
+										// Prï¿½fen auf was fï¿½r einem Feld der Traverser aktuell steht.
+										CurrentTileIsLightTile = ( currentModel . getTileAt( traverser . getX(), traverser . getY() ) instanceof LightTile );
+										
+										if ( CurrentTileIsLightTile ) {
+											// Den Button holen, der das aktuelle Tile reprï¿½sentiert.
+											int buttonArrayPos = ( ( traverser . getY() * currentModel . getWidth() ) + traverser . getX() )  ;
+											TileButton aktButton = buttons . get ( buttonArrayPos ) ;
+		
+											LightTile aktTile = (LightTile) traverser . get() ;
+											
+											
+											if ( aktTile . getTileState() == LightTileState.EMPTY ) {
+												// Einfï¿½rben des Buttons
+												aktButton . markiert = true ;
+												// Die "verbrauchte Stï¿½rke" erhï¿½hen.
+												verbrauchteStaerke += 1 ;
+												// Es wurde mindestens ein mögliches Feld markiert. Deshalb wird dieses NumberTile gespeichert, damit man später beim Klick auf ein markiertes LightTile weiß
+												// von wo der Strahl kommt.
+												activeNumberTile = btn . getTile() ;
+											}
+											else
+											{
+												if ( aktTile . getTileState () != aktState ) {
+													conflictWithBeam = true ;
+												}
+											}
+										} // if ( CurrentTileIsLightTile ) 
+														
+									} // while ( .. ) 
+									
+								} // if ( aktState != LightTileState . EMPTY )
+									
+							} // for ( LightTileState aktState : LightTileState . values() )
 							
-						} // if ( aktState != LightTileState . EMPTY )
-							
-					} // for ( LightTileState aktState : LightTileState . values() )
-					
-				} // if ( btn . getTile() instanceof NumberTile ) {
-				
-				updateButtonGraphics();
+						} // if ( btn . getTile() instanceof NumberTile ) {
+						
+						updateButtonGraphics();
+						
+					} // if ( controller . getCurrentModel() . isSolution() == false )
 				
 			} catch (Exception e2) {
 				
@@ -401,7 +446,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 	public LightgameUI(ILightController cntrl) {
 		controller = cntrl;
 		
-
+		
 			// Setzen der initialen Fensterposition und Grï¿½ï¿½e.
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			//setBounds(100, 100, 450, 300);
@@ -422,10 +467,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 			contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 			contentPane.setLayout(new BorderLayout(0, 0));
 			setContentPane(contentPane);
-			
-			// Progressbar ??? Wofür brauchen wir die?
-			JProgressBar progressBar = new JProgressBar();
-			contentPane.add(progressBar, BorderLayout.SOUTH);
+
 			
 			//SolverButton
 			javax.swing.JButton solverButton = new javax.swing.JButton(_("Solve"));
@@ -443,8 +485,17 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 				}
 				
 			});
-			contentPane.add(solverButton,BorderLayout.NORTH);
-			
+
+			JPanel pnHead ;
+			pnHead = new JPanel();
+			pnHead.add(solverButton);
+			pnHead.setLayout(new GridLayout(1,3));
+			UndoButton btUndo = new UndoButton(controller.getUndoManager());
+			pnHead.add(btUndo);
+			RedoButton btRedo = new RedoButton(controller.getUndoManager());
+			pnHead.add(btRedo);			
+
+			contentPane.add( pnHead , BorderLayout.NORTH) ;
 			buildRaster();
 		
 	} // public LightgameUI()
@@ -475,6 +526,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		IBeamsOfLightPuzzleBoard b = controller.getCurrentModel();
 		
 		//TODO refactor this stuff
+		/*
 		pnUndoRedo = new JPanel();
 		pnUndoRedo.setLayout(new GridLayout(1,2));
 		UndoButton btUndo = new UndoButton(controller.getUndoManager());
@@ -482,11 +534,12 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		RedoButton btRedo = new RedoButton(controller.getUndoManager());
 		pnUndoRedo.add(btRedo);
 		getContentPane().add(pnUndoRedo, BorderLayout.SOUTH);
+		*/
 		//TODO end
 		
 		// Das Spielfeld vom Controller holen:
 		
-        // TODO temporï¿½r feste Werte fï¿½r Tests eingetragen.
+        // TODO temporaer feste Werte fuer Tests eingetragen.
         int rows = b.getHeight() ;
         int cols = b.getWidth() ;
         
@@ -494,16 +547,16 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
         rasterPanel . setLayout ( new GridLayout ( rows , cols , 0 , 0 ) ) ;
         
         // Fenstergröße anpassen.
-        setBounds( 100 , 100 , ( cols * 127 ) + 30 , ( rows * 127 ) + 124 ) ;
+        setBounds( 100 , 100 , ( cols * 127 ) + 30 , ( rows * 127 ) + 100 ) ;
         
-        // Schleife ï¿½ber das "Spielfeld"
+        // Schleife ueber das "Spielfeld"
         for ( int row=0 ; row<rows ; row++ ) {
                 for ( int col=0 ;col<cols ; col++ ) {
 
                         // Neuen Button erzeugen
                         final TileButton newTileButton = new TileButton ( b . getTileAt ( col , row ) ) ;
                         newTileButton . setPreferredSize( new Dimension (128 , 128 ) ) ;
-                        // Action hinzufï¿½gen
+                        // Action hinzufuegen
                         
                         b . getTileAt ( col , row ) . accept( new ITileVisitor() {
 
@@ -555,6 +608,10 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 	private void buildMenu() {
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
+
+		
+		// -----------------------------------------------
+		// Erzeugen des File Menus
 		
 		JMenu mnFile = new JMenu(_("File"));
 		menuBar.add(mnFile);
@@ -571,8 +628,8 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 			}
 		});
 		
-		JSeparator separator_2 = new JSeparator();
-		mnFile.add(separator_2);
+		// Trennlinie - File
+		mnFile.add( new JSeparator() );
 		
 		JMenuItem mntmSave = new JMenuItem(_("Save"));
 		mnFile.add(mntmSave);
@@ -580,17 +637,22 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		JMenuItem mntmSaveAs = new JMenuItem(_("SaveAs"));
 		mnFile.add(mntmSaveAs);
 		
-		JSeparator separator_1 = new JSeparator();
-		mnFile.add(separator_1);
+		// Trennlinie - File
+		mnFile.add( new JSeparator() );
 		
 		JMenuItem mntmLoad = new JMenuItem(_("Load"));
 		mnFile.add(mntmLoad);
+		
+		
+		
+		// -----------------------------------------------
+		// Erzeugen des Game Menus
 		
 		JMenu mnGame = new JMenu(_("Game"));
 		menuBar.add(mnGame);
 		
 		
-		
+		// Prüfen des Spiels
 		JMenuItem mntmCheckGame = new JMenuItem ( _("Check") ) ;
 		mnGame . add ( mntmCheckGame ) . addActionListener( new ActionListener() {
 
@@ -610,8 +672,27 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		}) ; // .. new ActionListener() 
 		
 		
-		mnGame.add ( new JSeparator() );
+		// Trennlinie - Game
 		
+		mnGame.add( new JSeparator() );
+		
+		// Prüfen des Spiels
+				JMenuItem mntmShowTurns = new JMenuItem (_("ShowTurns")) ;
+				mnGame . add ( mntmShowTurns ) . addActionListener( new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent arg0) {						
+						JOptionPane . showMessageDialog( null , new JTextArea(controller . getUndoManager() . getTurnsInfo()) , "" ,  JOptionPane . PLAIN_MESSAGE ) ;
+					} // public void actionPerformed(ActionEvent arg0)
+					
+				}) ; // .. new ActionListener() 
+				
+				
+		// Trennlinie - Game
+		mnGame.add( new JSeparator() );
+
+				
+		// Zurück zum Fehler
 		JMenuItem mntmbacktoFailure = new JMenuItem(_("BackToFailure"));
 		mnGame.add(mntmbacktoFailure);
 		
@@ -623,9 +704,11 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 			}
 		});
 		
-		JSeparator separator_3 = new JSeparator();
-		mnGame.add(separator_3);
+		// Trennlinie - Game
+		mnGame.add( new JSeparator() ); 
 		
+		
+		// Markierung setzen
 		JMenuItem mntmsetMarker = new JMenuItem(_("SetMarker"));
 		mnGame.add(mntmsetMarker);
 		
@@ -638,7 +721,8 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 			}
 		});
 		
-		// Delete a mark
+		
+		// Markierung löschen
 		JSeparator separator_4 = new JSeparator();
 		mnGame.add(separator_4);
 		
@@ -648,12 +732,13 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				controller.getUndoManager().deleteLastMarker();
+				controller.getUndoManager().deleteMarker();
 				
 			}
 		});
 		
-		// Delete all marks
+		
+		// Alle Markierungen löschen
 		mnGame . add ( new JSeparator() ) ;
 		JMenuItem mntmDeleteAllMarker = new JMenuItem(_p("DeleteMarker",2)) ;
 		mnGame . add ( mntmDeleteAllMarker )  ;
@@ -668,21 +753,57 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		}) ; // mntmDeleteAllMarker
 		
 		
-		// Go back to a mark
-		JSeparator separator_5 = new JSeparator();
-		mnGame.add(separator_5);
+		// Zurück zur vorherigen Markierung
+		mnGame.add(new JSeparator());
 		
-		JMenuItem mntmBackToMark = new JMenuItem(_("BackToMarker"));
-		mntmBackToMark . addActionListener(new ActionListener() {
+		JMenuItem mntmGoToLastMark = new JMenuItem(_("GoToLastMarker")); 
+		mntmGoToLastMark . addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				controller.getUndoManager().undoToLastMarker();				
+				controller.getUndoManager().goToLastMark();
+				
+				
 			}
 		});
 				
+		mnGame.add(mntmGoToLastMark);
+
 		
-		mnGame.add(mntmBackToMark);
+		// Zur nächsten Markierung
+		mnGame.add(new JSeparator());
+		
+		JMenuItem mntmGoToNextMark = new JMenuItem(_("GoToNextMarker"));
+		mntmGoToNextMark . addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				controller.getUndoManager().goToNextMark();				
+			}
+		});
+		mnGame.add(mntmGoToNextMark);
+		
+		
+		// Das Spiel in Zeitraffer nachspielen
+		mnGame.add(new JSeparator());
+		
+		JMenuItem mntmFastMotion = new JMenuItem(_("TimeLapse"));
+		mntmFastMotion . addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				controller.getUndoManager().backToStart() ;				
+				ZeitrafferThread newThread = new ZeitrafferThread ( controller ) ;
+				newThread . start() ;			
+
+			}
+		});
+		mnGame.add(mntmFastMotion);
+		
+	
+		// -----------------------------------------------
+		// Erzeugen des Editor Menus
 		
 		JMenu mnEditor = new JMenu(_("Editor"));
 		menuBar.add(mnEditor);
@@ -698,7 +819,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 			}
 		});
 		
-		mnEditor.add(mntmStartEditor);
+		mnEditor.add(mntmStartEditor);	
 		
 		/*
 		//TODO: J(Toggle)Button instead of JMenuItem
@@ -796,6 +917,43 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		
 	} // private void buildMenu()
 	
+	
+	/**
+	 * Diese Klasse (Thread) spielt das Puzzle in einem Zeitraffer nach.
+	 * @author gbraun
+	 *
+	 */
+	class ZeitrafferThread extends Thread {
+		
+		private ILightController aController ;
+		
+		public ZeitrafferThread ( ILightController _controller ) {
+			aController = _controller ;
+		}
+		
+		public void run() {
+			try {
+			
+				// Das hier ist leider etwas unsauber, aber denke auf die schnelle ist das ok. Wenn jemand noch genug Zeit hat, kann es gerne umbauen.
+				// Und zwar sag ich dem aktuellen Spielboard, dass es ein solutionBoard ist. Dadurch werden Klicks auf die Tiles ignoriert (aber es ist immer noch möglich mit den 
+				// Markern/rückgängig/.. etc. Optionen evtl. dazwischen zu funken.) 
+				aController . getCurrentModel() . setSolution( true ) ;
+				
+				//
+				while ( aController.getUndoManager().canRedo() ) {
+					sleep(1000) ;
+					aController.getUndoManager().redo() ;	
+				}	
+				
+				// Hier wird das Board sozusagen wieder zum Spielen "freigegeben"
+				aController . getCurrentModel() . setSolution( false ) ;
+			}
+			catch ( Exception except)
+			{			
+			}
+			
+		} // public void run()
+	} // class ZeitrafferThread extends Thread
 	
 	
 	/**

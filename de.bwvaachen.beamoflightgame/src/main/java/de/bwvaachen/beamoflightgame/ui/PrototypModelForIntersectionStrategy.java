@@ -14,6 +14,7 @@ import de.bwvaachen.beamoflightgame.model.LightTile;
 import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 
+
 public class PrototypModelForIntersectionStrategy extends BeamsOfLightPuzzleBoard {
 	
 

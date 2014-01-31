@@ -11,14 +11,23 @@ See the COPYING file for more details.
 
 import java.awt.BorderLayout;
 import static de.bwvaachen.beamoflightgame.i18n.I18N.*;
+
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dialog;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -26,9 +35,16 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JSlider;
+import javax.swing.OverlayLayout;
+import javax.swing.ProgressMonitor;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+import javax.swing.SwingWorker.StateValue;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -36,7 +52,10 @@ import de.bwvaachen.beamoflightgame.controller.CouldNotCreatePuzzleException;
 import de.bwvaachen.beamoflightgame.controller.CreateRandomBoard;
 import de.bwvaachen.beamoflightgame.controller.ILightController;
 import de.bwvaachen.beamoflightgame.helper.GameProperties;
+import de.bwvaachen.beamoflightgame.helper.Holder;
+import de.bwvaachen.beamoflightgame.helper.Timer;
 import de.bwvaachen.beamoflightgame.model.IBeamsOfLightPuzzleBoard;
+import de.bwvaachen.beamoflightgame.model.NumberTile;
 import de.bwvaachen.beamoflightgame.model.impl.BeamsOfLightPuzzleBoard;
 
 public final class NewGamePropertyDialog extends JDialog {
@@ -46,47 +65,135 @@ public final class NewGamePropertyDialog extends JDialog {
 	private static final long serialVersionUID = 4944433339944945768L;
 	private static GameProperties properties = GameProperties.INSTANCE;
 	final ILightController controller;
+	private JButton okButton;
 	
-	private class CreateRandomMediator implements ActionListener {
-
+	//Mediator class between NewGamePropertyDialog and CreateRandomBoard
+	//The latter should not even realize the existence of any UIs
+	private class CreateRandomMediator implements ActionListener, PropertyChangeListener {
+		private ProgressMonitor progressMonitor = new ProgressMonitor(NewGamePropertyDialog.this, null, "", 1, 100);
+		
+		final Holder<Boolean> boardOk = new Holder<Boolean>(false);
+		
 		@Override
-		public void actionPerformed(ActionEvent ev) {     
+		//User clicked the generate button
+		public void actionPerformed(ActionEvent ev) {
 			IBeamsOfLightPuzzleBoard board = new BeamsOfLightPuzzleBoard();
-			
-			boolean boardOk = false;
 
 			final double density = (double) properties.get("newgame:density");
 			final int height     = (int) properties.get("newgame:height");
 			final int width      = (int) properties.get("newgame:width");
 			final boolean zerotiles = (boolean)properties.get("newgame:zerotiles");
 			
-			int repeat = JOptionPane.NO_OPTION;
-			
-			do {
-				try {
-					board = CreateRandomBoard.createRandom(height, width, density, zerotiles);
-					boardOk = true;
-				}
-				catch(CouldNotCreatePuzzleException ex) {
-					Object[] options = {_("Repeat"), _("Cancel")};
-					repeat = JOptionPane.showOptionDialog((Component)NewGamePropertyDialog.this, (Object)ex.getMessage(), _("Error"), JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE, (Icon) null, options, options[0]);
-				}
-			} while(!boardOk && (repeat == JOptionPane.YES_OPTION));
-			
-			if(boardOk) {
-				try {
-					controller.setBoard(board);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			  //This worker tries to generate puzzles and shows a ProgressManager
+			  //until a) a valid puzzle has been generated, b) the user clicks
+			  //"Abort" or c) 15 seconds are over
+			  class CreateRandomWorker extends SwingWorker<IBeamsOfLightPuzzleBoard, Void> {
+					private final Cursor waitCursor = new Cursor(Cursor.WAIT_CURSOR);
+					private final Cursor defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+					private IBeamsOfLightPuzzleBoard board;
+				  
+				    @Override
+				    public IBeamsOfLightPuzzleBoard doInBackground() {
+				    	okButton.setEnabled(false);
+				    	setCursor(waitCursor);
+				    
+						boardOk.value = false;
+						final Timer timer = new Timer(15000L);
+						CreateRandomBoard crb = new CreateRandomBoard();
+
+						while(!isCancelled() && !progressMonitor.isCanceled() && !boardOk.value && !timer.timeOver()) {
+							setProgress(timer.pastTimePercentage());
+							try {
+								board = crb.createRandom(height, width, density, zerotiles);
+								boardOk.value = true;
+							}
+							catch (CouldNotCreatePuzzleException e) {
+								//boardOk.value = false;
+							}
+						}
+
+						if(boardOk.value) {
+							try {
+								controller.setBoard(board);
+								controller.solve();
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						return board;
+				    }
+
+				    @Override
+				    public void done() {
+				     if(isCancelled() || progressMonitor.isCanceled()) {
+				    	 //cancel - do nothing!
+				     }
+				     else if(!boardOk.value) {
+				    	 //no valid board! Show timeout message
+							Object[] options = { _("Repeat"), _("Cancel") };
+							int repeat =
+							JOptionPane.showOptionDialog(NewGamePropertyDialog.this, _("TimeOut"), _("Error"),
+							        JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
+							        null, options, options[0]);
+							if (repeat == JOptionPane.YES_OPTION) {
+								//User pressed repeat
+								//Since doInBackground() only works for the first time
+								//we'll start a new instance
+								CreateRandomWorker newInstance = new CreateRandomWorker();
+								
+								//Pass the listeners
+								PropertyChangeListener pclArray[] = this.getPropertyChangeSupport().getPropertyChangeListeners();
+								for(PropertyChangeListener pcl: pclArray) {
+									this.getPropertyChangeSupport().removePropertyChangeListener(pcl);
+									newInstance.getPropertyChangeSupport().addPropertyChangeListener(pcl);
+								}
+								newInstance.execute();
+							}
+					  }
+					  else {
+						  //The board is ok, so update the controller
+						  try {
+							  controller.setBoard(get());
+						  }
+						  catch (Exception e) {
+							  // TODO Auto-generated catch block
+							  e.printStackTrace();
+						  }
+					  }
+				     //Free the UI
+				      okButton.setEnabled(true);
+				      setCursor(defaultCursor);
+				    }
 			}
 			
+			SwingWorker<IBeamsOfLightPuzzleBoard, Void> w = new CreateRandomWorker();
+				
+			w.addPropertyChangeListener(this);
+			
+			//Execute the worker
+			w.execute();
+		}
+
+		@Override
+		//Catch the property changes of the CreateRandomWorker
+		public void propertyChange(PropertyChangeEvent evt) {
+			switch(evt.getPropertyName()) {
+				case "state": {
+					SwingWorker.StateValue state = (StateValue) evt.getNewValue();
+					if(state == SwingWorker.StateValue.DONE) {
+						progressMonitor.close();
+					}
+				}
+				case "progress": {
+					int progress = (Integer)evt.getNewValue();
+					progressMonitor.setProgress(progress);
+					break;
+				}
+			}
 		}
 		
 	}
-	
-	//private class propertyListener implements 
 	
 	public NewGamePropertyDialog(final ILightController cntrl) {
 		super();
@@ -101,7 +208,6 @@ public final class NewGamePropertyDialog extends JDialog {
 		JPanel  mainPanel, densityPanel, widthPanel, heightPanel, noZeroPanel;
 		JSlider densitySlider, widthSlider, heightSlider;
 		JCheckBox noZeroCheckBox;
-		JButton okButton;
 		
 		setLayout(new BorderLayout());
 		
@@ -199,7 +305,6 @@ public final class NewGamePropertyDialog extends JDialog {
 		add(okButton, BorderLayout.SOUTH);
 		
 		pack();
-		
 	}
 	
 

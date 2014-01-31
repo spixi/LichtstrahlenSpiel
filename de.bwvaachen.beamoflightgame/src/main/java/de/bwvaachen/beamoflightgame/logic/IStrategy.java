@@ -22,7 +22,7 @@ public interface IStrategy<T extends ITileState> {
 	//Strategies with complexities of 100 - 999 are hard
 	public double getComplexity();
 	public void init(ITile<T> t);
-	public boolean isAppliableForTile(ITile<?> t);
+	public boolean isApplicableForTile(ITile<?> t);
 	public boolean hasHooks();
 	public Collection<? extends AbstractSolver.Hook> getHooks();
 	

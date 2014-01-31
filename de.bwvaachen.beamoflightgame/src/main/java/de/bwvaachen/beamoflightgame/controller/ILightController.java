@@ -29,6 +29,8 @@ public interface ILightController {
 	
 	public void solve();
 	public boolean GameIsCorrect () ;
+	public boolean gameIsFinished () ;
+	public boolean IsTileCorrect ( int _x , int _y ) ;
 	public void swapModelWithSolution();
 	
 	public void addBoardChangeListener(BoardChangeListener bcl);
