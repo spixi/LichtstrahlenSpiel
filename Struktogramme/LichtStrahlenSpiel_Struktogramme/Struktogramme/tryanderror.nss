@@ -1,4 +1,4 @@
-\begin{struktogramm}(140,220)
+\begin{struktogramm}(160,220)
 \assign
 {
 \begin{declaration}[Parameter]
@@ -16,13 +16,13 @@
 \assign{Registriere Hook zum R"uckg"angigmachen im Fehlerfall}
 \assign{\(observerAnmelden(undoManager,holeSpielbrett(feld))\)}
 \assign{\(richtungen \gets \{N, E, S, W\}\)}
-\while{\(\forall richtung in richtungen\)}
-\ifthenelse{1}{1}{\(benachbartes freies Feld in richtung?\)}{\sTrue}{\sFalse}
+\while{\(\forall richtung \in richtungen\)}
+\ifthenelse{2}{2}{\(benachbartes freies Feld \in richtung?\)}{\sTrue}{\sFalse}
 \change
 \assign{\(richtungen \gets richtungen \setminus richtung\)}
 \ifend
 \whileend
-\ifthenelse{1}{1}{\(richtungen = \emptyset\)}{\sTrue}{\sFalse}
+\ifthenelse{2}{2}{\(richtungen = \emptyset\)}{\sTrue}{\sFalse}
 \assign{Puzzle nicht l"osbar}
 \return{Ausnahme}
 \change
