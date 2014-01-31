@@ -28,8 +28,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
 import javax.swing.JSeparator;
+import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
@@ -467,10 +467,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 			contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 			contentPane.setLayout(new BorderLayout(0, 0));
 			setContentPane(contentPane);
-			
-			// Progressbar ??? Wofür brauchen wir die?
-			JProgressBar progressBar = new JProgressBar();
-			contentPane.add(progressBar, BorderLayout.SOUTH);
+
 			
 			//SolverButton
 			javax.swing.JButton solverButton = new javax.swing.JButton(_("Solve"));
@@ -488,8 +485,17 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 				}
 				
 			});
-			contentPane.add(solverButton,BorderLayout.NORTH);
-			
+
+			JPanel pnHead ;
+			pnHead = new JPanel();
+			pnHead.add(solverButton);
+			pnHead.setLayout(new GridLayout(1,3));
+			UndoButton btUndo = new UndoButton(controller.getUndoManager());
+			pnHead.add(btUndo);
+			RedoButton btRedo = new RedoButton(controller.getUndoManager());
+			pnHead.add(btRedo);			
+
+			contentPane.add( pnHead , BorderLayout.NORTH) ;
 			buildRaster();
 		
 	} // public LightgameUI()
@@ -520,6 +526,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		IBeamsOfLightPuzzleBoard b = controller.getCurrentModel();
 		
 		//TODO refactor this stuff
+		/*
 		pnUndoRedo = new JPanel();
 		pnUndoRedo.setLayout(new GridLayout(1,2));
 		UndoButton btUndo = new UndoButton(controller.getUndoManager());
@@ -527,6 +534,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		RedoButton btRedo = new RedoButton(controller.getUndoManager());
 		pnUndoRedo.add(btRedo);
 		getContentPane().add(pnUndoRedo, BorderLayout.SOUTH);
+		*/
 		//TODO end
 		
 		// Das Spielfeld vom Controller holen:
@@ -539,7 +547,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
         rasterPanel . setLayout ( new GridLayout ( rows , cols , 0 , 0 ) ) ;
         
         // Fenstergröße anpassen.
-        setBounds( 100 , 100 , ( cols * 127 ) + 30 , ( rows * 127 ) + 124 ) ;
+        setBounds( 100 , 100 , ( cols * 127 ) + 30 , ( rows * 127 ) + 100 ) ;
         
         // Schleife ueber das "Spielfeld"
         for ( int row=0 ; row<rows ; row++ ) {
@@ -674,7 +682,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 
 					@Override
 					public void actionPerformed(ActionEvent arg0) {						
-						JOptionPane . showMessageDialog( null , controller . getUndoManager() . getTurnsInfo() , "" ,  JOptionPane . PLAIN_MESSAGE ) ;
+						JOptionPane . showMessageDialog( null , new JTextArea(controller . getUndoManager() . getTurnsInfo()) , "" ,  JOptionPane . PLAIN_MESSAGE ) ;
 					} // public void actionPerformed(ActionEvent arg0)
 					
 				}) ; // .. new ActionListener() 

@@ -460,10 +460,12 @@ public class TurnUndoManager extends UndoManager
 				Turn currentTurn = (Turn) e ;
 				String activeTurn = "" ;
 				
-				if ( currentTurn . getBoard() . getCurrentTurnNumber() == currentTurn . getTurnNumber() )
-					activeTurn = "-> " ;
+				if ( currentTurn . getBoard() . getCurrentTurnNumber() == currentTurn . getTurnNumber() ) {
+					activeTurn = "->" ;
+				}
+
 								
-				strCurrentTurn = ( activeTurn + "TurnNumber: "  + currentTurn . getTurnNumber() + "(" + currentTurn . getX() + "/" + currentTurn . getY() + ") " +  "\t Marker: " + Boolean.toString(currentTurn . hasFlag(FLAG_MARKER)) + "\t Error: " + Boolean.toString(currentTurn . hasFlag(FLAG_ERROR)) +  "\t Signifikant: " + Boolean.toString(currentTurn . isSignificant()) );
+				strCurrentTurn = ( activeTurn + "\t TurnNumber: "  + currentTurn . getTurnNumber() +  "\t\t Marker: " + Boolean.toString(currentTurn . hasFlag(FLAG_MARKER)) + "\t Error: " + Boolean.toString(currentTurn . hasFlag(FLAG_ERROR)) +  "\t Signifikant: " + Boolean.toString(currentTurn . isSignificant()) );
 				strAllTurns = strAllTurns + "\n" + strCurrentTurn ;
 				System . out . println ( strCurrentTurn ) ;
 				//System . out . println ( activeTurn + "TurnNumber: "  + currentTurn . getTurnNumber() + "(" + currentTurn . getX() + "/" + currentTurn . getY() + ") " +  "\t Marker: " + Boolean.toString(currentTurn . hasFlag(FLAG_MARKER)) + "\t Error: " + Boolean.toString(currentTurn . hasFlag(FLAG_ERROR)) +  "\t Signifikant: " + Boolean.toString(currentTurn . isSignificant()) ) ;

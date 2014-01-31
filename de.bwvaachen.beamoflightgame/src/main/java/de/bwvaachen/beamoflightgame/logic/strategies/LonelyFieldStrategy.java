@@ -79,11 +79,14 @@ public class LonelyFieldStrategy extends AbstractStrategy<LightTileState> {
     
     private int getDistance(ITile<?> neighbour, LightTileState lts) {
                 int distance = 0;
-                traverser.reset();
+                traverser.reset();                
+                traverser.moveTo(neighbour.getX(), neighbour.getY());
                 while (traverser.shift(lts.reverse().getTraverseDirection())) {
-                        if(traverser.get().getTileState() != lts) { //ignore the same tile state!
+                        if(traverser.get().getTileState() != lts ) { //ignore the same tile state!
                                 distance++;
                         }
+                        if(traverser.getX() == traverser.getStartX() && traverser.getY() == traverser.getStartY())
+                        	break;
                 }
                 return distance;
         }
@@ -100,15 +103,19 @@ public class LonelyFieldStrategy extends AbstractStrategy<LightTileState> {
          IndexedMap<LightTileState,NumberTile> neighbours
                  = new IndexedMap<LightTileState,NumberTile>();
         
-         for(LightTileState lts : LightTileState.allDirections()) {
-                 
+         for(LightTileState lts : LightTileState.allDirections()) { 
+        	 
                  neighbour = findNeighbour(lts);
 
                  if (neighbour != null) {
                          //determine the distance to the neighbour NumberTile.
                          int remainingLightRange = neighbour.getRemainingLightRange();
-                         if (remainingLightRange > 0 &&
-                                 getDistance(neighbour,lts) <= neighbour.getRemainingLightRange()) {
+                         int distance = getDistance(neighbour,lts);
+                                                 
+                         System.out.println(String.format("LTS: %s Distance: %d Remaining: %d",lts,distance,remainingLightRange));                       
+                         System.out.println(neighbour.getBoard().toString());
+                         
+                         if (remainingLightRange > 0 && distance <= remainingLightRange) {
                                  neighbours.put(lts,neighbour);
                          }         
                  }
