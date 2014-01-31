@@ -1,4 +1,4 @@
-\begin{struktogramm}(140,220)
+\begin{struktogramm}(160,200)
 \assign{
 \begin{declaration}[zus"atzliche lokale Variablen]
 \description{\(summe\)}{Maximale Anzahl Lichtfelder, die in die Richtungen von \(m"oglichkeit\) verteilt werden k"onnen\)}
@@ -8,7 +8,7 @@
 \end{declaration}
 }
 \assign{\(summe \gets m"oglichkeiten \cdot verfRange\)}
-\ifthenelse{1}{4}{\(summe < verblRange\)}{\sTrue}{\sFalse}
+\ifthenelse{3}{1}{\(summe < verblRange\)}{\sTrue}{\sFalse}
 \assign{Es kann maximal \(summe\) Leuchtkraft auf die Richtungen verteilt werden.}
 \assign{Daher muss der Rest in die anderen Richtungen verteilt werden.}
 \assign{\(andereRichtungen \gets \begin{pmatrix}0 & 0 & 0 & 1\end{pmatrix} -  m"oglichkeit\)}
