@@ -29,6 +29,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
@@ -546,7 +547,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
         rasterPanel . setLayout ( new GridLayout ( rows , cols , 0 , 0 ) ) ;
         
         // Fenstergröße anpassen.
-        setBounds( 100 , 100 , ( cols * 127 ) + 30 , ( rows * 127 ) + 105 ) ;
+        setBounds( 100 , 100 , ( cols * 127 ) + 30 , ( rows * 127 ) + 100 ) ;
         
         // Schleife ueber das "Spielfeld"
         for ( int row=0 ; row<rows ; row++ ) {
@@ -681,7 +682,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 
 					@Override
 					public void actionPerformed(ActionEvent arg0) {						
-						JOptionPane . showMessageDialog( null , controller . getUndoManager() . getTurnsInfo() , "" ,  JOptionPane . PLAIN_MESSAGE ) ;
+						JOptionPane . showMessageDialog( null , new JTextArea(controller . getUndoManager() . getTurnsInfo()) , "" ,  JOptionPane . PLAIN_MESSAGE ) ;
 					} // public void actionPerformed(ActionEvent arg0)
 					
 				}) ; // .. new ActionListener() 
