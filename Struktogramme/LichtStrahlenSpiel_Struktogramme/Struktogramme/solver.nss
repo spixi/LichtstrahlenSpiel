@@ -1,4 +1,4 @@
-\begin{struktogramm}(140,220)
+\begin{struktogramm}(160,220)
 \assign
 {
 \begin{declaration}[Parameter]
@@ -24,23 +24,23 @@
 \description{\(maxIterations\)}{Maximale Anzahl Iterationen}
 \end{declaration}
 }
-\ifthenelse{3}{3}{\(sum(lichtfelder) \ne sum(zahlenfelder)\)}{\sTrue}{\sFalse}
-
-\ifthenelse{2}{1}{\(hooks \ne \emptyset\)}{\sTrue}{\sFalse}
+\ifthenelse{1}{3}{\anzahl(lichtfelder) \ne \sum{}zahlenfelder\)}{\sTrue}{\sFalse}
+\return{Puzzle unl"osbar}
+\change
+\assign{\(i \gets 0\)}
+\while{\(\lnot istGel"ost(board) \wedge i \le maxIterationen\)}
+\while{\(\forall tile \in board\)}
+\sub{\(step(tile,0)\)}
+\ifthenelse{3}{1}{Puzzle unl"osbar?}{\sTrue}{\sFalse}
+\ifthenelse{1}{1}{\(hooks \ne \emptyset\)}{\sTrue}{\sFalse}
 \while{\(\forall h \in hooks\)}
 \sub{\(ausf"uhren(h)\)}
 \whileend
 \change
 \return{Puzzle unl"osbar}
 \ifend
-
-
-
 \change
-\assign{\(i \gets 0\)}
-\while{\(\lnot istGel"ost(board) \wedge i \le maxIterationen\)}
-\while{\(\forall tile \in board\)}
-\sub{\(step(tile,0)\)}
+\ifend
 \assign{\(i \gets i+1\)}
 \whileend
 \whileend
