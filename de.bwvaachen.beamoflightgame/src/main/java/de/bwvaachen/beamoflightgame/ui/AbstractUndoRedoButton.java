@@ -47,4 +47,9 @@ public abstract class AbstractUndoRedoButton extends JButton implements ActionLi
 	public void stateChanged(ChangeEvent e) {
 		update();
 	}
+	
+	public void setUndoManager(TurnUndoManager um) {
+		undoManager = um;
+		this.repaint();
+	}
 }

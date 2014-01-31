@@ -33,8 +33,8 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
-
 import de.bwvaachen.beamoflightgame.controller.ILightController;
+import de.bwvaachen.beamoflightgame.controller.TurnUndoManager;
 import de.bwvaachen.beamoflightgame.controller.impl.LightController;
 import de.bwvaachen.beamoflightgame.editor.EditorMain;
 import de.bwvaachen.beamoflightgame.helper.BoardChangeListener;
@@ -162,9 +162,6 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 							traverser . moveTo ( lightTileX , lightTileY ) ;
 							TraverseDirection traverseDirection = lichtRichtung . reverse() . getTraverseDirection() ;
 							
-							boolean alleGezeichnet = false ;
-							boolean firstTile = true;
-							
 							// Ermitteln was die letzte Turn-Nummer ist.
 							int currentTurnNumber = controller . getCurrentModel() . getCurrentTurnNumber() ;
 							
@@ -217,7 +214,6 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 								// Ermitteln der Traverse-Richtung
 								TraverseDirection traverseDirection = lichtRichtung . getTraverseDirection() ; 
 								
-								boolean significant = true ;
 								// Vom Ausgangs-Tile bis zum "Strahlende" die TileStates auf EMPTY setzen.
 								LightTile currentTile = ausgangsTile ;						
 								
@@ -390,6 +386,7 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 	} // class TileButtonListener 
 
 	private static final long serialVersionUID = -3961364231837270604L;
+	private AbstractUndoRedoButton btUndo, btRedo;
 	
 	
 	/**
@@ -490,9 +487,9 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 			pnHead = new JPanel();
 			pnHead.add(solverButton);
 			pnHead.setLayout(new GridLayout(1,3));
-			UndoButton btUndo = new UndoButton(controller.getUndoManager());
+			btUndo = new UndoButton(controller.getUndoManager());
 			pnHead.add(btUndo);
-			RedoButton btRedo = new RedoButton(controller.getUndoManager());
+			btRedo = new RedoButton(controller.getUndoManager());
 			pnHead.add(btRedo);			
 
 			contentPane.add( pnHead , BorderLayout.NORTH) ;
@@ -504,6 +501,9 @@ public class LightgameUI extends JFrame implements BoardChangeListener {
 		initialize();
 		buildRaster();
 		updateButtonGraphics();
+		TurnUndoManager theUndoManager = controller.getUndoManager();
+		btUndo.setUndoManager(theUndoManager);
+		btRedo.setUndoManager(theUndoManager);
 	}
 	
 	/**
