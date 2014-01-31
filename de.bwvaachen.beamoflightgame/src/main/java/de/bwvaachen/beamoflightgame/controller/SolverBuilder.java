@@ -150,7 +150,6 @@ public class SolverBuilder {
 					IStrategy currentStrategy = strategies.get(stackPointer);
 					
 					System.out.println(String.format("X: %d | Y: %d",tile.getX(),tile.getY()));
-					//System.out.println(tile.getBoard());
 					
 					if ( !currentStrategy.isApplicableForTile(tile) ) {
 						step(tile, stackPointer+1);
