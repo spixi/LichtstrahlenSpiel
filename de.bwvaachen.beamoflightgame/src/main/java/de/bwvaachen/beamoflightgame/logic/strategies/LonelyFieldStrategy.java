@@ -82,7 +82,7 @@ public class LonelyFieldStrategy extends AbstractStrategy<LightTileState> {
                 traverser.reset();                
                 traverser.moveTo(neighbour.getX(), neighbour.getY());
                 while (traverser.shift(lts.reverse().getTraverseDirection())) {
-                        if(traverser.get().getTileState() != lts ) { //ignore the same tile state!
+                        if(traverser.get().getTileState() != lts.reverse() ) { //ignore the same tile state!
                                 distance++;
                         }
                         if(traverser.getX() == traverser.getStartX() && traverser.getY() == traverser.getStartY())
@@ -111,9 +111,11 @@ public class LonelyFieldStrategy extends AbstractStrategy<LightTileState> {
                          //determine the distance to the neighbour NumberTile.
                          int remainingLightRange = neighbour.getRemainingLightRange();
                          int distance = getDistance(neighbour,lts);
+                         
+                         
                                                  
-                         System.out.println(String.format("LTS: %s Distance: %d Remaining: %d",lts,distance,remainingLightRange));                       
-                         System.out.println(neighbour.getBoard().toString());
+                         //System.out.println(String.format("LTS: %s Distance: %d Remaining: %d",lts,distance,remainingLightRange));                       
+                         //System.out.println(neighbour.getBoard().toString());
                          
                          if (remainingLightRange > 0 && distance <= remainingLightRange) {
                                  neighbours.put(lts,neighbour);
